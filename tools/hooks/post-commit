@@ -1,0 +1,8 @@
+#!/bin/sh
+
+commit_msg=$(git log -1 --pretty=%B)
+sender="your_email@example.com"
+recipients="team_members@example.com"
+subject="新的代码提交通知"
+message="刚刚进行了一次代码提交，提交消息为：$commit_msg"
+sendmail -s "$sender" -r "$recipients" -t "$subject" -b "$message"
