@@ -149,7 +149,7 @@ extern uint32_t SystemCoreClock;
 /***************************************************************************************************************/
 /*                                FreeRTOS与运行时间和任务状态收集有关的配置选项                                 */
 /***************************************************************************************************************/
-#define configGENERATE_RUN_TIME_STATS           1 //为1时启用运行时间统计功能
+#define configGENERATE_RUN_TIME_STATS           0 //为1时启用运行时间统计功能
 #define configUSE_TRACE_FACILITY                1 //为1启用可视化跟踪调试
 #define configRECORD_STACK_HIGH_ADDRESS         1 //为1时记录堆栈高地址
 

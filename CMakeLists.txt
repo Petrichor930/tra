@@ -1,0 +1,129 @@
+cmake_minimum_required(VERSION 3.22)
+
+# Setup compiler settings
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+# Enable compile command to ease indexing with e.g. clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+# Version info
+set(VERSION_MAJOR 2)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+set(CONFIG_TARGET "stm32h723" CACHE STRING "Target Board")
+
+# set(CMSISCORE "${CMAKE_SOURCE_DIR}/cubemx/Drivers/CMSIS")
+
+# if(USE_EIGEN3)
+#   set(Eigen3_DIR "/usr/share/eigen3/cmake")
+# endif()
+
+# Define the build type
+set(CMAKE_BUILD_TYPE "Debug")
+message("Build type:" ${CMAKE_BUILD_TYPE})
+
+# Set the project name and version
+set(CMAKE_PROJECT_NAME robot)
+
+add_definitions(
+  -DUSE_HAL_DRIVER
+  -DSTM32H723xx
+  -DARM_MATH_CM7
+  -DARM_MATH_MATRIX_CHECK
+  -DARM_MATH_ROUNDING
+  -DARM_MATH_LOOPUNROLL
+  -DDISABLEFLOAT16) # need -D<macro> to define macro
+
+# Include toolchain file
+include("cubemx/cmake/gcc-arm-none-eabi.cmake")
+include("tools/cmake/FindInclude.cmake")
+include("Src/sdkconfig.cmake")
+
+# configure
+
+
+# Core project settings
+project(${CMAKE_PROJECT_NAME} VERSION ${VERSION})
+
+message( "C Standard: " ${CMAKE_C_STANDARD})
+message( "C++ Standard: " ${CMAKE_CXX_STANDARD})
+message( "gcc version: " ${CMAKE_C_COMPILER_VERSION})
+message( "g++ version: " ${CMAKE_CXX_COMPILER_VERSION})
+message( "robot version: " ${VERSION})
+
+# Enable CMake support for ASM and C languages
+enable_language(C CXX ASM)
+
+# 关闭指定警告
+add_compile_options(-Wno-unused-variable)
+add_compile_options(-Wno-unused-but-set-variable)
+add_compile_options(-Wno-unused-parameter)
+add_compile_options(-Wno-unused-function)
+add_compile_options(-Wno-unused-value)
+add_compile_options(-Wno-sign-compare)
+add_compile_options(-Wno-missing-braces)
+add_compile_options(-Wno-sequence-point)
+add_compile_options(-Wno-pedantic)
+# add_compile_options(-Wno-deprecated-volatile)
+add_compile_options(-Wno-missing-field-initializers)
+# add_compile_options(-O0) add_compile_options(-Ofast)
+
+# 启用彩色诊断信息
+add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
+add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
+
+# Create an executable object type
+add_executable(${CMAKE_PROJECT_NAME})
+
+# Add subdirectory
+add_subdirectory(cubemx/cmake/stm32cubemx)
+add_subdirectory(Src/App)
+add_subdirectory(Src/Common/Soc)
+add_subdirectory(Src/Common/Extensions)
+add_subdirectory(Src/System)
+add_subdirectory(Src/Utils)
+
+# Link directories setup
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE)
+
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE # Add user sources here
+)
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
+
+# Add project symbols
+
+# if(USE_LOG) add_definitions(-DUSE_LOG=1) else() add_definitions(-DUSE_LOG=0)
+# endif()
+
+# Add linked libraries
+target_link_libraries(
+  ${CMAKE_PROJECT_NAME} stm32cubemx # Add user defined libraries
+)
+
+# Add linker flags
+target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE "-Wl,--no-warn-rwx-segments" "-u _printf_float" "-Wl,--print-memory-usage")
+
+message(
+
+
+
+"    ____   _                  ______             \n"
+"   / __ \\ (_)____   __  __   / ____/____   _____ ___ \n"
+"  / /_/ // // __ \\ / / / /  / /    / __ \\ / ___// _ \\\n"
+" / ____// // / / // /_/ /  / /___ / /_/ // /   /  __/\n"
+"/_/    /_//_/ /_/ \\__, /   \\____/ \\____//_/    \\___/ \n"
+"                 /____/                              \n"
+
+
+
+)
+
+
+
