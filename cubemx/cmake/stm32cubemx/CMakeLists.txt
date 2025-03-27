@@ -6,9 +6,9 @@ add_library(stm32cubemx INTERFACE)
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
 
-target_compile_definitions(stm32cubemx INTERFACE
- USE_HAL_DRIVER
- STM32H723xx
+target_compile_definitions(stm32cubemx INTERFACE 
+	USE_HAL_DRIVER 
+	STM32H723xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
@@ -22,16 +22,6 @@ target_include_directories(stm32cubemx INTERFACE
 
 target_sources(stm32cubemx INTERFACE
     ../../Core/Src/main.c
-    ../../Core/Src/gpio.c
-    ../../Core/Src/adc.c
-    ../../Core/Src/bdma.c
-    ../../Core/Src/dma.c
-    ../../Core/Src/fdcan.c
-    ../../Core/Src/memorymap.c
-    ../../Core/Src/spi.c
-    ../../Core/Src/tim.c
-    ../../Core/Src/usart.c
-    ../../Core/Src/usb_otg.c
     ../../Core/Src/stm32h7xx_it.c
     ../../Core/Src/stm32h7xx_hal_msp.c
     ../../Core/Src/stm32h7xx_hal_timebase_tim.c
@@ -73,13 +63,11 @@ target_link_directories(stm32cubemx INTERFACE
 )
 
 target_link_libraries(stm32cubemx INTERFACE
-  App
 )
-
 
 # Validate that STM32CubeMX code is compatible with C standard
 if(CMAKE_C_STANDARD LESS 11)
-  message(ERROR "Generated code requires C11 or higher")
+    message(ERROR "Generated code requires C11 or higher")
 endif()
 
 

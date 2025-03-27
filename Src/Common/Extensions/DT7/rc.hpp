@@ -19,7 +19,7 @@
 #include "rc_msg.hpp"
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "usart.h"
+#include "main.h"
 
 namespace RC {
 
@@ -29,7 +29,7 @@ private:
     static Rc *instance;
     static SemaphoreHandle_t dataReadySem; // 数据更新信号量
     rc_ctrl_t data;
-    UART_HandleTypeDef* uart_;
+    UART_HandleTypeDef *uart_;
 
 public:
     Rc(const Rc &) = delete;

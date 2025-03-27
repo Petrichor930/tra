@@ -104,7 +104,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 
 # Add linked libraries
 target_link_libraries(
-  ${CMAKE_PROJECT_NAME} stm32cubemx # Add user defined libraries
+  ${CMAKE_PROJECT_NAME} stm32cubemx
+  App
+  Soc
+  Extensions
+  System
+  Utils # Add user defined libraries
 )
 
 # Add linker flags

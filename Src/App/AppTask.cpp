@@ -8,7 +8,7 @@ using namespace RC;
 RemoteController rc;
 
 
-
+extern UART_HandleTypeDef huart5;
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
