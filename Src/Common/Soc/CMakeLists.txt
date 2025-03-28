@@ -15,8 +15,8 @@ endif()
 message( "Soc_board: ${target_folder}")
 
 # Link directories setup
-set(CMAKE_C_LINK_FLAGS " -T \"${CMAKE_CURRENT_LIST_DIR}/startup/${target_folder}.ld\"" PARENT_SCOPE)
+set(CMAKE_C_LINK_FLAGS " -T \"${CMAKE_CURRENT_LIST_DIR}/link/${target_folder}.ld\"" PARENT_SCOPE)
 
 # includes
 target_include_directories(${CMAKE_PROJECT_NAME}
-    PUBLIC ${target_folder})
+  PRIVATE ${target_folder})

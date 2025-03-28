@@ -83,19 +83,19 @@ void PeriphCommonClock_Config(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define power_1_Pin        GPIO_PIN_13
-#define power_1_GPIO_Port  GPIOC
-#define power_2_Pin        GPIO_PIN_14
-#define power_2_GPIO_Port  GPIOC
-#define power_3_Pin        GPIO_PIN_15
-#define power_3_GPIO_Port  GPIOC
-#define ACC_CS_Pin         GPIO_PIN_0
-#define ACC_CS_GPIO_Port   GPIOC
-#define GYRO_CS_Pin        GPIO_PIN_3
-#define GYRO_CS_GPIO_Port  GPIOC
-#define ACC_INT_Pin        GPIO_PIN_10
-#define ACC_INT_GPIO_Port  GPIOE
-#define GYRO_INT_Pin       GPIO_PIN_12
+#define power_1_Pin GPIO_PIN_13
+#define power_1_GPIO_Port GPIOC
+#define power_2_Pin GPIO_PIN_14
+#define power_2_GPIO_Port GPIOC
+#define power_3_Pin GPIO_PIN_15
+#define power_3_GPIO_Port GPIOC
+#define ACC_CS_Pin GPIO_PIN_0
+#define ACC_CS_GPIO_Port GPIOC
+#define GYRO_CS_Pin GPIO_PIN_3
+#define GYRO_CS_GPIO_Port GPIOC
+#define ACC_INT_Pin GPIO_PIN_10
+#define ACC_INT_GPIO_Port GPIOE
+#define GYRO_INT_Pin GPIO_PIN_12
 #define GYRO_INT_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */

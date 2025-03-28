@@ -77,15 +77,16 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME})
+add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp)
 
 # Add subdirectory
-add_subdirectory(cubemx/cmake/stm32cubemx)
+add_subdirectory(cubemx)
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Soc)
 add_subdirectory(Src/Common/Extensions)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
+add_subdirectory(Src)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE)
@@ -104,16 +105,17 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 
 # Add linked libraries
 target_link_libraries(
-  ${CMAKE_PROJECT_NAME} stm32cubemx
+  ${CMAKE_PROJECT_NAME} PRIVATE
   App
   Soc
   Extensions
   System
-  Utils # Add user defined libraries
+  Utils
+  stm32cubemx
 )
 
 # Add linker flags
-target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE "-Wl,--no-warn-rwx-segments" "-u _printf_float" "-Wl,--print-memory-usage")
+# target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE "-Wl,--no-warn-rwx-segments" "-u _printf_float" "-Wl,--print-memory-usage")
 
 message(
 

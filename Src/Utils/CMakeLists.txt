@@ -11,4 +11,4 @@ FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Utils PUBLIC ${HEADERS})
 
 # Link
-target_link_libraries(Utils PUBLIC stm32cubemx)
+target_link_libraries(Utils PRIVATE stm32cubemx)
