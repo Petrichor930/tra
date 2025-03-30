@@ -2,6 +2,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "rc_control.hpp"
+#include "main.h"
 
 using namespace RC;
 
@@ -9,6 +10,7 @@ RemoteController rc;
 
 
 extern UART_HandleTypeDef huart5;
+extern FDCAN_HandleTypeDef hfdcan1;
 
 void rcTask();
 

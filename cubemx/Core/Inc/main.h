@@ -99,7 +99,8 @@ void PeriphCommonClock_Config(void);
 #define GYRO_INT_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
-
+void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
