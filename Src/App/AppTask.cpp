@@ -10,25 +10,18 @@ RemoteController rc;
 
 extern UART_HandleTypeDef huart5;
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-    if (huart == &huart5) {
-        Rc *rc = Rc::getInstance();
-        rc->idleHandleFromISR(huart);
-    }
-}
-
-void rc_task();
+void rcTask();
 
 void robot_init()
 {
     rc.init(&huart5);
-    xTaskCreate((TaskFunction_t)rc_task, "rc_task", 256, NULL, 5, NULL);
+
+    xTaskCreate((TaskFunction_t)rcTask, "rc_task", 256, NULL, 5, NULL);
     vTaskStartScheduler();
 }
 
 
-void rc_task()
+void rcTask()
 {
     for (;;) {
         rc.update();

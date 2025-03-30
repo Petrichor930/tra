@@ -84,6 +84,7 @@ add_subdirectory(cubemx)
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Soc)
 add_subdirectory(Src/Common/Extensions)
+add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
 add_subdirectory(Src)
@@ -106,16 +107,15 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 # Add linked libraries
 target_link_libraries(
   ${CMAKE_PROJECT_NAME} PRIVATE
-  App
-  Soc
-  Extensions
-  System
-  Utils
   stm32cubemx
+  Piny
 )
 
 # Add linker flags
-# target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE "-Wl,--no-warn-rwx-segments" "-u _printf_float" "-Wl,--print-memory-usage")
+target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE
+  "-Wl,--no-warn-rwx-segments"
+  "-u _printf_float" 
+  "-Wl,--print-memory-usage")
 
 message(
 

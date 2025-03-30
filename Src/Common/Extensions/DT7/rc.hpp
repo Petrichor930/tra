@@ -40,7 +40,7 @@ public:
     inline rc_ctrl_t getData() { return data; }
     inline static Rc *getInstance() { return instance; }
 
-    void idleHandleFromISR(UART_HandleTypeDef *huart);
+    static void callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos);
     uint8_t parseData();
 };
 
