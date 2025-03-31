@@ -10,5 +10,5 @@ add_library(App STATIC ${SOURCES})
 FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(App PUBLIC ${HEADERS})
 
-# link
+# Link
 target_link_libraries(App PUBLIC System Extensions Utils Bsp)

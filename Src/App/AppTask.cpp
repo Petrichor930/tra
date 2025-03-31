@@ -3,6 +3,7 @@
 #include "task.h"
 #include "rc_control.hpp"
 #include "main.h"
+#include "cmsis_os2.h"
 
 using namespace RC;
 
@@ -18,7 +19,7 @@ void robot_init()
 {
     rc.init(&huart5);
 
-    xTaskCreate((TaskFunction_t)rcTask, "rc_task", 256, NULL, 5, NULL);
+    xTaskCreate((TaskFunction_t)rcTask, "rc_task", 256, NULL, osPriorityRealtime, NULL);
     vTaskStartScheduler();
 }
 

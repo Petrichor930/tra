@@ -45,7 +45,6 @@ include("Src/sdkconfig.cmake")
 
 # configure
 
-
 # Core project settings
 project(${CMAKE_PROJECT_NAME} VERSION ${VERSION})
 
@@ -77,14 +76,14 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp)
+add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
+  )
 
 # Add subdirectory
 add_subdirectory(cubemx)
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Soc)
 add_subdirectory(Src/Common/Extensions)
-add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
@@ -109,13 +108,14 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 target_link_libraries(
   ${CMAKE_PROJECT_NAME} PRIVATE
   stm32cubemx
+  systemcall
   Piny
 )
 
 # Add linker flags
 target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE
   "-Wl,--no-warn-rwx-segments"
-  "-u _printf_float" 
+  "-u _printf_float"
   "-Wl,--print-memory-usage")
 
 message(
@@ -135,3 +135,5 @@ message(
 
 
 
+# get_target_property(OPTS ${CMAKE_PROJECT_NAME} LINK_OPTIONS)
+# message(STATUS "Final link options: ${OPTS}")

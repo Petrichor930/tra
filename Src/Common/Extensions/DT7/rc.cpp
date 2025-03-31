@@ -1,3 +1,4 @@
+#include <string.h>
 #include "rc.hpp"
 
 namespace RC {
@@ -7,118 +8,115 @@ SemaphoreHandle_t Rc::dataReadySem = nullptr;
 uint8_t dt7_rc_rxlost = RC_RX_LOST_MAX;
 uint8_t rc_buffer[2 * RC_FRAME_LENGTH] __attribute__((section(".ram_DMA")));
 
-Rc::Rc()
-{
-    data.rc.ch0 = 0;
-    data.rc.ch1 = 0;
-    data.rc.ch2 = 0;
-    data.rc.ch3 = 0;
-    data.rc.switch_left = 0;
-    data.rc.switch_right = 0;
-    data.rc.last_switch_left = 0;
-    data.rc.last_switch_right = 0;
-    data.mouse.x = 0;
-    data.mouse.y = 0;
-    data.mouse.z = 0;
-    data.mouse.press_left = 0;
-    data.mouse.press_right = 0;
-    data.mouse.last_press_left = 0;
-    data.mouse.last_press_right = 0;
-    data.keyboard.keycode = 0;
-    data.keyboard.last_keycode = 0;
-    data.wheel = 0;
-}
+Rc::Rc() { memset(&data, 0, sizeof(data)); }
 
 
-HAL_StatusTypeDef uart_recv_dma_H7multibuffer_init(UART_HandleTypeDef *huart, uint32_t *DstAddress,
-                                                   uint32_t *SecondMemAddress, uint32_t DataLength)
+HAL_StatusTypeDef uart_recv_dma_H7multibuffer_init(UART_HandleTypeDef *huart,
+                                                   uint32_t *DstAddress,
+                                                   uint32_t *SecondMemAddress,
+                                                   uint32_t DataLength)
 {
     huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
     huart->RxEventType = HAL_UART_RXEVENT_IDLE;
     huart->RxXferSize = DataLength;
     SET_BIT(huart->Instance->CR3, USART_CR3_DMAR);
     __HAL_UART_ENABLE_IT(huart, UART_IT_IDLE);
-    return HAL_DMAEx_MultiBufferStart(huart->hdmarx, (uint32_t)&huart->Instance->RDR,
-                                      (uint32_t)DstAddress, (uint32_t)SecondMemAddress, DataLength);
+    return HAL_DMAEx_MultiBufferStart(huart->hdmarx,
+                                      (uint32_t)&huart->Instance->RDR,
+                                      (uint32_t)DstAddress,
+                                      (uint32_t)SecondMemAddress, DataLength);
 }
 
 void Rc::init(UART_HandleTypeDef *huart)
 {
     uart_ = huart;
     uart_recv_dma_H7multibuffer_init(huart, (uint32_t *)&rc_buffer[0],
-                                     (uint32_t *)&rc_buffer[RC_FRAME_LENGTH], 2 * RC_FRAME_LENGTH);
+                                     (uint32_t *)&rc_buffer[RC_FRAME_LENGTH],
+                                     2 * RC_FRAME_LENGTH);
 
     dataReadySem = xSemaphoreCreateBinary();
 }
 
-void Rc::idleHandleFromISR(UART_HandleTypeDef *huart)
+void Rc::callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     // if (huart == uart_) {
-        uint16_t size = huart->RxXferCount;
-        if (((((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR) & DMA_SxCR_CT) == RESET) {
-            __HAL_DMA_DISABLE(huart->hdmarx);
-            ((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR |= DMA_SxCR_CT;
-            __HAL_DMA_SET_COUNTER(huart->hdmarx, 2 * RC_FRAME_LENGTH);
-            if (size == RC_FRAME_LENGTH) {
-                xSemaphoreGiveFromISR(dataReadySem, &xHigherPriorityTaskWoken);
-                // dt7_rc_rx_lost = 0; BUG: wait for fix
-            } else
-                dt7_rc_rxlost = RC_RX_LOST_MAX;
+    uint16_t size = huart->RxXferCount;
+    if (((((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR) & DMA_SxCR_CT) ==
+        RESET) {
+        __HAL_DMA_DISABLE(huart->hdmarx);
+        ((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR |= DMA_SxCR_CT;
+        __HAL_DMA_SET_COUNTER(huart->hdmarx, 2 * RC_FRAME_LENGTH);
+        if (size == RC_FRAME_LENGTH) {
+            xSemaphoreGiveFromISR(dataReadySem, &xHigherPriorityTaskWoken);
+            // dt7_rc_rx_lost = 0; BUG: wait for fix
+        } else
+            dt7_rc_rxlost = RC_RX_LOST_MAX;
 
-        } else {
-            __HAL_DMA_DISABLE(huart->hdmarx);
-            ((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR &= ~(DMA_SxCR_CT);
-            __HAL_DMA_SET_COUNTER(huart->hdmarx, 2 * RC_FRAME_LENGTH);
-            if (size == RC_FRAME_LENGTH) {
-                xSemaphoreGiveFromISR(dataReadySem, &xHigherPriorityTaskWoken);
-            }
+    } else {
+        __HAL_DMA_DISABLE(huart->hdmarx);
+        ((DMA_Stream_TypeDef *)huart->hdmarx->Instance)->CR &= ~(DMA_SxCR_CT);
+        __HAL_DMA_SET_COUNTER(huart->hdmarx, 2 * RC_FRAME_LENGTH);
+        if (size == RC_FRAME_LENGTH) {
+            xSemaphoreGiveFromISR(dataReadySem, &xHigherPriorityTaskWoken);
         }
-        __HAL_DMA_ENABLE(huart->hdmarx);
+    }
+    __HAL_DMA_ENABLE(huart->hdmarx);
     // }
 }
 
 uint8_t Rc::parseData()
 {
     if (xSemaphoreTake(dataReadySem, portMAX_DELAY) == pdTRUE) {
-        data.rc.ch0 = (int16_t)((int16_t)rc_buffer[0] | ((int16_t)rc_buffer[1] << 8)) & 0x07FF;
+        data.rc.ch0 = (int16_t)((int16_t)rc_buffer[0] |
+                                ((int16_t)rc_buffer[1] << 8)) &
+                      0x07FF;
         if (data.rc.ch0 > RC_CH_VALUE_MAX || data.rc.ch0 < RC_CH_VALUE_MIN)
             return RC_CH_ERROR;
         data.rc.ch0 -= RC_CH_VALUE_OFFSET;
 
-        data.rc.ch1 = (int16_t)(((int16_t)rc_buffer[1] >> 3) | ((int16_t)rc_buffer[2] << 5)) &
+        data.rc.ch1 = (int16_t)(((int16_t)rc_buffer[1] >> 3) |
+                                ((int16_t)rc_buffer[2] << 5)) &
                       0x07FF;
         if (data.rc.ch1 > RC_CH_VALUE_MAX || data.rc.ch1 < RC_CH_VALUE_MIN)
             return RC_CH_ERROR;
         data.rc.ch1 -= RC_CH_VALUE_OFFSET;
 
-        data.rc.ch2 = (int16_t)(((int16_t)rc_buffer[2] >> 6) | ((int16_t)rc_buffer[3] << 2) |
+        data.rc.ch2 = (int16_t)(((int16_t)rc_buffer[2] >> 6) |
+                                ((int16_t)rc_buffer[3] << 2) |
                                 ((int16_t)rc_buffer[4] << 10)) &
                       0x07FF;
         if (data.rc.ch2 > RC_CH_VALUE_MAX || data.rc.ch2 < RC_CH_VALUE_MIN)
             return RC_CH_ERROR;
         data.rc.ch2 -= RC_CH_VALUE_OFFSET;
 
-        data.rc.ch3 = (int16_t)(((int16_t)rc_buffer[4] >> 1) | ((int16_t)rc_buffer[5] << 7)) &
+        data.rc.ch3 = (int16_t)(((int16_t)rc_buffer[4] >> 1) |
+                                ((int16_t)rc_buffer[5] << 7)) &
                       0x07FF;
         if (data.rc.ch3 > RC_CH_VALUE_MAX || data.rc.ch3 < RC_CH_VALUE_MIN)
             return RC_CH_ERROR;
         data.rc.ch3 -= RC_CH_VALUE_OFFSET;
 
-        data.rc.switch_left = (uint8_t)((uint8_t)(rc_buffer[5] >> 4) & 0x0C) >> 2;
+        data.rc.switch_left = (uint8_t)((uint8_t)(rc_buffer[5] >> 4) & 0x0C) >>
+                              2;
         data.rc.switch_right = (uint8_t)((uint8_t)(rc_buffer[5] >> 4) & 0x03);
 
-        data.mouse.x = (int16_t)((int16_t)rc_buffer[6]) | ((int16_t)rc_buffer[7] << 8);
-        data.mouse.y = (int16_t)((int16_t)rc_buffer[8]) | ((int16_t)rc_buffer[9] << 8);
-        data.mouse.z = (int16_t)((int16_t)rc_buffer[10]) | ((int16_t)rc_buffer[11] << 8);
+        data.mouse.x = (int16_t)((int16_t)rc_buffer[6]) |
+                       ((int16_t)rc_buffer[7] << 8);
+        data.mouse.y = (int16_t)((int16_t)rc_buffer[8]) |
+                       ((int16_t)rc_buffer[9] << 8);
+        data.mouse.z = (int16_t)((int16_t)rc_buffer[10]) |
+                       ((int16_t)rc_buffer[11] << 8);
 
         data.mouse.press_left = (uint8_t)rc_buffer[12];
         data.mouse.press_right = (uint8_t)rc_buffer[13];
 
-        data.keyboard.keycode = (((uint16_t)rc_buffer[14]) | ((uint16_t)rc_buffer[15] << 8));
+        data.keyboard.keycode =
+                (((uint16_t)rc_buffer[14]) | ((uint16_t)rc_buffer[15] << 8));
 
-        data.wheel = (int16_t)((int16_t)rc_buffer[16]) | ((int16_t)rc_buffer[17] << 8);
+        data.wheel = (int16_t)((int16_t)rc_buffer[16]) |
+                     ((int16_t)rc_buffer[17] << 8);
         return RC_NO_ERROR;
     }
     return RC_VERIFY_ERR;
