@@ -39,7 +39,7 @@ add_definitions(
   -DDISABLEFLOAT16) # need -D<macro> to define macro
 
 # Include toolchain file
-include("cubemx/cmake/gcc-arm-none-eabi.cmake")
+include("Src/Common/Soc/stm32h723/hal/cmake/gcc-arm-none-eabi.cmake")
 include("tools/cmake/FindInclude.cmake")
 include("Src/sdkconfig.cmake")
 
@@ -80,7 +80,7 @@ add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
   )
 
 # Add subdirectory
-add_subdirectory(cubemx)
+add_subdirectory(Src/Common/Soc/stm32h723/hal)
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Soc)
 add_subdirectory(Src/Common/Extensions)
