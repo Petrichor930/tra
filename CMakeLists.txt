@@ -24,7 +24,6 @@ set(CONFIG_TARGET "stm32h723" CACHE STRING "Target Board")
 
 # Define the build type
 set(CMAKE_BUILD_TYPE "Debug")
-message("Build type:" ${CMAKE_BUILD_TYPE})
 
 # Set the project name and version
 set(CMAKE_PROJECT_NAME robot)
@@ -39,20 +38,16 @@ add_definitions(
   -DDISABLEFLOAT16) # need -D<macro> to define macro
 
 # Include toolchain file
-include("Src/Common/Soc/stm32h723/hal/cmake/gcc-arm-none-eabi.cmake")
+add_subdirectory(Src/Common/Soc)
+include("${soc}/hal/cmake/gcc-arm-none-eabi.cmake")
 include("tools/cmake/FindInclude.cmake")
+include("tools/cmake/ShowMessage.cmake")
 include("Src/sdkconfig.cmake")
 
 # configure
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME} VERSION ${VERSION})
-
-message( "C Standard: " ${CMAKE_C_STANDARD})
-message( "C++ Standard: " ${CMAKE_CXX_STANDARD})
-message( "gcc version: " ${CMAKE_C_COMPILER_VERSION})
-message( "g++ version: " ${CMAKE_CXX_COMPILER_VERSION})
-message( "robot version: " ${VERSION})
 
 # Enable CMake support for ASM and C languages
 enable_language(C CXX ASM)
@@ -76,19 +71,16 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
-  )
+add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp)
 
 # Add subdirectory
-add_subdirectory(Src/Common/Soc/stm32h723/hal)
+add_subdirectory(${soc}/hal)
 add_subdirectory(Src/App)
-add_subdirectory(Src/Common/Soc)
 add_subdirectory(Src/Common/Extensions)
 add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
 add_subdirectory(Src)
-
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 
@@ -118,22 +110,4 @@ target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE
   "-u _printf_float"
   "-Wl,--print-memory-usage")
 
-message(
-
-
-
-"    ____   _                  ______             \n"
-"   / __ \\ (_)____   __  __   / ____/____   _____ ___ \n"
-"  / /_/ // // __ \\ / / / /  / /    / __ \\ / ___// _ \\\n"
-" / ____// // / / // /_/ /  / /___ / /_/ // /   /  __/\n"
-"/_/    /_//_/ /_/ \\__, /   \\____/ \\____//_/    \\___/ \n"
-"                 /____/                              \n"
-
-
-
-)
-
-
-
-# get_target_property(OPTS ${CMAKE_PROJECT_NAME} LINK_OPTIONS)
-# message(STATUS "Final link options: ${OPTS}")
+showMessage()
