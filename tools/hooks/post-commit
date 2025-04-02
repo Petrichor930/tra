@@ -1,8 +1,12 @@
 #!/bin/sh
 
+# 获取最近30天内的贡献者邮箱
+recipients=$(git log --since="30 days ago" --pretty="%ae" | sort | uniq)
+
 commit_msg=$(git log -1 --pretty=%B)
-sender="your_email@example.com"
-recipients="team_members@example.com"
-subject="新的代码提交通知"
-message="刚刚进行了一次代码提交，提交消息为：$commit_msg"
-sendmail -s "$sender" -r "$recipients" -t "$subject" -b "$message"
+subject="代码仓库更新通知"
+message="新的代码提交:\n$commit_msg"
+
+for email in $recipients; do
+  echo -e "$message" | mail -s "$subject" "$email"
+done

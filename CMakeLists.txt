@@ -14,7 +14,6 @@ set(VERSION_MAJOR 0)
 set(VERSION_MINOR 0)
 set(VERSION_PATCH 0)
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-set(CONFIG_TARGET "stm32h723" CACHE STRING "Target Board")
 
 # set(CMSISCORE "${CMAKE_SOURCE_DIR}/cubemx/Drivers/CMSIS")
 
@@ -39,7 +38,7 @@ add_definitions(
 
 # Include toolchain file
 add_subdirectory(Src/Common/Soc)
-include("${soc}/hal/cmake/gcc-arm-none-eabi.cmake")
+include("tools/cmake/GccArmNoneEabi.cmake")
 include("tools/cmake/FindInclude.cmake")
 include("tools/cmake/ShowMessage.cmake")
 include("Src/sdkconfig.cmake")
@@ -74,7 +73,7 @@ add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp)
 
 # Add subdirectory
-add_subdirectory(${soc}/hal)
+add_subdirectory(${soc_folder}/hal)
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Extensions)
 add_subdirectory(Src/Common/Bsp)

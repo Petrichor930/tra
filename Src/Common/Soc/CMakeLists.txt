@@ -14,7 +14,7 @@ else()
   message(FATAL_ERROR "Unset target or set Unknown target")
 endif()
 
-set(soc "${CMAKE_CURRENT_SOURCE_DIR}/${target_folder}/" PARENT_SCOPE)
+set(soc_folder "${CMAKE_CURRENT_SOURCE_DIR}/${target_folder}/" PARENT_SCOPE)
 # includes
 target_include_directories(Soc
   INTERFACE ${target_folder})
