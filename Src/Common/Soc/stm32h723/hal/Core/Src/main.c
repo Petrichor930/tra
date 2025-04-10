@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AppTask.hpp"
+#include "../../../Soc.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,8 +78,6 @@ DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart10_rx;
-
-PCD_HandleTypeDef hpcd_USB_OTG_HS;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -159,9 +157,8 @@ int main(void)
   MX_ADC1_Init();
   MX_SPI6_Init();
   MX_UART9_Init();
-  MX_USB_OTG_HS_PCD_Init();
   /* USER CODE BEGIN 2 */
-    robot_init();
+    robotInit();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -232,9 +229,8 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 3;
@@ -1275,42 +1271,6 @@ void MX_USART10_UART_Init(void)
   /* USER CODE BEGIN USART10_Init 2 */
 
   /* USER CODE END USART10_Init 2 */
-
-}
-
-/**
-  * @brief USB_OTG_HS Initialization Function
-  * @param None
-  * @retval None
-  */
-void MX_USB_OTG_HS_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_OTG_HS_Init 0 */
-
-  /* USER CODE END USB_OTG_HS_Init 0 */
-
-  /* USER CODE BEGIN USB_OTG_HS_Init 1 */
-
-  /* USER CODE END USB_OTG_HS_Init 1 */
-  hpcd_USB_OTG_HS.Instance = USB_OTG_HS;
-  hpcd_USB_OTG_HS.Init.dev_endpoints = 9;
-  hpcd_USB_OTG_HS.Init.speed = PCD_SPEED_FULL;
-  hpcd_USB_OTG_HS.Init.dma_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.phy_itface = USB_OTG_EMBEDDED_PHY;
-  hpcd_USB_OTG_HS.Init.Sof_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.low_power_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.lpm_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.vbus_sensing_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.use_dedicated_ep1 = DISABLE;
-  hpcd_USB_OTG_HS.Init.use_external_vbus = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_OTG_HS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_OTG_HS_Init 2 */
-
-  /* USER CODE END USB_OTG_HS_Init 2 */
 
 }
 

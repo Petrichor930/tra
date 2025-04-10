@@ -27,15 +27,6 @@ set(CMAKE_BUILD_TYPE "Debug")
 # Set the project name and version
 set(CMAKE_PROJECT_NAME robot)
 
-add_definitions(
-  -DUSE_HAL_DRIVER
-  -DSTM32H723xx
-  -DARM_MATH_CM7
-  -DARM_MATH_MATRIX_CHECK
-  -DARM_MATH_ROUNDING
-  -DARM_MATH_LOOPUNROLL
-  -DDISABLEFLOAT16) # need -D<macro> to define macro
-
 # Include toolchain file
 add_subdirectory(Src/Common/Soc)
 include("tools/cmake/GccArmNoneEabi.cmake")
@@ -70,7 +61,8 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp)
+add_executable(${CMAKE_PROJECT_NAME} Src/App/AppTask.cpp
+)
 
 # Add subdirectory
 add_subdirectory(${soc_folder}/hal)
@@ -81,14 +73,15 @@ add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
 add_subdirectory(Src)
 # Link directories setup
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE Src/PinyCore.hpp)
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE # Add user sources here
 )
 
+
 # Add include paths
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE bsp)
 
 # Add project symbols
 
@@ -98,9 +91,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE)
 # Add linked libraries
 target_link_libraries(
   ${CMAKE_PROJECT_NAME} PRIVATE
-  stm32cubemx
-  systemcall
   Piny
+  App
+  Extensions
+  System
+  Bsp
+  stm32cubemx
 )
 
 # Add linker flags

@@ -75,7 +75,6 @@ void MX_TIM3_Init(void);
 void MX_ADC1_Init(void);
 void MX_SPI6_Init(void);
 void MX_UART9_Init(void);
-void MX_USB_OTG_HS_PCD_Init(void);
 
 /* USER CODE BEGIN EFP */
 void SystemClock_Config(void);
