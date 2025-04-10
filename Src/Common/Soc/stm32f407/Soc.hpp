@@ -2,5 +2,21 @@
 
 #define HAL_INCLUDE <stm32f4xx_hal.h>
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void robotInit();
+
+#ifdef __cplusplus
+}
+#endif
+
+// can
 #define SOC_CAN
 #define SOC_CAN_NUM (2)
+#define canHandle   CAN_HandleTypeDef
+#define canHeader   CAN_RxHeaderTypeDef
+#define RX_FIFO0    CAN_RX_FIFO0
+#define RX_FIFO1    CAN_RX_FIFO1
