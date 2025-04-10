@@ -11,5 +11,5 @@ FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Bsp PUBLIC ${HEADERS})
 
 # link
-target_link_libraries(Bsp PUBLIC System Soc stm32cubemx)
+target_link_libraries(Bsp PRIVATE System stm32cubemx Soc)
 

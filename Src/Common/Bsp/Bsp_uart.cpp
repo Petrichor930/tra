@@ -1,9 +1,10 @@
 #include "Bsp_uart.hpp"
 
+Uart *Uart::instance = new Uart();
 
-HAL_StatusTypeDef uartRecvDmaMultibufferInit(UART_HandleTypeDef *_huart,
-                                             uint32_t *_dstAddress,
-                                             uint32_t _dataLength)
+HAL_StatusTypeDef Uart::RecvDmaMultiBufInit(UART_HandleTypeDef *_huart,
+                                            uint32_t *_dstAddress,
+                                            uint32_t _dataLength)
 {
     HAL_StatusTypeDef result = HAL_OK;
 #if defined(SOC_MULTI_BUFFER)
@@ -17,21 +18,21 @@ HAL_StatusTypeDef uartRecvDmaMultibufferInit(UART_HandleTypeDef *_huart,
             _huart->hdmarx, (uint32_t)&_huart->Instance->RDR,
             (uint32_t)_dstAddress, (uint32_t)secondMemAddress, _dataLength);
 #else
-    huart->pRxBuffPtr = (uint8_t *)DstAddress;
-    huart->RxXferSize = DataLength;
-    huart->ErrorCode = HAL_UART_ERROR_NONE;
+    _huart->pRxBuffPtr = (uint8_t *)_dstAddress;
+    _huart->RxXferSize = _dataLength;
+    _huart->ErrorCode = HAL_UART_ERROR_NONE;
     /* Enable the DMA Stream */
-    HAL_DMA_Start(huart->hdmarx, (uint32_t)&huart->Instance->RDR,
-                  (uint32_t)DstAddress, DataLength);
-    SET_BIT(huart->Instance->CR3, USART_CR3_DMAR);
-    __HAL_UART_CLEAR_OREFLAG(huart);
-    __HAL_UART_CLEAR_IDLEFLAG(huart);
-    __HAL_UART_ENABLE_IT(huart, UART_IT_IDLE);
+    HAL_DMA_Start(_huart->hdmarx, (uint32_t)&_huart->Instance->DR,
+                  (uint32_t)_dstAddress, _dataLength);
+    SET_BIT(_huart->Instance->CR3, USART_CR3_DMAR);
+    __HAL_UART_CLEAR_OREFLAG(_huart);
+    __HAL_UART_CLEAR_IDLEFLAG(_huart);
+    __HAL_UART_ENABLE_IT(_huart, UART_IT_IDLE);
 #endif
     return result;
 }
 
-HAL_StatusTypeDef uartRecvDmaInit(UART_HandleTypeDef *_huart,
+HAL_StatusTypeDef Uart::RecvDmaInit(UART_HandleTypeDef *_huart,
                                   uint32_t *_dstAddress, uint32_t _dataLength)
 {
     HAL_StatusTypeDef result = HAL_OK;

@@ -7,4 +7,4 @@ add_library(Piny  ${SOURCES})
 # Include the header directories
 target_include_directories(Piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(Piny PUBLIC  App)
+target_link_libraries(Piny PRIVATE App stm32cubemx System Extensions Utils Bsp Soc)

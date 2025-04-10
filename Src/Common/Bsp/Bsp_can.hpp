@@ -1,33 +1,51 @@
 #pragma once
 
 #include "Soc.hpp"
+#include <functional>
+#include <unordered_map>
 #include HAL_INCLUDE
 
-#if defined(SOC_FDCAN)
-/**
- * @brief fdcan初始化并配置滤波器，不过滤任何ID
- */
-HAL_StatusTypeDef fdcanInit(FDCAN_HandleTypeDef *_fdcan, uint8_t _fifo,
-                            void (*_cb)(void));
-/**
- * @brief fdcan发送普通数据帧
- */
-HAL_StatusTypeDef fdcanTransmitData(FDCAN_HandleTypeDef *hfdcan, uint16_t stdid,
-                                    uint8_t *tx_data, uint32_t len);
-/**
- * @brief fdcan发送可变波特率数据帧
- */
-HAL_StatusTypeDef fdcanTransmitBrsData(FDCAN_HandleTypeDef *hfdcan,
-                                       uint16_t stdid, uint8_t *tx_data,
-                                       uint32_t len);
-#elif defined(SOC_CAN)
-/**
- * @brief can初始化并配置滤波器，不过滤任何ID
- */
-HAL_StatusTypeDef canInit(CAN_HandleTypeDef *hcan, bool FIFO);
-/**
- * @brief can发送普通数据帧
- */
-HAL_StatusTypeDef canTransmitData(CAN_HandleTypeDef *hcan, uint16_t stdid,
-                                  uint8_t *tx_data, uint32_t len);
-#endif
+
+class Can {
+public:
+    using callback =
+            std::function<void(canHandle *, const uint32_t &, const uint8_t *)>;
+
+    /**
+     * @brief fdcan registerCallback
+     */
+    void registerCallback(canHandle *_hcan, uint32_t _fifo,
+                          callback _pCallback);
+    /**
+    * @brief fdcan初始化并配置滤波器，不过滤任何ID
+    */
+    HAL_StatusTypeDef init(canHandle *_hcan, uint32_t _fifo);
+
+    /**
+    * @brief fdcan发送普通数据帧
+    */
+    HAL_StatusTypeDef transmitData(canHandle *_hcan, uint16_t _stdid,
+                                   uint8_t *_txData, uint32_t _len);
+
+    /**
+    * @brief fdcan发送可变波特率数据帧
+    */
+    HAL_StatusTypeDef transmitBrsData(canHandle *_hcan, uint16_t _stdid,
+                                      uint8_t *_txData, uint32_t _len);
+
+    /**
+    * @brief fdcan rx callbackFromISR
+    */
+    inline void callbackFromISR(canHandle *_hcan, uint32_t _rxFifo);
+
+    /**
+    * @brief fdcan get Instance
+    */
+    inline static Can *getInstance() { return instance; }
+
+private:
+    static Can *instance;
+    std::unordered_map<canHandle *, std::unordered_map<uint32_t, callback> >
+            cbTable;
+};
+void fdcan1_config(void);
