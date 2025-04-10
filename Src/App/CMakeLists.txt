@@ -11,4 +11,4 @@ FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(App PUBLIC ${HEADERS})
 
 # Link
-target_link_libraries(App PUBLIC System Extensions Utils Bsp)
+target_link_libraries(App PRIVATE System   Bsp  Soc Extensions)

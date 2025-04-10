@@ -1,5 +1,6 @@
 #include <string.h>
 #include "rc.hpp"
+#include "Bsp_uart.hpp"
 
 namespace RC {
 
@@ -11,29 +12,12 @@ uint8_t rc_buffer[2 * RC_FRAME_LENGTH] __attribute__((section(".ram_DMA")));
 Rc::Rc() { memset(&data, 0, sizeof(data)); }
 
 
-HAL_StatusTypeDef uart_recv_dma_H7multibuffer_init(UART_HandleTypeDef *huart,
-                                                   uint32_t *DstAddress,
-                                                   uint32_t *SecondMemAddress,
-                                                   uint32_t DataLength)
-{
-    huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
-    huart->RxEventType = HAL_UART_RXEVENT_IDLE;
-    huart->RxXferSize = DataLength;
-    SET_BIT(huart->Instance->CR3, USART_CR3_DMAR);
-    __HAL_UART_ENABLE_IT(huart, UART_IT_IDLE);
-    return HAL_DMAEx_MultiBufferStart(huart->hdmarx,
-                                      (uint32_t)&huart->Instance->RDR,
-                                      (uint32_t)DstAddress,
-                                      (uint32_t)SecondMemAddress, DataLength);
-}
-
 void Rc::init(UART_HandleTypeDef *huart)
 {
     uart_ = huart;
-    uart_recv_dma_H7multibuffer_init(huart, (uint32_t *)&rc_buffer[0],
-                                     (uint32_t *)&rc_buffer[RC_FRAME_LENGTH],
-                                     2 * RC_FRAME_LENGTH);
-
+    Uart::getInstance()->RecvDmaMultiBufInit(huart, (uint32_t *)&rc_buffer[0],
+                                             2 * RC_FRAME_LENGTH);
+    HAL_UART_RegisterRxEventCallback(huart, callBackFromISR);
     dataReadySem = xSemaphoreCreateBinary();
 }
 

@@ -1,13 +1,14 @@
 #pragma once
 
-#ifdef USE_LOG
+// #ifdef USE_LOG
+#if 1
 #include "SEGGER_RTT.h"
 
 typedef enum {
-    STM_LOG_NONE,  /*!< No log output */
+    STM_LOG_NONE, /*!< No log output */
     STM_LOG_ERROR, /*!< Critical errors, software module can not recover on its own */
-    STM_LOG_WARN,  /*!< Error conditions from which recovery measures have been taken */
-    STM_LOG_INFO,  /*!< Information messages which describe normal flow of events */
+    STM_LOG_WARN, /*!< Error conditions from which recovery measures have been taken */
+    STM_LOG_INFO, /*!< Information messages which describe normal flow of events */
     STM_LOG_DEBUG, /*!< Extra information which is not necessary for normal use (values, pointers, sizes, etc). */
     STM_LOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the output. */
 } stm_log_level_t;
@@ -15,7 +16,7 @@ typedef enum {
 typedef int stm_err_t;
 
 /* Definitions for error constants. */
-#define STM_OK                   0  /*!< stm_err_t value indicating success (no error) */
+#define STM_OK                   0 /*!< stm_err_t value indicating success (no error) */
 #define STM_FAIL                 -1 /*!< Generic stm_err_t code indicating failure */
 
 #define STM_ERR_NO_MEM           0x101 /*!< Out of memory */
@@ -35,37 +36,45 @@ typedef int stm_err_t;
 #define STM_ERR_WIFI_BASE        0x3000 /*!< Starting number of WiFi error codes */
 #define STM_ERR_MESH_BASE        0x4000 /*!< Starting number of MESH error codes */
 #define STM_ERR_FLASH_BASE       0x6000 /*!< Starting number of flash error codes */
-#define STM_ERR_HW_CRYPTO_BASE   0xc000 /*!< Starting number of HW cryptography module error codes */
-#define STM_ERR_MEMPROT_BASE     0xd000 /*!< Starting number of Memory Protection API error codes */
+#define STM_ERR_HW_CRYPTO_BASE \
+    0xc000 /*!< Starting number of HW cryptography module error codes */
+#define STM_ERR_MEMPROT_BASE \
+    0xd000 /*!< Starting number of Memory Protection API error codes */
 
-void _stm_error_check_failed(stm_err_t rc, const char *file, int line, const char *function,
-                             const char *expression) __attribute__((__noreturn__));
+void _stm_error_check_failed(stm_err_t rc, const char *file, int line,
+                             const char *function, const char *expression)
+        __attribute__((__noreturn__));
 
-#define STM_ERROR_CHECK(x)                                                           \
-    do {                                                                             \
-        stm_err_t stm_rc_ = (x);                                                     \
-        if (unlikely(stm_rc_ != STM_OK)) {                                           \
-            _stm_error_check_failed(stm_rc_, __FILE__, __LINE__, __ASSERT_FUNC, #x); \
-        }                                                                            \
+#define STM_ERROR_CHECK(x)                                       \
+    do {                                                         \
+        stm_err_t stm_rc_ = (x);                                 \
+        if (unlikely(stm_rc_ != STM_OK)) {                       \
+            _stm_error_check_failed(stm_rc_, __FILE__, __LINE__, \
+                                    __ASSERT_FUNC, #x);          \
+        }                                                        \
     } while (0)
 
-#define LOG_PROTO(type, color, format, ...) \
-    SEGGER_RTT_printf(0, "  %s%s" format "\r\n%s", color, type, ##__VA_ARGS__, RTT_CTRL_RESET)
+#define LOG_PROTO(type, color, format, ...)                                    \
+    SEGGER_RTT_printf(0, "  %s%s" format "\r\n%s", color, type, ##__VA_ARGS__, \
+                      RTT_CTRL_RESET)
 
 /* 清屏*/
-#define LOG_CLEAR()           SEGGER_RTT_WriteString(0, "  " RTT_CTRL_CLEAR)
+#define LOG_CLEAR()      SEGGER_RTT_WriteString(0, "  " RTT_CTRL_CLEAR)
 
 /* 无颜色日志输出 */
-#define LOG(format, ...)      LOG_PROTO("", "", format, ##__VA_ARGS__)
+#define LOG(format, ...) LOG_PROTO("", "", format, ##__VA_ARGS__)
 
 /* 有颜色格式日志输出 */
 // #define LOGI(format,...) LOG_PROTO("INFO: ", RTT_CTRL_TEXT_BRIGHT_GREEN , format, ##__VA_ARGS__)
 // #define LOGW(format,...) LOG_PROTO("WARN: ", RTT_CTRL_TEXT_BRIGHT_YELLOW, format, ##__VA_ARGS__)
 // #define LOGE(format,...) LOG_PROTO("ERROR: ", RTT_CTRL_TEXT_BRIGHT_RED   , format, ##__VA_ARGS__)
 
-#define STM_LOGI(format, ...) LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_GREEN, format, ##__VA_ARGS__)
-#define STM_LOGW(format, ...) LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_YELLOW, format, ##__VA_ARGS__)
-#define STM_LOGE(format, ...) LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_RED, format, ##__VA_ARGS__)
+#define STM_LOGI(format, ...) \
+    LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_GREEN, format, ##__VA_ARGS__)
+#define STM_LOGW(format, ...) \
+    LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_YELLOW, format, ##__VA_ARGS__)
+#define STM_LOGE(format, ...) \
+    LOG_PROTO("", RTT_CTRL_TEXT_BRIGHT_RED, format, ##__VA_ARGS__)
 
 
 #else
@@ -76,6 +85,9 @@ void _stm_error_check_failed(stm_err_t rc, const char *file, int line, const cha
 #define LOGI
 #define LOGW
 #define LOGE
+#define STM_LOGI
+#define STM_LOGW
+#define STM_LOGE
 
 #endif
 
