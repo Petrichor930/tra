@@ -2,17 +2,6 @@
 
 #define HAL_INCLUDE <stm32f4xx_hal.h>
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void robotInit();
-
-#ifdef __cplusplus
-}
-#endif
-
 // can
 #define SOC_CAN
 #define SOC_CAN_NUM (2)

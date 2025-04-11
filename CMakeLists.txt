@@ -97,12 +97,10 @@ target_link_libraries(
   System
   Bsp
   stm32cubemx
+  syscall
+  seggersyscall
 )
 
-# Add linker flags
-target_link_options( ${CMAKE_PROJECT_NAME} PRIVATE
-  "-Wl,--no-warn-rwx-segments"
-  "-u _printf_float"
-  "-Wl,--print-memory-usage")
+
 
 showMessage()

@@ -3,13 +3,13 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2021 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2023 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SEGGER RTT * Real Time Transfer for embedded targets         *
+*       SEGGER SystemView * Real-time application analysis           *
 *                                                                    *
 **********************************************************************
 *                                                                    *
@@ -17,7 +17,7 @@
 *                                                                    *
 * SEGGER strongly recommends to not make any changes                 *
 * to or modify the source code of this software in order to stay     *
-* compatible with the RTT protocol and J-Link.                       *
+* compatible with the SystemView and RTT protocol, and J-Link.       *
 *                                                                    *
 * Redistribution and use in source and binary forms, with or         *
 * without modification, are permitted provided that the following    *
@@ -42,10 +42,9 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       RTT version: 7.98f                                           *
+*       SystemView version: 3.52a                                    *
 *                                                                    *
 **********************************************************************
-
 ---------------------------END-OF-HEADER------------------------------
 File    : SEGGER_RTT.c
 Purpose : Implementation of SEGGER real-time transfer (RTT) which
@@ -174,6 +173,12 @@ Additional information:
 
 #ifndef   MAX
   #define MAX(a, b)                                       (((a) > (b)) ? (a) : (b))
+#endif
+//
+// For some environments, NULL may not be defined until certain headers are included
+//
+#ifndef NULL
+  #define NULL                                            0
 #endif
 
 /*********************************************************************
@@ -950,7 +955,7 @@ unsigned SEGGER_RTT_WriteSkipNoLock(unsigned BufferIndex, const void* pBuffer, u
   // 1) is the most common case for large buffers and assuming that J-Link reads the data fast enough
   //
   pData = (const char *)pBuffer;
-  pRing = (SEGGER_RTT_BUFFER_UP*)((uintptr_t)&_SEGGER_RTT.aUp[BufferIndex] + SEGGER_RTT_UNCACHED_OFF);  // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
+  pRing = (SEGGER_RTT_BUFFER_UP*)((char*)&_SEGGER_RTT.aUp[BufferIndex] + SEGGER_RTT_UNCACHED_OFF);  // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
   RdOff = pRing->RdOff;
   WrOff = pRing->WrOff;
   pDst = (pRing->pBuffer + WrOff) + SEGGER_RTT_UNCACHED_OFF;

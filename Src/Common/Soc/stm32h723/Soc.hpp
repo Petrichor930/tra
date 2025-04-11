@@ -2,16 +2,6 @@
 
 #define HAL_INCLUDE <stm32h7xx_hal.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void robotInit();
-
-#ifdef __cplusplus
-}
-#endif
-
 #define SOC_MULTI_BUFFER
 
 #define SOC_FDCAN

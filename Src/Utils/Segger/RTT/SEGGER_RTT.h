@@ -3,13 +3,13 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2021 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2023 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SEGGER RTT * Real Time Transfer for embedded targets         *
+*       SEGGER SystemView * Real-time application analysis           *
 *                                                                    *
 **********************************************************************
 *                                                                    *
@@ -17,7 +17,7 @@
 *                                                                    *
 * SEGGER strongly recommends to not make any changes                 *
 * to or modify the source code of this software in order to stay     *
-* compatible with the RTT protocol and J-Link.                       *
+* compatible with the SystemView and RTT protocol, and J-Link.       *
 *                                                                    *
 * Redistribution and use in source and binary forms, with or         *
 * without modification, are permitted provided that the following    *
@@ -42,10 +42,9 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       RTT version: 7.98f                                           *
+*       SystemView version: 3.52a                                    *
 *                                                                    *
 **********************************************************************
-
 ---------------------------END-OF-HEADER------------------------------
 File    : SEGGER_RTT.h
 Purpose : Implementation of SEGGER real-time transfer which allows
@@ -399,7 +398,7 @@ unsigned     SEGGER_RTT_GetBytesInBuffer        (unsigned BufferIndex);
 //
 // Function macro for performance optimization
 //
-#define      SEGGER_RTT_HASDATA(n)       (((SEGGER_RTT_BUFFER_DOWN*)((uintptr_t)&_SEGGER_RTT.aDown[n] + SEGGER_RTT_UNCACHED_OFF))->WrOff - ((SEGGER_RTT_BUFFER_DOWN*)((uintptr_t)&_SEGGER_RTT.aDown[n] + SEGGER_RTT_UNCACHED_OFF))->RdOff)
+#define      SEGGER_RTT_HASDATA(n)       (((SEGGER_RTT_BUFFER_DOWN*)((uintptr_t)&_SEGGER_RTT.aDown[n] + SEGGER_RTT_UNCACHED_OFF))->WrOff - ((SEGGER_RTT_BUFFER_DOWN*)((char*)&_SEGGER_RTT.aDown[n] + SEGGER_RTT_UNCACHED_OFF))->RdOff)
 
 #if RTT_USE_ASM
   #define SEGGER_RTT_WriteSkipNoLock  SEGGER_RTT_ASM_WriteSkipNoLock
@@ -416,7 +415,7 @@ unsigned     SEGGER_RTT_ReadUpBufferNoLock      (unsigned BufferIndex, void* pDa
 unsigned     SEGGER_RTT_WriteDownBuffer         (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
 unsigned     SEGGER_RTT_WriteDownBufferNoLock   (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
 
-#define      SEGGER_RTT_HASDATA_UP(n)    (((SEGGER_RTT_BUFFER_UP*)((uintptr_t)&_SEGGER_RTT.aUp[n] + SEGGER_RTT_UNCACHED_OFF))->WrOff - ((SEGGER_RTT_BUFFER_UP*)((uintptr_t)&_SEGGER_RTT.aUp[n] + SEGGER_RTT_UNCACHED_OFF))->RdOff)   // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
+#define      SEGGER_RTT_HASDATA_UP(n)    (((SEGGER_RTT_BUFFER_UP*)((uintptr_t)&_SEGGER_RTT.aUp[n] + SEGGER_RTT_UNCACHED_OFF))->WrOff - ((SEGGER_RTT_BUFFER_UP*)((char*)&_SEGGER_RTT.aUp[n] + SEGGER_RTT_UNCACHED_OFF))->RdOff)   // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
 
 /*********************************************************************
 *
@@ -441,13 +440,6 @@ int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pPa
 #endif
 
 #endif // ifndef(SEGGER_RTT_ASM)
-
-//
-// For some environments, NULL may not be defined until certain headers are included
-//
-#ifndef NULL
-  #define NULL  ((void*)0)
-#endif
 
 /*********************************************************************
 *

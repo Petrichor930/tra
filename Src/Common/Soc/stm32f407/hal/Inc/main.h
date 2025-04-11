@@ -76,7 +76,7 @@ void MX_RNG_Init(void);
 void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN EFP */
-void SystemClock_Config(void);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
