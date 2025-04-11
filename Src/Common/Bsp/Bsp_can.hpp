@@ -10,7 +10,6 @@ class Can {
 public:
     using callback =
             std::function<void(canHandle *, const uint32_t &, const uint8_t *)>;
-
     /**
      * @brief fdcan registerCallback
      */
@@ -48,4 +47,3 @@ private:
     std::unordered_map<canHandle *, std::unordered_map<uint32_t, callback> >
             cbTable;
 };
-void fdcan1_config(void);

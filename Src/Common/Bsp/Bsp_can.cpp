@@ -166,7 +166,7 @@ HAL_StatusTypeDef Can::init(canHandle *_hcan, uint32_t _fifo)
 {
     HAL_StatusTypeDef result = HAL_OK;
     result = canFilterInit(_hcan, _fifo);
-    __HAL_CAN_ENABLE_IT(_hcan, CAN_IT_BUSOFF) HAL_FDCAN_RxFifo1Callback;
+    __HAL_CAN_ENABLE_IT(_hcan, CAN_IT_BUSOFF);
     result = HAL_CAN_Start(_hcan);
     return result;
 }

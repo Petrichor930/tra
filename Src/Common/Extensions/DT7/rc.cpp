@@ -15,9 +15,10 @@ Rc::Rc() { memset(&data, 0, sizeof(data)); }
 void Rc::init(UART_HandleTypeDef *huart)
 {
     uart_ = huart;
-    Uart::getInstance()->RecvDmaMultiBufInit(huart, (uint32_t *)&rc_buffer[0],
-                                             2 * RC_FRAME_LENGTH);
-    HAL_UART_RegisterRxEventCallback(huart, callBackFromISR);
+    Uart *_instance = Uart::getInstance();
+    _instance->RecvDmaMultiBufInit(huart, (uint32_t *)&rc_buffer[0],
+                                   2 * RC_FRAME_LENGTH);
+    _instance->registerCallback(huart, &Rc::callBackFromISR);
     dataReadySem = xSemaphoreCreateBinary();
 }
 
@@ -47,7 +48,6 @@ void Rc::callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos)
         }
     }
     __HAL_DMA_ENABLE(huart->hdmarx);
-    // }
 }
 
 uint8_t Rc::parseData()

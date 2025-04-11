@@ -5,8 +5,7 @@ extern "C" {
 #endif
 
 #include "stdint.h"
-#include "Soc.hpp"
-#include HAL_INCLUDE
+#include "main.h"
 
 #define DWT_CR           *(__IO uint32_t *)0xE0001000
 #define DWT_CYCCNT       *(__IO uint32_t *)0xE0001004

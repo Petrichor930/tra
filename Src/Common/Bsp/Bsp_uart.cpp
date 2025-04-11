@@ -2,6 +2,11 @@
 
 Uart *Uart::instance = new Uart();
 
+void Uart::registerCallback(UART_HandleTypeDef *_huart, callback _pCallback)
+{
+    HAL_UART_RegisterRxEventCallback(_huart, _pCallback);
+}
+
 HAL_StatusTypeDef Uart::RecvDmaMultiBufInit(UART_HandleTypeDef *_huart,
                                             uint32_t *_dstAddress,
                                             uint32_t _dataLength)
@@ -33,7 +38,7 @@ HAL_StatusTypeDef Uart::RecvDmaMultiBufInit(UART_HandleTypeDef *_huart,
 }
 
 HAL_StatusTypeDef Uart::RecvDmaInit(UART_HandleTypeDef *_huart,
-                                  uint32_t *_dstAddress, uint32_t _dataLength)
+                                    uint32_t *_dstAddress, uint32_t _dataLength)
 {
     HAL_StatusTypeDef result = HAL_OK;
     __HAL_UART_ENABLE_IT(_huart, UART_IT_IDLE);
