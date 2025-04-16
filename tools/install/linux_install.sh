@@ -49,7 +49,7 @@ if command -v ninja &>/dev/null; then
 else
   echo "正在安装ninja..."
   if [ "$PKG_MANAGER" = "apt-get" ]; then
-    sudo apt-get install -y ninja
+    sudo apt-get install -y ninja-build
   elif [ "$PKG_MANAGER" = "pacman" ]; then
     sudo pacman -S --noconfirm ninja
   fi
@@ -86,6 +86,7 @@ else
   echo "正在安装arm-eabi-gcc..."
   if [ "$PKG_MANAGER" = "apt-get" ]; then
     sudo apt-get install -y gcc-arm-none-eabi
+    sudo apt install --only-upgrade gcc-arm-none-eabi
   elif [ "$PKG_MANAGER" = "pacman" ]; then
     sudo pacman -S --noconfirm arm-none-eabi-gcc
   fi
