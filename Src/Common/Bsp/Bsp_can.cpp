@@ -168,7 +168,7 @@ HAL_StatusTypeDef Can::init(canHandle *_hcan, uint32_t _fifo)
     return result;
 }
 
-HAL_StatusTypeDef transmitData(canHandle *_hcan, uint16_t _stdid,
+HAL_StatusTypeDef Can::transmitData(canHandle *_hcan, uint16_t _stdid,
                                uint8_t *_txData, uint32_t _len)
 {
     CAN_TxHeaderTypeDef tx_header;
@@ -181,7 +181,7 @@ HAL_StatusTypeDef transmitData(canHandle *_hcan, uint16_t _stdid,
     return HAL_CAN_AddTxMessage(_hcan, &tx_header, _txData, &can_mailbox);
 }
 
-inline void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
+void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
 {
     uint8_t rxData[8];
     canHeader rxHeader;

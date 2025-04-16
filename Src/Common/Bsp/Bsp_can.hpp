@@ -35,7 +35,7 @@ public:
     /**
     * @brief fdcan rx callbackFromISR
     */
-    inline void callbackFromISR(canHandle *_hcan, uint32_t _rxFifo);
+    void callbackFromISR(canHandle *_hcan, uint32_t _rxFifo);
 
     /**
     * @brief fdcan get Instance
