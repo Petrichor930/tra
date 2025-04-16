@@ -4,12 +4,11 @@ include (${CMAKE_SOURCE_DIR}/tools/cmake/FindInclude.cmake)
 file(GLOB_RECURSE SOURCES CMAKE_CONFIGURE_DEPENDS "*.c" "*.cpp" "*.s")
 
 # Add the library
-add_library(Utils ${SOURCES})
+add_library(segger STATIC ${SOURCES})
 
 # Include the header directories
 FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(Utils PUBLIC ${HEADERS})
+target_include_directories(segger PUBLIC ${HEADERS})
 
-# Link
-target_link_libraries(Utils PRIVATE stm32cubemx Soc segger)
-
+#link
+target_link_libraries(segger PRIVATE stm32cubemx)

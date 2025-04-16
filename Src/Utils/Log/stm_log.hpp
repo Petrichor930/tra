@@ -80,7 +80,7 @@ void _stm_error_check_failed(stm_err_t rc, const char *file, int line,
 #else
 
 #define LOG_CLEAR()
-#define ESP_ERROR_CHECK(x)
+#define STM_ERROR_CHECK(x)
 #define LOG
 #define LOGI
 #define LOGW

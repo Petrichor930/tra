@@ -6,6 +6,7 @@
 #include "Soc.hpp"
 #include "main.h"
 #include "stm_log.hpp"
+#include "SEGGER_SYSVIEW.h"
 
 using namespace RC;
 RemoteController rc;

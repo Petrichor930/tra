@@ -3,7 +3,7 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2023 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2024 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.52a                                    *
+*       SystemView version: 3.60d                                    *
 *                                                                    *
 **********************************************************************
 ---------------------------END-OF-HEADER------------------------------
@@ -121,12 +121,6 @@ Additional information:
   #define SEGGER_RTT_MAX_NUM_DOWN_BUFFERS                  2    // Number of down-buffers (H->T) available on this target
 #endif
 
-#ifndef SEGGER_RTT_BUFFER_SECTION
-  #if defined(SEGGER_RTT_SECTION)
-    #define SEGGER_RTT_BUFFER_SECTION SEGGER_RTT_SECTION
-  #endif
-#endif
-
 #ifndef   SEGGER_RTT_ALIGNMENT
   #define SEGGER_RTT_ALIGNMENT                            SEGGER_RTT_CPU_CACHE_LINE_SIZE
 #endif
@@ -174,12 +168,6 @@ Additional information:
 #ifndef   MAX
   #define MAX(a, b)                                       (((a) > (b)) ? (a) : (b))
 #endif
-//
-// For some environments, NULL may not be defined until certain headers are included
-//
-#ifndef NULL
-  #define NULL                                            0
-#endif
 
 /*********************************************************************
 *
@@ -214,7 +202,7 @@ Additional information:
 #define SEGGER_RTT_PUT_SECTION(Var, Section) RTT_PRAGMA(location=Section) \
                                         Var
   #elif (defined __CC_ARM)
-    #define SEGGER_RTT_PUT_SECTION(Var, Section) __attribute__ ((section (Section), zero_init))  Var
+    #define SEGGER_RTT_PUT_SECTION(Var, Section) __attribute__ ((section (Section)))  Var
   #else
     #error "Section placement not supported for this compiler."
   #endif
@@ -955,7 +943,7 @@ unsigned SEGGER_RTT_WriteSkipNoLock(unsigned BufferIndex, const void* pBuffer, u
   // 1) is the most common case for large buffers and assuming that J-Link reads the data fast enough
   //
   pData = (const char *)pBuffer;
-  pRing = (SEGGER_RTT_BUFFER_UP*)((char*)&_SEGGER_RTT.aUp[BufferIndex] + SEGGER_RTT_UNCACHED_OFF);  // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
+  pRing = (SEGGER_RTT_BUFFER_UP*)((uintptr_t)&_SEGGER_RTT.aUp[BufferIndex] + SEGGER_RTT_UNCACHED_OFF);  // Access uncached to make sure we see changes made by the J-Link side and all of our changes go into HW directly
   RdOff = pRing->RdOff;
   WrOff = pRing->WrOff;
   pDst = (pRing->pBuffer + WrOff) + SEGGER_RTT_UNCACHED_OFF;
