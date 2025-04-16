@@ -148,26 +148,26 @@ int main(void)
   MX_RNG_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-    robotInit();
+robotInit();
   /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
-    /* add mutexes, ... */
+  /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-    /* add semaphores, ... */
+  /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
-    /* start timers, add new ones, ... */
+  /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-    /* add queues, ... */
+  /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -175,11 +175,11 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-    /* add threads, ... */
+  /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
-    /* add events, ... */
+  /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
@@ -189,11 +189,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    while (1) {
+  while (1)
+  {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    }
+  }
   /* USER CODE END 3 */
 }
 
@@ -1077,8 +1078,9 @@ void MX_DMA_Init(void)
 void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -1136,8 +1138,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(CS1_GYRO_GPIO_Port, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -1154,10 +1157,11 @@ void MX_GPIO_Init(void)
 __weak void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-    /* Infinite loop */
-    for (;;) {
-        osDelay(1);
-    }
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
   /* USER CODE END 5 */
 }
 
@@ -1174,7 +1178,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM2) {
+  if (htim->Instance == TIM2)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -1189,10 +1194,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-    /* User can add his own implementation to report the HAL error return state */
-    __disable_irq();
-    while (1) {
-    }
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -1207,7 +1213,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-    /* User can add his own implementation to report the file name and line number,
+  /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
