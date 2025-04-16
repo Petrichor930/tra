@@ -3,9 +3,6 @@
 
 Can *Can::instance = new Can();
 
-extern canHandle hfdcan1;
-
-
 void Can::registerCallback(canHandle *_hcan, uint32_t _stdid,
                            callback _pCallback)
 {
