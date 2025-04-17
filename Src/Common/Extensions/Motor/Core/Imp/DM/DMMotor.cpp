@@ -2,7 +2,7 @@
 
 #include "Bsp_can.hpp"
 
-#include "CommonMacros.hpp"
+#include "MotorCommonMacros.hpp"
 
 using namespace PINYMOTOR;
 
