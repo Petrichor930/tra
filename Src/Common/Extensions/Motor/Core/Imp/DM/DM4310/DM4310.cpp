@@ -4,8 +4,8 @@
 #include <cstring>
 
 using namespace PINYMOTOR;
-
-DM4310::DM4310(InitConfig_s _config) : DMMotor<DM4310>(_config)
+DM4310::DM4310(const char _name[16], InitConfig_s _config)
+        : DMMotor<DM4310>(_name, _config)
 {
     this->globalState_ = GlobalState_e::UNREGISTER;
 
@@ -33,5 +33,7 @@ DM4310::DM4310(InitConfig_s _config) : DMMotor<DM4310>(_config)
 
         0.9333f // torqConstant
     };
+    this->log("INFO", "",
+                          "Motor %s: An instance of DM4310 created", this->name_);
     // TODO:
 }
