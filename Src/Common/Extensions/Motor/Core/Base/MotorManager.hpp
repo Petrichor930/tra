@@ -13,6 +13,7 @@ public:
 
     inline static MotorManager *getInstance() { return &instance_; }
 
+    // <uint16_t, IMotor *> -> <uid, motor>
     inline std::unordered_map<uint16_t, IMotor *> &motors() { return motorList_; }
 
 private:
