@@ -2,8 +2,9 @@
 #include <cstdint>
 
 namespace PINYMOTOR {
-enum class MotorTypedef_e { OK = 0u, ERR };
 
+using MotorTypeDef_e = uint8_t;
+        
 enum class MotorCmdType_e { SET_SPD, SET_POS, SET_TORQ };
 
 enum class ComType_e { NONE, FDCAN, CAN, UART };
@@ -12,24 +13,24 @@ enum class WorkMode_e { QUAD_CURR, QUAD_VOLT, MIT_TT, MIT_VDES, MIT_VDESPDES, PD
 enum class GlobalState_e { UNREGISTER, OFFLINE, ONLINE, ERROR };
 
 enum class MotorErrorCode_e { ErrorNone = 0u };
-typedef struct _InitConfig {
+struct InitConfig_s {
     uint32_t *pComHandle;
     ComType_e comType;
     WorkMode_e workMode;
     uint8_t offsetId;
     float txFreq;
-} InitConfig_s;
+};
 
-typedef struct _Model_s {
+struct Model_s {
     char name[10]; // 电机名称
     uint16_t measureMin; // 测量最小值
     uint16_t measureMax; // 测量最大值
     float reductionRatio; // 减速比
     uint16_t txBaseId; // 发送基ID
     uint16_t rxBaseId; // 接收基ID
-} Model_s;
+};
 
-typedef struct _Data_s {
+struct Data_s {
     int32_t rawScale; // 原始比例
     int32_t lastRawScale; // 上一次原始比例
     float singleCirAng; // rad
@@ -40,6 +41,6 @@ typedef struct _Data_s {
     float torq;         // Nm
     float tempture;     // °C
     float feedbackFreq; // Hz
-} Data_s;
+};
 
 }
