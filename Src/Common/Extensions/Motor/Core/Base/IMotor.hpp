@@ -5,30 +5,53 @@
 #include "../Projdefs.hpp"
 
 #include <queue>
-
 namespace PINYMOTOR {
-
+class MotorManager;
 // 类型擦除 管理异构CRTP
 class IMotor {
+    using LoggerCallback =
+            void(*)(const char *, const char *, const char *, ...);
+private:
+    static LoggerCallback activeLogger_;
 protected:
     Model_s model_;
     Data_s data_;
     float txFreq_;
+    const char name_[16] = "NULL";
 
     std::queue<MotorErrorCode_e> errQueue_;
 public:
     virtual ~IMotor() = default;
-    virtual MotorTypedef_e parse(uint8_t *_rxBuffer) = 0;
-    virtual MotorTypedef_e ctrl() = 0;
+    virtual MotorTypeDef_e parse(uint8_t *_rxBuffer) = 0;
+    virtual MotorTypeDef_e ctrl() = 0;
 
-    virtual MotorTypedef_e cmd(MotorCmdType_e _cmd, float _cmdData) = 0;
+    virtual MotorTypeDef_e cmd(MotorCmdType_e _cmd, float _cmdData) = 0;
 
     virtual uint16_t uid() = 0;
 
-    Data_s &data() { return data_; }
+    MotorTypeDef_e registerMotor();
+    MotorTypeDef_e cancelMotor();
+
+    inline Data_s &data() { return data_; }
     // 出轴减速比
-    float RR(){ return model_.reductionRatio; }
+    inline float RR(){ return model_.reductionRatio; }
     // 角度编码量程
-    float span(){return static_cast<float>(model_.measureMax - model_.measureMin);}
+    inline float span()
+    {
+        return static_cast<float>(model_.measureMax - model_.measureMin);
+    }
+
+    /* LOG */
+    // 建议使用lambda适配LOG原型
+    inline void registerLogger(LoggerCallback logger) {
+        activeLogger_ = std::move(logger);
+    }
+
+    template<typename... Args>
+    inline void log(const char* type, const char* color, const char* format, Args... args) {
+        if (activeLogger_) {
+            activeLogger_(type, color, format, args...);
+        }
+    }
 };
 }

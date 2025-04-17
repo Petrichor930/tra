@@ -1,0 +1,23 @@
+#pragma once
+
+#include "../Projdefs.hpp"
+
+#include <unordered_map>
+
+namespace PINYMOTOR {
+class IMotor;
+class MotorManager {
+public:
+    MotorManager(const MotorManager &) = delete;
+    MotorManager &operator=(const MotorManager &) = delete;
+
+    inline static MotorManager *getInstance() { return &instance_; }
+
+    inline std::unordered_map<uint16_t, IMotor *> &motors() { return motorList_; }
+
+private:
+    MotorManager() = default;
+    static MotorManager instance_;
+    std::unordered_map<uint16_t, IMotor *> motorList_;
+};
+}
