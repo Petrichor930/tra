@@ -167,11 +167,28 @@ protected:
     DMMotorErrorCode_e errorCode_;
 
     struct Cmd_s {
-        float torq;
-        float speed;
-        float pos;
-    }cmd_;
-
+        bool SW;
+        bool prevSW;
+        struct {
+            float torq;
+            float speed;
+            float pos;
+        };
+        void clear() {
+            SW = false;
+            torq = 0;
+            speed = 0;
+            pos = 0;
+        }
+        void updateSW(bool _sw)
+        {
+            if (_sw != prevSW) {
+                SW = _sw;
+                prevSW = _sw;
+            }
+        }
+    } cmd_;
+    
 public:
     // 构造函数，接受一个InitConfig_s类型的参数_config，并调用基类的构造函数
     inline DMMotor(const char _name[16], InitConfig_s _config)
@@ -188,9 +205,12 @@ public:
     }
 
     MotorTypeDef_e _cmd_(MotorCmdType_e _cmd, float _cmdData);
+    MotorTypeDef_e _cmd_(MotorCmdType_e _cmd);
 
-    inline uint16_t canId() { return this->model_.txBaseId + this->offsetId_; }
-    inline uint16_t masterId()
+    inline bool isEnable() const { return cmd_.SW; }
+
+    inline uint16_t canId() const { return this->model_.txBaseId + this->offsetId_; }
+    inline uint16_t masterId() const
     {
         return this->model_.rxBaseId + this->offsetId_;
     }

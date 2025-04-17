@@ -5,7 +5,7 @@ namespace PINYMOTOR {
 
 using MotorTypeDef_e = uint8_t;
         
-enum class MotorCmdType_e { SET_SPD, SET_POS, SET_TORQ };
+enum class MotorCmdType_e { SET_SPD, SET_POS, SET_TORQ, EN, DIS };
 
 enum class ComType_e { NONE, FDCAN, CAN, UART };
 enum class WorkMode_e { QUAD_CURR, QUAD_VOLT, MIT_TT, MIT_VDES, MIT_VDESPDES, PDESVDES, VDES, EMIT };

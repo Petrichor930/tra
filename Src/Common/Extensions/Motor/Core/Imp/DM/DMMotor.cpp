@@ -1,4 +1,4 @@
-#include "./DMMotor.hpp"
+#include "DMMotor.hpp"
 
 #include "Bsp_can.hpp"
 
@@ -43,7 +43,22 @@ MotorTypeDef_e DMMotor<T>::_cmd_(MotorCmdType_e _cmd, float _cmdData)
     return 0;
 }
 
-template <typename T> MotorTypeDef_e DMMotor<T>::_parse_(uint8_t *_rxBuf)
+template <typename T>
+MotorTypeDef_e DMMotor<T>::_cmd_(MotorCmdType_e _cmd)
+{
+    if (_cmd == MotorCmdType_e::EN) {
+        cmd_.updateSW(true);
+    } else if (_cmd == MotorCmdType_e::DIS) {
+        cmd_.updateSW(false);
+    } else {
+        this->log("ERROR", "", "Motor %s: not SW cmd!", this->name_);
+        return 1;
+    }
+    return 0;
+}
+
+template <typename T>
+MotorTypeDef_e DMMotor<T>::_parse_(uint8_t *_rxBuf)
 {
     // 先处理非常规数据反馈的帧
     if (_rxBuf[0] == static_cast<uint8_t>(canId()) &&
@@ -121,10 +136,14 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
     bool isMIT = false;
     switch (this->workMode_) {
     case WorkMode_e::QUAD_CURR:
-        // error
+        this->log("ERROR", "",
+                  "Motor %s: QUAD_CURR mode is not supported",
+                  this->name_);
         break;
     case WorkMode_e::QUAD_VOLT:
-        // error
+        this->log("ERROR", "",
+                  "Motor %s: QUAD_VOLT mode is not supported",
+                  this->name_);
         break;
     case WorkMode_e::MIT_TT:
         DMMsg.msgMIT.torqueOffset = float2uint(cmd_.torq, -stats_.TMax, stats_.TMax, 12);
@@ -177,6 +196,7 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         txBuf[7] = static_cast<uint8_t>(DMMsg.msgEMIT.imaxX10000);
         break;
     }
+
     if (isMIT) {
         lenBuf = 8;
         id = canId();
@@ -189,13 +209,27 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         txBuf[6] = static_cast<uint8_t>((DMMsg.msgMIT.Kd & 0x000F) << 4 | ((DMMsg.msgMIT.torqueOffset & 0x0F00) >> 8));
         txBuf[7] = static_cast<uint8_t>(DMMsg.msgMIT.torqueOffset & 0x00FF);
     }
-    rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(this->canHandle_, id, txBuf, lenBuf));
+    
+    if (this->checkSend()) {
+        this->lastSendTick = xTaskGetTickCount();
+        if ((cmd_.SW && !cmd_.prevSW) ||
+            (cmd_.SW && errorCode_ == DMMotorErrorCode_e::MotorDisable)) {
+            this->enable();
+        } else if (!cmd_.SW) {
+            this->disable();
+        } else {
+            rslt |= static_cast<MotorTypeDef_e>(
+                    Can::getInstance()->transmitData(this->canHandle_, id,
+                                                     txBuf, lenBuf));
+        } 
+    }
     return rslt;
 }
 
 template <typename T> MotorTypeDef_e DMMotor<T>::enable()
 {
     MotorTypeDef_e rslt = 0;
+    cmd_.updateSW(true); // force enable
     // 定义一个8字节的数组enableCmdPack，用于存储使能命令
     uint8_t enableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC };
     rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
@@ -206,6 +240,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::enable()
 template <typename T> MotorTypeDef_e DMMotor<T>::disable()
 {
     MotorTypeDef_e rslt = 0;
+    cmd_.updateSW(false); // force disable
     // 定义一个8字节的数组disableCmdPack，用于存储禁用命令
     uint8_t disableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD };
     rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(

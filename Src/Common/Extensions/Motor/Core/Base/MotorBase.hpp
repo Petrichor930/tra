@@ -69,9 +69,10 @@ public:
     inline uint16_t uid() override final { return derived()._uid_();}
 
     // 检查是否需要发送数据
-    inline bool checkSend(uint32_t _interval) const
+    inline bool checkSend() const
     {
-        return (xTaskGetTickCount() - lastSendTick) >= pdMS_TO_TICKS(_interval);
+        return (xTaskGetTickCount() - lastSendTick) >=
+               pdMS_TO_TICKS(1000.f / this->txFreq_);
     }
 };
 
