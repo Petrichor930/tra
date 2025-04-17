@@ -33,9 +33,6 @@ protected:
 
     uint32_t lastSendTick = 0; // ms
 
-    // 定义发送互斥信号量
-    static SemaphoreHandle_t sendMutex_;
-
 public:
     // 构造函数
     MotorBase(const char _name[16], InitConfig_s _config);
@@ -80,11 +77,9 @@ public:
     }
 };
 
-template <typename Derived>
-SemaphoreHandle_t MotorBase<Derived>::sendMutex_ = xSemaphoreCreateMutex();
-
 struct QuadMotorGroup_s {
     IMotor *motor[4];
+    QuadMotorGroup_s() { for(int i = 0; i < 4; i++) motor[i] = nullptr; }
 };
 // 模板类，用于定义一拖四电机的基类
 template <typename Derived> class QuadMotorBase : public MotorBase<Derived> {
@@ -93,19 +88,21 @@ protected:
     using Base = MotorBase<Derived>;
     using Base::model_;
 
-    // 二重键值对 pComHandle_ -> CanId -> QuadMotorGroup
-    static std::unordered_map<uint32_t *, std::unordered_map<uint16_t, QuadMotorGroup_s *> >
+    // vector < pair(pComHandle_, <canId, 4 motors>) >
+    static std::vector<std::pair<uint32_t *, std::unordered_map<uint16_t, QuadMotorGroup_s *> > >
             motorMap_;
 
 public:
     // 构造函数，初始化基类，并将isQuad_设置为true
-    inline QuadMotorBase(const char _name[16], InitConfig_s _config) : Base(_name, _config)
-    {
-        this->isQuad_ = true;
-    }
+    inline QuadMotorBase(const char _name[16], InitConfig_s _config);
     
     // 获取电机的组ID
     inline uint32_t getGroupId() const override { return model_.txBaseId_; }
-};
 
+    // 获取电机在组中的位置
+    inline uint8_t getPosInGroup() const
+    {
+        return this->offsetId_ % 4; // 0,1,2,3
+    }
+};
 }
