@@ -15,17 +15,17 @@
 namespace PINYMOTOR {
 
 #pragma pack(push, 1)
-typedef struct _DJIMotorMsg_s {
+struct DJIMotorMsg_s {
     int16_t cmd[4];
-} DJIMotorMsg_s;
-typedef struct _DJIMotorFeedback_s {
+};
+struct DJIMotorFeedback_s {
     uint16_t rawScale;
     int16_t rawRpm;
     int16_t current;
     uint8_t temperature;
-} DJIMotorFeedback_s;
+};
 #pragma pack(pop)
-typedef struct _DJIMotorStats_s {
+struct DJIMotorStats_s {
     float currCodeSpan; 
     float currRated;    // A
     float torqRated;    // Nm
@@ -33,7 +33,7 @@ typedef struct _DJIMotorStats_s {
     float torqMax;      // Nm
     float torqConstant; // Nm/A
 
-    _DJIMotorStats_s& operator=(const _DJIMotorStats_s& _other) {
+    DJIMotorStats_s& operator=(const DJIMotorStats_s& _other) {
         if (this != &_other)
         {
             currCodeSpan = _other.currCodeSpan;
@@ -45,7 +45,7 @@ typedef struct _DJIMotorStats_s {
         }
         return *this;
     }
-} DJIMotorStats_s;
+};
 
 template <typename Derived> class DJIMotor : public QuadMotorBase<DJIMotor<Derived>>{
     using Base = QuadMotorBase<DJIMotor<Derived> >;
