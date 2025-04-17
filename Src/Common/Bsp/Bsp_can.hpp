@@ -5,11 +5,10 @@
 #include <unordered_map>
 #include HAL_INCLUDE
 
-
 class Can {
 public:
     using callback =
-            std::function<void(canHandle *, const uint32_t &, const uint8_t *)>;
+            std::function<void(const uint8_t *)>;
     /**
      * @brief fdcan registerCallback
      */

@@ -190,7 +190,7 @@ void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
     }
     auto it = cbTable[_hcan].find(rxHeader.StdId);
     if (it != cbTable[_hcan].end()) {
-        it->second(_hcan, rxHeader.StdId, rxData);
+        it->second(rxData);
     }
 }
 
