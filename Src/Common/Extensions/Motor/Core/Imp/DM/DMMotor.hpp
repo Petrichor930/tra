@@ -190,9 +190,12 @@ public:
     MotorTypeDef_e _cmd_(MotorCmdType_e _cmd, float _cmdData);
 
     inline uint16_t canId() { return this->model_.txBaseId + this->offsetId_; }
-    inline uint16_t masterId() { return this->model_.rxBaseId + this->offsetId_; }
+    inline uint16_t masterId()
+    {
+        return this->model_.rxBaseId + this->offsetId_;
+    }
 
-    inline uint16_t _uid_() { return masterId(); } // TODO:
+    inline uint16_t _uid_() { return masterId(); }
 
     MotorTypeDef_e _parse_(uint8_t *_rxBuf);
     
