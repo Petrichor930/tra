@@ -194,6 +194,7 @@ public:
     inline DMMotor(const char _name[16], InitConfig_s _config)
             : Base(_name, _config)
     {
+        cmd_.clear();
         registerRecvCallback(); // 注册解析函数
     }
     

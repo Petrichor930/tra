@@ -51,6 +51,10 @@ public:
     {
         return derived()._cmd_(_cmd, _cmdData);
     }
+    inline MotorTypeDef_e cmd(MotorCmdType_e _cmd) override final
+    {
+        return derived()._cmd_(_cmd);
+    }
 
     // 注册用户自定义接收回调函数
     inline void

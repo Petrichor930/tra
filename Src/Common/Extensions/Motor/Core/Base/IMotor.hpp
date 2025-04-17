@@ -26,6 +26,7 @@ public:
     virtual MotorTypeDef_e ctrl() = 0;
 
     virtual MotorTypeDef_e cmd(MotorCmdType_e _cmd, float _cmdData) = 0;
+    virtual MotorTypeDef_e cmd(MotorCmdType_e _cmd) = 0;
 
     virtual uint16_t uid() = 0;
 
