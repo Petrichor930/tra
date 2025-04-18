@@ -219,7 +219,7 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
             this->disable();
         } else {
             rslt |= static_cast<MotorTypeDef_e>(
-                    Can::getInstance()->transmitData(this->canHandle_, id,
+                    Can::getInstance()->transmitData(this->pComHandle_, id,
                                                      txBuf, lenBuf));
         } 
     }
@@ -233,7 +233,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::enable()
     // 定义一个8字节的数组enableCmdPack，用于存储使能命令
     uint8_t enableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC };
     rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
-            this->pCanhandle, canId(), enableCmdPack, 8));
+            this->pComHandle_, canId(), enableCmdPack, 8));
     return rslt;
 }
 
@@ -244,7 +244,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::disable()
     // 定义一个8字节的数组disableCmdPack，用于存储禁用命令
     uint8_t disableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD };
     rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
-            this->pCanhandle, canId(),
+            this->pComHandle_, canId(),
             disableCmdPack, 8));
     return rslt;
 }
@@ -299,7 +299,7 @@ MotorTypeDef_e DMMotor<T>::writeReg(DMMotorRegId_e _regId, uint8_t dat[4])
                     dat[3] };
         rslt |= static_cast<MotorTypeDef_e>(
                 Can::getInstance()->transmitData(
-                        this->pCanhandle, 0x7FF, writeTxBuffer, 8));
+                        this->pComHandle_, 0x7FF, writeTxBuffer, 8));
     }
     return rslt;
 }
@@ -323,7 +323,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::readReg(DMMotorRegId_e _regId)
                                     0x00 };
         rslt |= static_cast<MotorTypeDef_e>(
                 Can::getInstance()->transmitData(
-                        this->pCanhandle, 0x7FF, readTxBuffer, 8));
+                        this->pComHandle_, 0x7FF, readTxBuffer, 8));
     }
     return rslt;
 }
@@ -348,7 +348,7 @@ MotorTypeDef_e DMMotor<T>::storageReg(DMMotorRegId_e _regId)
                                     0x00 };
         rslt |= static_cast<MotorTypeDef_e>(
                 Can::getInstance()->transmitData(
-                        this->pCanhandle, 0x7FF, storageTxBuf, 8));
+                        this->pComHandle_, 0x7FF, storageTxBuf, 8));
     }
     return rslt;
 }
