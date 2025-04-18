@@ -40,10 +40,20 @@ QuadMotorBase<T>::QuadMotorBase(const char _name[16], InitConfig_s _config) : Ba
     }
     // 在找到的pair对象中添加电机
     auto &map = it->second;
-    map[getGroupId()] = new QuadMotorGroup_s();
-    map[getGroupId()]->motor[getPosInGroup()] = this;
-
-    // 检查电机组中所有电机的发送频率是否一致
+    // 检查pair中是否已经存在电机组
+    if (map.find(getGroupId()) == map.end()) {
+        // 如果不存在，则创建一个电机组
+        map[getGroupId()] = new QuadMotorGroup_s();
+        map[getGroupId()]->motor[getPosInGroup()] = this;
+    } else {
+        // 如果存在，则检查电机组中是否已经存在该电机
+        if (map[getGroupId()]->motor[getPosInGroup()] != nullptr) {
+            this->log("ERROR", "", "Motor %s: already exist", this->name_);
+        } else {
+            map[getGroupId()]->motor[getPosInGroup()] = this;
+        }
+    }
+    // 检查电机组中所有电机的发送频率是否一致，并更新最小发送频率
     for (size_t i = 0; i < 4; i++) {
         if (map[getGroupId()]->motor[i] != nullptr) {
             if (map[getGroupId()]->motor[i]->txFreq_ != this->txFreq_) {
@@ -51,5 +61,6 @@ QuadMotorBase<T>::QuadMotorBase(const char _name[16], InitConfig_s _config) : Ba
                 return;
             }
         }
+        map[getGroupId()]->minTxFreq = std::min(map[getGroupId()]->minTxFreq, this->txFreq_);
     }
 }

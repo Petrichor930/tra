@@ -79,7 +79,17 @@ public:
 
 struct QuadMotorGroup_s {
     IMotor *motor[4];
-    QuadMotorGroup_s() { for(int i = 0; i < 4; i++) motor[i] = nullptr; }
+    uint8_t package[8];
+    uint32_t lastSendTick; // ms
+    float minTxFreq;
+    QuadMotorGroup_s()
+    {
+        for (int i = 0; i < 4; i++)
+            motor[i] = nullptr;
+        memset(package, 0, sizeof(package));
+        lastSendTick = 0.f;
+        minTxFreq = 1000.f; // 初始设成最大，以便后续更新减小
+    }
 };
 // 模板类，用于定义一拖四电机的基类
 template <typename Derived> class QuadMotorBase : public MotorBase<Derived> {
@@ -89,7 +99,8 @@ protected:
     using Base::model_;
 
     // vector < pair(pComHandle_, <canId, 4 motors>) >
-    static std::vector<std::pair<uint32_t *, std::unordered_map<uint16_t, QuadMotorGroup_s *> > >
+    static std::vector<std::pair<
+            uint32_t *, std::unordered_map<uint16_t, QuadMotorGroup_s *> > >
             motorMap_;
 
 public:
@@ -103,6 +114,12 @@ public:
     inline uint8_t getPosInGroup() const
     {
         return this->offsetId_ % 4; // 0,1,2,3
+    }
+
+    inline bool checkGroupSend(QuadMotorGroup_s *_group) const
+    {
+        return (xTaskGetTickCount() - _group->lastSendTick) >=
+               pdMS_TO_TICKS(1000.f / _group->minTxFreq);
     }
 };
 }
