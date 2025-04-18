@@ -21,7 +21,7 @@ DM4310::DM4310(const char _name[16], InitConfig_s _config)
         500.f, // MITKpMax
         5.f,   // MITKdMax
 
-        10000.f, // currCodeSpan
+        10000.f, // currTxCodeSpan
 
         2.5f, // currRated
         3.f,  // torqRated

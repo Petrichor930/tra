@@ -17,7 +17,18 @@ GM6020::GM6020(const char _name[16], InitConfig_s _config)
     else
         this->model_.txBaseId = 0x1FE;
 
-    this->stats_ = DJIMotorStats_s(8192, 1.62f, 1.2f, 0.9f, 0.86f, 0.741f);
+    this->stats_ = DJIMotorStats_s(
+        16384.f, // currTxCodeSpan
+        8192.f,  // currRxCodeSpan
+                                        
+        1.62f, // currRated
+        1.2f,  // torqRated
+                
+        0.9f,  // currMax
+        0.86f, // torqMax
+                              
+        0.741f // torqConstant
+    );
     this->log("INFO", "",
                           "Motor %s: An instance of DJIMotor created", this->name_);
 }

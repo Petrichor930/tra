@@ -119,7 +119,7 @@ struct DMMotorStats_s {
     float TMax;
     float MITKpMax;
     float MITKdMax;
-    float currCodeSpan; 
+    float currTxCodeSpan; 
     float currRated;    // A
     float torqRated;    // Nm
     float currMax;      // A
@@ -133,7 +133,7 @@ struct DMMotorStats_s {
             TMax = _other.TMax;
             MITKpMax = _other.MITKpMax;
             MITKdMax = _other.MITKdMax;
-            currCodeSpan = _other.currCodeSpan;
+            currTxCodeSpan = _other.currTxCodeSpan;
             currRated = _other.currRated;
             torqRated = _other.torqRated;
             currMax = _other.currMax;
