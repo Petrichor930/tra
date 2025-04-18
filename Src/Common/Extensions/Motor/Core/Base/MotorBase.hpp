@@ -108,10 +108,10 @@ protected:
 
 public:
     // 构造函数，初始化基类，并将isQuad_设置为true
-    inline QuadMotorBase(const char _name[16], InitConfig_s _config);
+    QuadMotorBase(const char _name[16], InitConfig_s _config);
     
     // 获取电机的组ID
-    inline uint32_t getGroupId() const override { return model_.txBaseId_; }
+    inline uint32_t getGroupId() const { return model_.txBaseId_; }
 
     // 获取电机在组中的位置
     inline uint8_t getPosInGroup() const

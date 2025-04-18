@@ -7,8 +7,6 @@ using namespace PINYMOTOR;
 DM4310::DM4310(const char _name[16], InitConfig_s _config)
         : DMMotor<DM4310>(_name, _config)
 {
-    this->globalState_ = GlobalState_e::UNREGISTER;
-
     this->model_.measureMax = 16383;
     this->model_.measureMin = 0;
     this->model_.reductionRatio = 1.f;

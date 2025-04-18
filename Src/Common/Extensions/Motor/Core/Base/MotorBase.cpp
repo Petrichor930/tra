@@ -11,6 +11,8 @@ MotorBase<T>::MotorBase(const char _name[16], InitConfig_s _config)
         , offsetId_(_config.offsetId)
 {
     this->registerMotor(); // 实例创建即注册
+
+    this->globalState_ = GlobalState_e::UNREGISTER;
     
     this->txFreq_ = _config.txFreq;
     strcpy(this->name_, _name);
