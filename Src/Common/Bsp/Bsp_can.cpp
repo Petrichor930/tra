@@ -115,7 +115,7 @@ inline void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
     }
     auto it = cbTable[_hcan].find(rxHeader.Identifier);
     if (it != cbTable[_hcan].end()) {
-        it->second(_hcan, rxHeader.Identifier, rxData);
+        it->second(rxData);
     }
 }
 
@@ -169,7 +169,7 @@ HAL_StatusTypeDef Can::init(canHandle *_hcan, uint32_t _fifo)
 }
 
 HAL_StatusTypeDef Can::transmitData(canHandle *_hcan, uint16_t _stdid,
-                               uint8_t *_txData, uint32_t _len)
+                                    uint8_t *_txData, uint32_t _len)
 {
     CAN_TxHeaderTypeDef tx_header;
     uint32_t can_mailbox;
