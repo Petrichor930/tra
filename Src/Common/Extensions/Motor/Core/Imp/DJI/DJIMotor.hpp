@@ -1,11 +1,3 @@
-/*
- * @Author: MYUIN 2812090269@qq.com
- * @Date: 2025-03-29 23:07:03
- * @LastEditors: MYUIN 2812090269@qq.com
- * @LastEditTime: 2025-03-30 01:50:06
- * @FilePath: \PinyCore\Src\Common\Extensions\Motor\Core\Imp\DJI\DJIMotor.hpp
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 #pragma once
 
 #include "../../Base/MotorBase.hpp"
@@ -50,10 +42,63 @@ struct DJIMotorStats_s {
 template <typename Derived> class DJIMotor : public QuadMotorBase<DJIMotor<Derived>>{
     using Base = QuadMotorBase<DJIMotor<Derived> >;
 
+private:
+    // 注册解析函数
+    void registerRecvCallback();
+
 protected:
     DJIMotorStats_s stats_;
 
-    static std::unordered_map<int, DJIMotor*> motorMap;
+    // 一拖四电机特有的全局包实例
+    static std::unordered_map<int, DJIMotor *> motorMap;
+
+    struct Cmd_s {
+        bool SW;
+        bool prevSW;
+        struct {
+            float torq;
+            // float speed;
+            // float pos;
+        };
+        void clear() {
+            SW = false;
+            torq = 0;
+            // speed = 0;
+            // pos = 0;
+        }
+        void updateSW(bool _sw)
+        {
+            if (_sw != prevSW) {
+                SW = _sw;
+                prevSW = _sw;
+            }
+        }
+    } cmd_;
+
+public:
+    inline DJIMotor(const char _name[16], InitConfig_s _config)
+            : Base(_name, _config)
+    {
+        cmd_.clear();
+        registerRecvCallback(); // 注册解析函数
+    }
+
+    MotorTypeDef_e _cmd_(MotorCmdType_e _cmd, float _cmdData);
+    MotorTypeDef_e _cmd_(MotorCmdType_e _cmd);
+
+    inline uint16_t canId() { return this->model_.txBaseId + 0u; }
+    inline uint16_t masterId()
+    {
+        return this->model_.rxBaseId + this->offsetId_;
+    }
+
+    inline uint16_t _uid_() { return masterId(); }
+
+    MotorTypeDef_e _send_(uint8_t *_txBuf, uint8_t _len);
+
+    MotorTypeDef_e _parse_(uint8_t *_rxBuf);
+
+    MotorTypeDef_e _ctrl_();
     
 };
 }
