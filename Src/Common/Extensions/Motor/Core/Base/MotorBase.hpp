@@ -37,6 +37,9 @@ public:
     // 构造函数
     MotorBase(const char _name[16], InitConfig_s _config);
 
+    // 发送函数
+    inline MotorTypeDef_e send(uint8_t *_txBuffer, uint8_t _txLen) override final { return derived()._send_(_txBuffer, _txLen); }
+
     // 解析接收到的数据
     inline MotorTypeDef_e parse(uint8_t *_rxBuffer) override final  { return derived()._parse_(_rxBuffer); }
 

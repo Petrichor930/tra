@@ -58,6 +58,14 @@ MotorTypeDef_e DMMotor<T>::_cmd_(MotorCmdType_e _cmd)
 }
 
 template <typename T>
+MotorTypeDef_e DMMotor<T>::_send_(uint8_t *_txBuf, uint8_t _len)
+{
+    return static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
+            static_cast<canHandle *>(this->pComHandle_), this->canId(), _txBuf,
+            _len));
+}
+
+template <typename T>
 MotorTypeDef_e DMMotor<T>::_parse_(uint8_t *_rxBuf)
 {
     // 先处理非常规数据反馈的帧
@@ -230,9 +238,7 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         } else if (!cmd_.SW) {
             this->disable();
         } else {
-            rslt |= static_cast<MotorTypeDef_e>(
-                    Can::getInstance()->transmitData(this->pComHandle_, id,
-                                                     txBuf, lenBuf));
+            rslt |= this->send(txBuf, lenBuf);
         } 
     }
     return rslt;
@@ -244,8 +250,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::enable()
     cmd_.updateSW(true); // force enable
     // 定义一个8字节的数组enableCmdPack，用于存储使能命令
     uint8_t enableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC };
-    rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
-            this->pComHandle_, canId(), enableCmdPack, 8));
+    rslt |= this->send(enableCmdPack, 8);
     return rslt;
 }
 
@@ -255,9 +260,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::disable()
     cmd_.updateSW(false); // force disable
     // 定义一个8字节的数组disableCmdPack，用于存储禁用命令
     uint8_t disableCmdPack[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD };
-    rslt |= static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
-            this->pComHandle_, canId(),
-            disableCmdPack, 8));
+    rslt |= this->send(disableCmdPack, 8);
     return rslt;
 }
 

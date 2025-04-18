@@ -218,6 +218,8 @@ public:
 
     inline uint16_t _uid_() { return masterId(); }
 
+    MotorTypeDef_e _send_(uint8_t *_txBuf, uint8_t _len);
+
     MotorTypeDef_e _parse_(uint8_t *_rxBuf);
     
     MotorTypeDef_e _ctrl_();
