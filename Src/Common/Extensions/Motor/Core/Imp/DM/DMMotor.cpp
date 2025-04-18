@@ -135,23 +135,26 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
     uint16_t id = 0x0000;
     bool isMIT = false;
     switch (this->workMode_) {
-    case WorkMode_e::QUAD_CURR:
+    case WorkMode_e::QUAD_CURR: {
         this->log("ERROR", "",
-                  "Motor %s: QUAD_CURR mode is not supported",
-                  this->name_);
-        break;
-    case WorkMode_e::QUAD_VOLT:
+                "Motor %s: QUAD_CURR mode is not supported",
+                this->name_);
+        break;   
+    }
+    case WorkMode_e::QUAD_VOLT: {
         this->log("ERROR", "",
-                  "Motor %s: QUAD_VOLT mode is not supported",
-                  this->name_);
-        break;
-    case WorkMode_e::MIT_TT:
+                "Motor %s: QUAD_VOLT mode is not supported",
+                this->name_);
+        break; 
+    }
+    case WorkMode_e::MIT_TT: {
         DMMsg.msgMIT.torqueOffset = float2uint(cmd_.torq, -stats_.TMax, stats_.TMax, 12);
         DMMsg.msgMIT.Kp = 0;
         DMMsg.msgMIT.Kd = 0;
         isMIT = true;
-        break;
-    case WorkMode_e::MIT_VDESPDES:
+        break; 
+    }
+    case WorkMode_e::MIT_VDESPDES: {
         DMMsg.msgMIT.exptScale = float2uint(cmd_.pos, -stats_.PMax, stats_.PMax, 16);
         DMMsg.msgMIT.exptVel = float2uint(cmd_.speed, -stats_.VMax, stats_.VMax, 12);
         DMMsg.msgMIT.Kd = float2uint(this->MITKd_, -stats_.MITKdMax, stats_.MITKdMax, 12);
@@ -159,14 +162,16 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         DMMsg.msgMIT.torqueOffset = float2uint(cmd_.torq, -stats_.TMax, stats_.TMax, 12);
         isMIT = true;
         break;
-    case WorkMode_e::MIT_VDES:
+    }
+    case WorkMode_e::MIT_VDES: {
         DMMsg.msgMIT.exptVel = float2uint(cmd_.speed, -stats_.VMax, stats_.VMax, 12);
         DMMsg.msgMIT.Kd = float2uint(this->MITKd_, -stats_.MITKdMax, stats_.MITKdMax, 12);
         DMMsg.msgMIT.Kp = 0;
         DMMsg.msgMIT.torqueOffset = float2uint(cmd_.torq, -stats_.TMax, stats_.TMax, 12);
         isMIT = true;
         break;
-    case WorkMode_e::PDESVDES:
+    }
+    case WorkMode_e::PDESVDES: {
         lenBuf = 8;
         id = canId() + 0x100;
         DMMsg.msgPDESVDES.exptScale = cmd_.pos;
@@ -174,13 +179,15 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         memcpy(txBuf, &DMMsg.msgPDESVDES.exptScale, 4);
         memcpy(&txBuf[4], &DMMsg.msgPDESVDES.exptVel, 4);
         break;
-    case WorkMode_e::VDES:
+    }
+    case WorkMode_e::VDES: {
         lenBuf = 4;
         id = canId() + 0x200;
         DMMsg.msgVDES.exptVel = cmd_.speed;
         memcpy(txBuf, &DMMsg.msgVDES.exptVel, 4);
         break;
-    case WorkMode_e::EMIT:
+    }
+    case WorkMode_e::EMIT: {
         lenBuf = 8;
         id = canId() + 0x300;
         DMMsg.msgEMIT.exptScale = cmd_.pos;
@@ -196,7 +203,12 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         txBuf[7] = static_cast<uint8_t>(DMMsg.msgEMIT.imaxX10000);
         break;
     }
-
+    default: {
+        this->log("ERROR", "", "Motor %s: this mode is not supported",
+                  this->name_);
+        break;
+    }
+    }
     if (isMIT) {
         lenBuf = 8;
         id = canId();
