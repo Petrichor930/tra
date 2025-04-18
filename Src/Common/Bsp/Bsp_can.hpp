@@ -7,12 +7,11 @@
 
 class Can {
 public:
-    using callback =
-            std::function<void(const uint8_t *)>;
+    using callback = std::function<void(const uint8_t *)>;
     /**
      * @brief fdcan registerCallback
      */
-    void registerCallback(canHandle *_hcan, uint32_t _fifo,
+    void registerCallback(canHandle *_hcan, uint32_t _stdid,
                           callback _pCallback);
     /**
     * @brief fdcan初始化并配置滤波器，不过滤任何ID
