@@ -148,7 +148,7 @@ int main(void)
   MX_RNG_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-robotInit();
+  robotInit();
   /* USER CODE END 2 */
 
   /* Init scheduler */

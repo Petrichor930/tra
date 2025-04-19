@@ -106,7 +106,7 @@ MotorTypeDef_e DJIMotor<T>::_ctrl_()
     switch (this->workMode_) {
     case WorkMode_e::QUAD_CURR: {
         uint16_t currCmd = cmd_.torq / stats_.torqConstant /
-                        this->stats_.currMax * this->stats_.currCodeSpan;
+                        this->stats_.currMax * this->stats_.currTxCodeSpan;
         if (txBuf != nullptr) {
             if(cmd_.SW) {
                 txBuf[2 * this->getPosInGroup() + 1] = static_cast<uint8_t>(currCmd & 0xFF);

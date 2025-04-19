@@ -202,7 +202,7 @@ MotorTypeDef_e DMMotor<T>::_ctrl_()
         DMMsg.msgEMIT.exptVelX100 =
                 static_cast<uint16_t>(((cmd_.speed < 0) ? -cmd_.speed : cmd_.speed) * 100.f);
         DMMsg.msgEMIT.imaxX10000 = static_cast<uint16_t>(((cmd_.torq < 0) ? -cmd_.torq : cmd_.torq) /
-                                            stats_.torqConstant / stats_.currMax * stats_.currCodeSpan);
+                                            stats_.torqConstant / stats_.currMax * stats_.currTxCodeSpan);
         float f = DMMsg.msgEMIT.exptScale;
         memcpy(txBuf, &f, 4);
         txBuf[4] = static_cast<uint8_t>((DMMsg.msgEMIT.exptVelX100) >> 8);
