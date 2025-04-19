@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_EXTENSIONS ON)
+
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
@@ -18,7 +19,7 @@ set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 # set(CMSISCORE "${CMAKE_SOURCE_DIR}/cubemx/Drivers/CMSIS")
 
 # if(USE_EIGEN3)
-#   set(Eigen3_DIR "/usr/share/eigen3/cmake")
+# set(Eigen3_DIR "/usr/share/eigen3/cmake")
 # endif()
 
 # Define the build type
@@ -52,8 +53,10 @@ add_compile_options(-Wno-sign-compare)
 add_compile_options(-Wno-missing-braces)
 add_compile_options(-Wno-sequence-point)
 add_compile_options(-Wno-pedantic)
+
 # add_compile_options(-Wno-deprecated-volatile)
 add_compile_options(-Wno-missing-field-initializers)
+
 # add_compile_options(-O0) add_compile_options(-Ofast)
 
 # 启用彩色诊断信息
@@ -61,7 +64,7 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME} Src/App/AppTask.cpp
+add_executable(${CMAKE_PROJECT_NAME} Src/App/AppManager.cpp
 )
 
 # Add subdirectory
@@ -73,13 +76,13 @@ add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
 add_subdirectory(Src)
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE Src/PinyCore.hpp)
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE # Add user sources here
 )
-
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE bsp)
@@ -101,6 +104,5 @@ target_link_libraries(
   segger
   syscall
 )
-
 
 showMessage()

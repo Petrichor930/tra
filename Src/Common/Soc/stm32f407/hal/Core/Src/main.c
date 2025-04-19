@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AppTask.hpp"
+#include "AppManager.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
