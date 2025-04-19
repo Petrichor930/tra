@@ -58,6 +58,12 @@ void _stm_error_check_failed(stm_err_t rc, const char *file, int line,
     SEGGER_RTT_printf(0, "  %s%s" format "\r\n%s", color, type, ##__VA_ARGS__, \
                       RTT_CTRL_RESET)
 
+inline void logProtoVaList(const char* type, const char* color, const char* format, va_list args) {
+    SEGGER_RTT_printf(0, "  %s%s", color, type);
+    SEGGER_RTT_vprintf(0, format, &args);
+    SEGGER_RTT_WriteString(0, RTT_CTRL_RESET "\r\n");
+}
+
 /* 清屏*/
 #define LOG_CLEAR()      SEGGER_RTT_WriteString(0, "  " RTT_CTRL_CLEAR)
 

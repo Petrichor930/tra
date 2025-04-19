@@ -26,7 +26,7 @@ set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 set(CMAKE_BUILD_TYPE "Debug")
 
 # Set the project name and version
-set(CMAKE_PROJECT_NAME robot)
+set(CMAKE_PROJECT_NAME PinyCore)
 
 # Include toolchain file
 add_subdirectory(Src/Common/Soc)
@@ -64,7 +64,7 @@ add_compile_options($<$<C_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 add_compile_options($<$<CXX_COMPILER_ID:GNU>:-fdiagnostics-color=always>)
 
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME} Src/App/AppManager.cpp
+add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
 )
 
 # Add subdirectory

@@ -5,6 +5,9 @@
 #include "../Projdefs.hpp"
 
 #include <queue>
+
+#include <utility>
+
 namespace PINYMOTOR {
 class MotorManager;
 // 类型擦除 管理异构CRTP

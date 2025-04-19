@@ -1,4 +1,4 @@
-include (${CMAKE_SOURCE_DIR}/tools/cmake/FindInclude.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake/FindInclude.cmake)
 
 # Add the sourses
 file(GLOB_RECURSE SOURCES CMAKE_CONFIGURE_DEPENDS "*.c" "*.cpp" "*.s")
@@ -9,7 +9,7 @@ list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/syscalls.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32f4xx_it.c")
 
 file(GLOB_RECURSE SYSCALL CMAKE_CONFIGURE_DEPENDS
-       "syscalls.c" "sysmem.c" "system_stm32f4xx.c" "stm32f4xx_it.c")
+  "syscalls.c" "sysmem.c" "system_stm32f4xx.c" "stm32f4xx_it.c")
 
 # Add the library
 add_library(stm32cubemx STATIC ${SOURCES})
@@ -26,6 +26,7 @@ target_include_directories(syscall PUBLIC ${HEADERS})
 # link
 target_link_libraries(stm32cubemx
   PUBLIC
+  Piny
   App
   Utils
   segger

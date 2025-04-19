@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AppManager.hpp"
+#include "PinyCore.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -148,7 +148,7 @@ int main(void)
   MX_RNG_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  robotInit();
+  initPinyCore();
   /* USER CODE END 2 */
 
   /* Init scheduler */
