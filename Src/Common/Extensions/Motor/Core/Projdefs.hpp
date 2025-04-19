@@ -34,7 +34,7 @@ struct Data_s {
     int32_t rawScale; // 原始比例
     int32_t lastRawScale; // 上一次原始比例
     float singleCirAng; // rad
-    float MultipCirAng; // rad
+    float multipCirAng; // rad
     float spdRadps;     // rad/s
     float spdRpm;       // rpm
     float curr;         // A

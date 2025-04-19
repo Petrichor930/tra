@@ -120,7 +120,7 @@ MotorTypeDef_e DMMotor<T>::_parse_(uint8_t *_rxBuf)
         }
         this->data_.lastRawScale = this->data_.rawScale;
 
-        this->data_.MultipCirAng += angDiff;
+        this->data_.multipCirAng += angDiff;
         this->data_.singleCirAng += angDiff;
         this->data_.singleCirAng = rangeMap(this->data_.singleCirAng, 0, 2 * PI);
     }
