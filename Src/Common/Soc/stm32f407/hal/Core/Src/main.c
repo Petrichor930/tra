@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "PinyCore.hpp"
+#include "PinyCore.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
