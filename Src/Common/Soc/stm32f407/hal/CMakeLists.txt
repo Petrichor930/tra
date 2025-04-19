@@ -3,10 +3,10 @@ include (${CMAKE_SOURCE_DIR}/tools/cmake/FindInclude.cmake)
 # Add the sourses
 file(GLOB_RECURSE SOURCES CMAKE_CONFIGURE_DEPENDS "*.c" "*.cpp" "*.s")
 
-list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Src/syscalls.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Src/sysmem.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Src/system_stm32f4xx.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Src/stm32f4xx_it.c")
+list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/syscalls.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/sysmem.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/system_stm32f4xx.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32f4xx_it.c")
 
 file(GLOB_RECURSE SYSCALL CMAKE_CONFIGURE_DEPENDS
        "syscalls.c" "sysmem.c" "system_stm32f4xx.c" "stm32f4xx_it.c")

@@ -9,3 +9,7 @@
 #define canHeader   CAN_RxHeaderTypeDef
 #define RX_FIFO0    CAN_RX_FIFO0
 #define RX_FIFO1    CAN_RX_FIFO1
+
+//uart
+#define SOC_DMA_RAM
+enum DmaRam_e { RAM };
