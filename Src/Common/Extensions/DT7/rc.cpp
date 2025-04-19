@@ -1,13 +1,14 @@
+#include "Soc.hpp"
 #include <string.h>
 #include "rc.hpp"
 #include "Bsp_uart.hpp"
+#include "Bsp_dma.hpp"
 
 namespace RC {
 
 Rc *Rc::instance = new Rc();
 SemaphoreHandle_t Rc::dataReadySem = nullptr;
 uint8_t dt7_rc_rxlost = RC_RX_LOST_MAX;
-uint8_t rc_buffer[2 * RC_FRAME_LENGTH] __attribute__((section(".ram_DMA")));
 
 Rc::Rc() { memset(&data, 0, sizeof(data)); }
 
@@ -20,6 +21,7 @@ void Rc::init(UART_HandleTypeDef *huart)
                                    2 * RC_FRAME_LENGTH);
     _instance->registerCallback(huart, &Rc::callBackFromISR);
     dataReadySem = xSemaphoreCreateBinary();
+    rc_buffer = (uint8_t *)Dma::getInstance()->ram_alloc(2 * RC_FRAME_LENGTH);
 }
 
 void Rc::callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos)

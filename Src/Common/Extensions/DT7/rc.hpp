@@ -30,6 +30,7 @@ private:
     static SemaphoreHandle_t dataReadySem; // 数据更新信号量
     rc_ctrl_t data;
     UART_HandleTypeDef *uart_;
+    uint8_t *rc_buffer;
 
 public:
     Rc(const Rc &) = delete;

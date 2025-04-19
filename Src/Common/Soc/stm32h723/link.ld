@@ -180,8 +180,10 @@ SECTIONS
 .ram_DMA :
   {
     . = ALIGN(4);
+    _ram_dma_start = .; /* define a global symbol at ram_DMA start */
     *(.ram_DMA*)
     . = ALIGN(4);
+    _ram_dma_end = .;  /* define a global symbol at ram_DMA end */
   } >RAM
   
 .ram_BDMA :

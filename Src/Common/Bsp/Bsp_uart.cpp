@@ -1,4 +1,5 @@
 #include "Bsp_uart.hpp"
+#include <stdlib.h>
 
 Uart *Uart::instance = new Uart();
 
@@ -12,7 +13,7 @@ HAL_StatusTypeDef Uart::RecvDmaMultiBufInit(UART_HandleTypeDef *_huart,
                                             uint32_t _dataLength)
 {
     HAL_StatusTypeDef result = HAL_OK;
-#if defined(SOC_MULTI_BUFFER)
+#if defined(SOC_UART_MULTI_BUFFER)
     _huart->ReceptionType = HAL_UART_RECEPTION_TOIDLE;
     _huart->RxEventType = HAL_UART_RXEVENT_IDLE;
     _huart->RxXferSize = _dataLength;
