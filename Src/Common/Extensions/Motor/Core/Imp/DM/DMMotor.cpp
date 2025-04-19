@@ -10,7 +10,7 @@ template <typename T>
 void DMMotor<T>::registerRecvCallback()
 {
     // lamda
-    Can::getInstance()->registerCallback(
+    Can::inst()->registerCallback(
             static_cast<canHandle *>(this->pComHandle_), this->masterId(),
             [this](uint8_t *_rxBuf) {
                 // basic cb
@@ -60,7 +60,7 @@ MotorTypeDef_e DMMotor<T>::_cmd_(MotorCmdType_e _cmd)
 template <typename T>
 MotorTypeDef_e DMMotor<T>::_send_(uint8_t *_txBuf, uint8_t _len)
 {
-    return static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
+    return static_cast<MotorTypeDef_e>(Can::inst()->transmitData(
             static_cast<canHandle *>(this->pComHandle_), this->canId(), _txBuf,
             _len));
 }
@@ -313,7 +313,7 @@ MotorTypeDef_e DMMotor<T>::writeReg(DMMotorRegId_e _regId, uint8_t dat[4])
                     dat[2],
                     dat[3] };
         rslt |= static_cast<MotorTypeDef_e>(
-                Can::getInstance()->transmitData(
+                Can::inst()->transmitData(
                         this->pComHandle_, 0x7FF, writeTxBuffer, 8));
     }
     return rslt;
@@ -337,7 +337,7 @@ template <typename T> MotorTypeDef_e DMMotor<T>::readReg(DMMotorRegId_e _regId)
                                     0x00,
                                     0x00 };
         rslt |= static_cast<MotorTypeDef_e>(
-                Can::getInstance()->transmitData(
+                Can::inst()->transmitData(
                         this->pComHandle_, 0x7FF, readTxBuffer, 8));
     }
     return rslt;
@@ -362,7 +362,7 @@ MotorTypeDef_e DMMotor<T>::storageReg(DMMotorRegId_e _regId)
                                     0x00,
                                     0x00 };
         rslt |= static_cast<MotorTypeDef_e>(
-                Can::getInstance()->transmitData(
+                Can::inst()->transmitData(
                         this->pComHandle_, 0x7FF, storageTxBuf, 8));
     }
     return rslt;

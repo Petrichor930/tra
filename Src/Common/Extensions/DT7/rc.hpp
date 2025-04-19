@@ -39,7 +39,7 @@ public:
     void init(UART_HandleTypeDef *huart);
 
     inline rc_ctrl_t getData() { return data; }
-    inline static Rc *getInstance() { return instance; }
+    inline static Rc *inst() { return instance; }
 
     static void callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos);
     uint8_t parseData();

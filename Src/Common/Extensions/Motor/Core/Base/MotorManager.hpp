@@ -11,7 +11,7 @@ public:
     MotorManager(const MotorManager &) = delete;
     MotorManager &operator=(const MotorManager &) = delete;
 
-    inline static MotorManager *getInstance() { return &instance_; }
+    inline static MotorManager *inst() { return &instance_; }
 
     // <uint16_t, IMotor *> -> <uid, motor>
     inline std::unordered_map<uint16_t, IMotor *> &motors() { return motorList_; }

@@ -27,13 +27,18 @@ void rcTask()
     }
 }
 
+void AppManager::createApp()
+{
+    
+}
+
 void robotInit()
 {
     osKernelInitialize();
 
     SEGGER_SYSVIEW_Conf();
 
-    // Can *can = Can::getInstance();
+    // Can *can = Can::inst();
     // can->registerCallback(&hfdcan1, 0x204, canCallback);
     // can->init(&hfdcan2, RX_FIFO0);
 

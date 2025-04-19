@@ -121,12 +121,12 @@ inline void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 {
-    Can::getInstance()->callbackFromISR(hfdcan, RX_FIFO0);
+    Can::inst()->callbackFromISR(hfdcan, RX_FIFO0);
 }
 
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
 {
-    Can::getInstance()->callbackFromISR(hfdcan, RX_FIFO1);
+    Can::inst()->callbackFromISR(hfdcan, RX_FIFO1);
 }
 
 #elif defined(SOC_CAN)
@@ -196,12 +196,12 @@ void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *_hcan)
 {
-    Can::getInstance()->callbackFromISR(_hcan, RX_FIFO0);
+    Can::inst()->callbackFromISR(_hcan, RX_FIFO0);
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *_hcan)
 {
-    Can::getInstance()->callbackFromISR(_hcan, RX_FIFO1);
+    Can::inst()->callbackFromISR(_hcan, RX_FIFO1);
 }
 
 #endif

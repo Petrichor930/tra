@@ -29,7 +29,7 @@ public:
     /**
     * @brief uart get Instance
     */
-    inline static Uart *getInstance() { return instance; }
+    inline static Uart *inst() { return instance; }
 
 private:
     static Uart *instance;

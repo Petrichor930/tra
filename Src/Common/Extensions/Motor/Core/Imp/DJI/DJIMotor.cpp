@@ -11,7 +11,7 @@ template <typename T>
 void DJIMotor<T>::registerRecvCallback()
 {
     // lamda
-    Can::getInstance()->registerCallback(
+    Can::inst()->registerCallback(
             static_cast<canHandle *>(this->pComHandle_), this->masterId(),
             [this](uint8_t *_rxBuf) {
                 // basic cb
@@ -41,7 +41,7 @@ MotorTypeDef_e DJIMotor<T>::_cmd_(MotorCmdType_e _cmd, float _cmdData)
 template <typename T>
 MotorTypeDef_e DJIMotor<T>::_send_(uint8_t *_txBuf, uint8_t _len)
 {
-    return static_cast<MotorTypeDef_e>(Can::getInstance()->transmitData(
+    return static_cast<MotorTypeDef_e>(Can::inst()->transmitData(
             static_cast<canHandle *>(this->pComHandle_), this->getGroupId(), _txBuf,
             _len));
 }

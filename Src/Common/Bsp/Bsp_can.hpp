@@ -38,7 +38,7 @@ public:
     /**
     * @brief fdcan get Instance
     */
-    inline static Can *getInstance() { return instance; }
+    inline static Can *inst() { return instance; }
 
 private:
     static Can *instance;

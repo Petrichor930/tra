@@ -19,7 +19,7 @@ public:
     /**
     * @brief dma get Instance
     */
-    inline static Dma *getInstance() { return instance; }
+    inline static Dma *inst() { return instance; }
 
 private:
     static Dma *instance;
