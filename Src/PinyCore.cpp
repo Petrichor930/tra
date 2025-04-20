@@ -8,6 +8,8 @@
 
 #include "AppManager.hpp"
 
+#include "../Lib/TinyMPC/src/tinympc/tiny_api.hpp"
+
 static void logCallback(const char* type, const char* color, const char* format, ...) {
     va_list args;
     va_start(args, format);

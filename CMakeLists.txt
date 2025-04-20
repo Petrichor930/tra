@@ -69,9 +69,12 @@ add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
 
 # Add subdirectory
 add_subdirectory(${soc_folder}/hal)
+
+add_subdirectory(Lib/Segger)
+add_subdirectory(Lib/TinyMPC)
+
 add_subdirectory(Src/App)
 add_subdirectory(Src/Common/Extensions)
-add_subdirectory(Lib/Segger)
 add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
 add_subdirectory(Src/Utils)
@@ -103,6 +106,8 @@ target_link_libraries(
   stm32cubemx
   segger
   syscall
+
+  tinympcstatic
 )
 
 showMessage()
