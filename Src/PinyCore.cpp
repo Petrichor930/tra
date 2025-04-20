@@ -1,4 +1,4 @@
-#include "PinyCore.h"
+#include "PinyCore.hpp"
 
 #include "SEGGER_SYSVIEW.h"
 
@@ -15,7 +15,7 @@ static void logCallback(const char* type, const char* color, const char* format,
     va_end(args);
 }
 
-void initPinyCore()
+void PinyCore::init()
 {
     osKernelInitialize();
 
@@ -25,11 +25,16 @@ void initPinyCore()
     // can->registerCallback(&hfdcan1, 0x204, canCallback);
     // can->init(&hfdcan2, RX_FIFO0);
 
-    registerLogger(logCallback);
+    this->registerLogger(logCallback);
 
     AppManager::inst()->createApp();
 
     STM_LOGI("PinyCore Init");
 
     osKernelStart();
+}
+
+void initPinyCore()
+{
+    PinyCore::inst()->init();
 }

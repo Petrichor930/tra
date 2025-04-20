@@ -15,7 +15,7 @@ class IMotor {
     using LoggerCallback =
             void(*)(const char *, const char *, const char *, ...);
 private:
-    static LoggerCallback activeLogger_;
+    inline static LoggerCallback activeLogger_;
 protected:
     Model_s model_;
     Data_s data_;

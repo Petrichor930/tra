@@ -11,14 +11,16 @@ public:
     MotorManager(const MotorManager &) = delete;
     MotorManager &operator=(const MotorManager &) = delete;
 
-    inline static MotorManager *inst() { return &instance_; }
+    inline static MotorManager* inst() {
+        static MotorManager instance;
+        return &instance;
+    }
 
     // <uint16_t, IMotor *> -> <uid, motor>
     inline std::unordered_map<uint16_t, IMotor *> &motors() { return motorList_; }
 
 private:
     MotorManager() = default;
-    static MotorManager instance_;
     std::unordered_map<uint16_t, IMotor *> motorList_;
 };
 }
