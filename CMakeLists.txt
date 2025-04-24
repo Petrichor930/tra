@@ -18,10 +18,6 @@ set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 # set(CMSISCORE "${CMAKE_SOURCE_DIR}/cubemx/Drivers/CMSIS")
 
-# if(USE_EIGEN3)
-# set(Eigen3_DIR "/usr/share/eigen3/cmake")
-# endif()
-
 # Define the build type
 set(CMAKE_BUILD_TYPE "Debug")
 
@@ -53,7 +49,6 @@ add_compile_options(-Wno-sign-compare)
 add_compile_options(-Wno-missing-braces)
 add_compile_options(-Wno-sequence-point)
 add_compile_options(-Wno-pedantic)
-
 # add_compile_options(-Wno-deprecated-volatile)
 add_compile_options(-Wno-missing-field-initializers)
 
@@ -71,6 +66,7 @@ add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
 add_subdirectory(${soc_folder}/hal)
 
 add_subdirectory(Lib/Segger)
+add_subdirectory(Lib/Eigen3)
 add_subdirectory(Lib/TinyMPC)
 
 add_subdirectory(Src/App)
@@ -88,7 +84,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE # Add user sources here
 )
 
 # Add include paths
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE bsp)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE )
 
 # Add project symbols
 
@@ -105,9 +101,9 @@ target_link_libraries(
   Bsp
   stm32cubemx
   segger
+  Eigen3
+  TinyMPC
   syscall
-
-  tinympcstatic
 )
 
 showMessage()
