@@ -8,12 +8,12 @@
 
 #include "AppManager.hpp"
 
-#include "../Lib/TinyMPC/src/tinympc/tiny_api.hpp"
+// #include "../Lib/TinyMPC/src/tinympc/tiny_api.hpp"
 
-static void logCallback(const char* type, const char* color, const char* format, ...) {
+static void logCallback(const char* _type, const char* _color, const char* _format, ...) {
     va_list args;
-    va_start(args, format);
-    logProtoVaList(type, color, format, args);
+    va_start(args, _format);
+    logProtoVaList(_type, _color, _format, args);
     va_end(args);
 }
 
@@ -31,7 +31,7 @@ void PinyCore::init()
 
     AppManager::inst()->createApp();
 
-    STM_LOGI("PinyCore Init");
+    this->log("INFO", "green", "PinyCore init done.\n");
 
     osKernelStart();
 }

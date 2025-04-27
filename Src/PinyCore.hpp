@@ -28,14 +28,14 @@ public:
     PinyCore(const PinyCore &) = delete;
     PinyCore &operator=(const PinyCore &) = delete;
 
-    inline void registerLogger(LoggerCallback logger) {
-        activeLogger_ = std::move(logger);
+    inline void registerLogger(LoggerCallback _logger) {
+        activeLogger_ = std::move(_logger);
     }
 
     template<typename... Args>
-    inline void log(const char* type, const char* color, const char* format, Args... args) {
+    inline void log(const char* _type, const char* _color, const char* _format, Args... _args) {
         if (activeLogger_) {
-            activeLogger_(type, color, format, args...);
+            activeLogger_(_type, _color, _format, _args...);
         }
     }
 
