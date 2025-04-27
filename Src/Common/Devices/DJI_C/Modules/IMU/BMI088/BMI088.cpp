@@ -140,32 +140,46 @@ int8_t BMI088::init()
 
     if(rslt == BMI08X_OK) {
         rslt = bmi08a_set_power_mode(&this->bmi08xDev_);
-        if (rslt != BMI08X_OK)
+        if (rslt != BMI08X_OK) {
+            this->log("ERROR", "red", "BMI088 set power mode failed\n");
             return rslt;
+        }
         rslt = bmi08a_set_meas_conf(&this->bmi08xDev_);
-        if (rslt != BMI08X_OK)
+        if (rslt != BMI08X_OK) {
+            this->log("ERROR", "red", "BMI088 set meas conf failed\n");
             return rslt;
+        }
         rslt = bmi08a_get_power_mode(&this->bmi08xDev_);
         if (rslt != BMI08X_OK ||
-            this->bmi08xDev_.accel_cfg.power != BMI08X_ACCEL_PM_ACTIVE)
+            this->bmi08xDev_.accel_cfg.power != BMI08X_ACCEL_PM_ACTIVE) {
+            this->log("ERROR", "red", "BMI088 get power mode failed\n");
             return -47; // IMU_CONF_ERR = -47
+        }
         rslt = bmi08g_set_power_mode(&this->bmi08xDev_);
-        if (rslt != BMI08X_OK)
+        if (rslt != BMI08X_OK) {
+            this->log("ERROR", "red", "BMI088 set power mode failed\n");
             return rslt;
+        }
         rslt = bmi08g_set_meas_conf(&this->bmi08xDev_);
-        if (rslt != BMI08X_OK)
+        if (rslt != BMI08X_OK) {
+            this->log("ERROR", "red", "BMI088 set meas conf failed\n");
             return rslt;
+        }
         rslt = bmi08g_get_power_mode(&this->bmi08xDev_);
         if (rslt != BMI08X_OK ||
-            this->bmi08xDev_.gyro_cfg.power != BMI08X_GYRO_PM_NORMAL)
+            this->bmi08xDev_.gyro_cfg.power != BMI08X_GYRO_PM_NORMAL) {
+            this->log("ERROR", "red", "BMI088 get power mode failed\n");
             return -24; // IMU_ACCEL_ERR = -24
+        }    
     }
     rslt = bmi08a_get_error_status(&this->err_, &this->bmi08xDev_);
     if (rslt == BMI08X_OK) {
         if (this->err_.err_code != 0 || this->err_.fatal_err != 0) {
+            this->log("ERROR", "red", "BMI088 error status failed\n");
             return -24;
         }
     }
+    this->log("INFO", "green", "BMI088 init done\n");
     return rslt;
 }
 
