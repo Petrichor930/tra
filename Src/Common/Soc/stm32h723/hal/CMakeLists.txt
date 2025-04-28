@@ -28,6 +28,7 @@ target_link_libraries(stm32cubemx
   PUBLIC
   App
   Utils
+  Piny
   segger
 )
 

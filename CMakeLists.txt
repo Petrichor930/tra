@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.24)
 
 # Setup compiler settings
 set(CMAKE_C_STANDARD 11)
@@ -25,13 +25,12 @@ set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_PROJECT_NAME PinyCore)
 
 # Include toolchain file
-add_subdirectory(Src/Common/Soc)
+include("tools/Kconfig/Kconfig.cmake")
+add_subdirectory(Src/Common/Soc)  # BUG: waiting for fix
 include("tools/cmake/GccArmNoneEabi.cmake")
 include("tools/cmake/FindInclude.cmake")
 include("tools/cmake/ShowMessage.cmake")
 include("Src/sdkconfig.cmake")
-
-# configure
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME} VERSION ${VERSION})
@@ -51,7 +50,6 @@ add_compile_options(-Wno-sequence-point)
 add_compile_options(-Wno-pedantic)
 # add_compile_options(-Wno-deprecated-volatile)
 add_compile_options(-Wno-missing-field-initializers)
-
 # add_compile_options(-O0) add_compile_options(-Ofast)
 
 # 启用彩色诊断信息
@@ -63,13 +61,13 @@ add_executable(${CMAKE_PROJECT_NAME} Src/PinyCore.cpp
 )
 
 # Add subdirectory
-add_subdirectory(${soc_folder}/hal)
 
 add_subdirectory(Lib/Segger)
 add_subdirectory(Lib/Eigen3)
-add_subdirectory(Lib/TinyMPC)
+# add_subdirectory(Lib/TinyMPC)
 
 add_subdirectory(Src/App)
+add_subdirectory(${soc_folder}/hal)
 add_subdirectory(Src/Common/Extensions)
 add_subdirectory(Src/Common/Bsp)
 add_subdirectory(Src/System)
@@ -88,9 +86,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE )
 
 # Add project symbols
 
-# if(USE_LOG) add_definitions(-DUSE_LOG=1) else() add_definitions(-DUSE_LOG=0)
-# endif()
-
 # Add linked libraries
 target_link_libraries(
   ${CMAKE_PROJECT_NAME} PRIVATE
@@ -102,7 +97,7 @@ target_link_libraries(
   stm32cubemx
   segger
   Eigen3
-  TinyMPC
+  # TinyMPC
   syscall
 )
 

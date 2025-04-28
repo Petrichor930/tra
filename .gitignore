@@ -2,3 +2,7 @@
 build/
 
 .cache/
+.config
+.config.old
+sdkconfig.h
+sdkconfig.cmake
