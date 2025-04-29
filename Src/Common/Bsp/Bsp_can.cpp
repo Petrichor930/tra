@@ -1,7 +1,6 @@
 #include "Bsp_can.hpp"
 #include "Soc.hpp"
-
-Can *Can::instance = new Can();
+#include "stm_log.hpp"
 
 void Can::registerCallback(canHandle *_hcan, uint32_t _stdid,
                            callback _pCallback)
@@ -33,11 +32,11 @@ HAL_StatusTypeDef fdcanFilterInit(FDCAN_HandleTypeDef *_hcan, uint8_t _fifo)
     sFilterConfig.IdType = FDCAN_STANDARD_ID;
     sFilterConfig.FilterIndex = 0;
     sFilterConfig.FilterType = FDCAN_FILTER_MASK;
-    if (_fifo == 0) {
+    if (_fifo == RX_FIFO0) {
         sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
         result = HAL_FDCAN_ActivateNotification(
                 _hcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
-    } else if (_fifo == 1) {
+    } else if (_fifo == RX_FIFO1) {
         sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO1;
         result = HAL_FDCAN_ActivateNotification(
                 _hcan, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0);
@@ -45,10 +44,10 @@ HAL_StatusTypeDef fdcanFilterInit(FDCAN_HandleTypeDef *_hcan, uint8_t _fifo)
     sFilterConfig.FilterID1 = 0x00000000;
     sFilterConfig.FilterID2 = 0x00000000;
     result = HAL_FDCAN_ConfigFilter(_hcan, &sFilterConfig);
-    if (_fifo == 0) {
+    if (_fifo == RX_FIFO0) {
         result = HAL_FDCAN_ActivateNotification(
                 _hcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
-    } else if (_fifo == 1) {
+    } else if (_fifo == RX_FIFO1) {
         result = HAL_FDCAN_ActivateNotification(
                 _hcan, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0);
     }
@@ -121,12 +120,12 @@ inline void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 {
-    Can::inst()->callbackFromISR(hfdcan, RX_FIFO0);
+    Can::instance().callbackFromISR(hfdcan, RX_FIFO0);
 }
 
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
 {
-    Can::inst()->callbackFromISR(hfdcan, RX_FIFO1);
+    Can::instance().callbackFromISR(hfdcan, RX_FIFO1);
 }
 
 #elif defined(SOC_CAN)
@@ -196,12 +195,12 @@ void Can::callbackFromISR(canHandle *_hcan, uint32_t _rxFifo)
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *_hcan)
 {
-    Can::inst()->callbackFromISR(_hcan, RX_FIFO0);
+    Can::instance().callbackFromISR(_hcan, RX_FIFO0);
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *_hcan)
 {
-    Can::inst()->callbackFromISR(_hcan, RX_FIFO1);
+    Can::instance().callbackFromISR(_hcan, RX_FIFO1);
 }
 
 #endif

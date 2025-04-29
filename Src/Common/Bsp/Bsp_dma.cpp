@@ -1,7 +1,6 @@
 #include "Bsp_dma.hpp"
 #include <stdlib.h>
 
-Dma *Dma::instance = new Dma();
 
 void *Dma::ram_alloc(size_t _size)
 {

@@ -1,9 +1,10 @@
 #pragma once
 
+#include "BspBase.hpp"
 #include "Soc.hpp"
 #include HAL_INCLUDE
 
-class Uart {
+class Uart : public Bsp {
 public:
     using callback = void(UART_HandleTypeDef *, uint16_t);
     /**
@@ -29,8 +30,9 @@ public:
     /**
     * @brief uart get Instance
     */
-    inline static Uart *inst() { return instance; }
-
-private:
-    static Uart *instance;
+    inline static Uart &instance()
+    {
+        static Uart instance;
+        return instance;
+    }
 };

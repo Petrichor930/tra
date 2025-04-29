@@ -1,8 +1,6 @@
 #include "Bsp_uart.hpp"
 #include <stdlib.h>
 
-Uart *Uart::instance = new Uart();
-
 void Uart::registerCallback(UART_HandleTypeDef *_huart, callback _pCallback)
 {
     HAL_UART_RegisterRxEventCallback(_huart, _pCallback);

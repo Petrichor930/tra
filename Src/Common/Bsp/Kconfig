@@ -1,0 +1,19 @@
+menu "Bsp config"
+    config BSP_USE_CAN
+        bool "Enable CAN/FDCAN"
+        select BSP_USE_CAN1
+        default y
+
+    config BSP_USE_UART
+        bool "Enable USART" 
+        select BSP_USE_UART1
+        default y
+
+    config BSP_USE_SPI
+        bool "Enable SPI"
+        default y
+
+    config BSP_USE_IIC
+        bool "Enable IIC"
+        default y
+endmenu

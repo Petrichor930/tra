@@ -16,12 +16,12 @@ Rc::Rc() { memset(&data, 0, sizeof(data)); }
 void Rc::init(UART_HandleTypeDef *huart)
 {
     uart_ = huart;
-    Uart *_instance = Uart::inst();
-    _instance->RecvDmaMultiBufInit(huart, (uint32_t *)&rc_buffer[0],
-                                   2 * RC_FRAME_LENGTH);
-    _instance->registerCallback(huart, &Rc::callBackFromISR);
+
+    Uart::instance().RecvDmaMultiBufInit(huart, (uint32_t *)&rc_buffer[0],
+                                         2 * RC_FRAME_LENGTH);
+    Uart::instance().registerCallback(huart, &Rc::callBackFromISR);
     dataReadySem = xSemaphoreCreateBinary();
-    rc_buffer = (uint8_t *)Dma::inst()->ram_alloc(2 * RC_FRAME_LENGTH);
+    rc_buffer = (uint8_t *)Dma::instance().ram_alloc(2 * RC_FRAME_LENGTH);
 }
 
 void Rc::callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos)
