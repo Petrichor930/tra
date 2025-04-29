@@ -30,7 +30,7 @@ add_subdirectory(Src/Common/Soc)  # BUG: waiting for fix
 include("tools/cmake/GccArmNoneEabi.cmake")
 include("tools/cmake/FindInclude.cmake")
 include("tools/cmake/ShowMessage.cmake")
-include("Src/sdkconfig.cmake")
+include("Src/sdkconfig.cmake" OPTIONAL)
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME} VERSION ${VERSION})
