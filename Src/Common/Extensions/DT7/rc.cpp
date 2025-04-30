@@ -6,7 +6,7 @@
 
 namespace RC {
 
-Rc *Rc::instance = new Rc();
+Rc *Rc::instance_ = new Rc();
 SemaphoreHandle_t Rc::dataReadySem = nullptr;
 uint8_t dt7_rc_rxlost = RC_RX_LOST_MAX;
 

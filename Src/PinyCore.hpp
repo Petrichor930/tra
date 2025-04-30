@@ -20,9 +20,9 @@ class PinyCore {
                                     ...);
     inline static LoggerCallback activeLogger_;
 public:
-    inline static PinyCore* inst() {
-        static PinyCore instance;
-        return &instance;
+    inline static PinyCore* instance() {
+        static PinyCore instance_;
+        return &instance_;
     }
 
     PinyCore(const PinyCore &) = delete;

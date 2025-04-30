@@ -6,7 +6,7 @@ using namespace PINYMOTOR;
 
 MotorTypeDef_e IMotor::registerMotor()
 {
-    MotorManager *motorManager = MotorManager::inst();
+    MotorManager *motorManager = MotorManager::instance();
     auto it = motorManager->motors().find(uid());
     if (it != motorManager->motors().end()) {
         return false;
@@ -17,7 +17,7 @@ MotorTypeDef_e IMotor::registerMotor()
 
 MotorTypeDef_e IMotor::cancelMotor()
 {
-    MotorManager *motorManager = MotorManager::inst();
+    MotorManager *motorManager = MotorManager::instance();
     auto it = motorManager->motors().find(uid());
     if (it == motorManager->motors().end()) {
         return false;

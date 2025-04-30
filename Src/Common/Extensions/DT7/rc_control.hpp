@@ -23,7 +23,7 @@ public:
 
 class RemoteController {
 public:
-    RemoteController() { rc_ = Rc::inst(); };
+    RemoteController() { rc_ = Rc::instance(); };
 
     void init(UART_HandleTypeDef *uart) { rc_->init(uart); };
 

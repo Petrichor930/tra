@@ -11,9 +11,9 @@ public:
     MotorManager(const MotorManager &) = delete;
     MotorManager &operator=(const MotorManager &) = delete;
 
-    inline static MotorManager* inst() {
-        static MotorManager instance;
-        return &instance;
+    inline static MotorManager* instance() {
+        static MotorManager instance_;
+        return &instance_;
     }
 
     // <uint16_t, IMotor *> -> <uid, motor>

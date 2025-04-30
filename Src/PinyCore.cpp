@@ -29,16 +29,16 @@ void PinyCore::init()
     SEGGER_SYSVIEW_Conf();
 
 
-    Can::instance().registerCallback(&hfdcan1, 0x201, canCallback);
-    Can::instance().init(&hfdcan1, RX_FIFO0);
+    // Can::instance().registerCallback(&hfdcan1, 0x201, canCallback);
+    // Can::instance().init(&hfdcan1, RX_FIFO0);
 
     this->registerLogger(logCallback);
 
-    AppManager::inst()->createApp();
+    AppManager::instance()->createApp();
 
     this->log("INFO", "green", "PinyCore init done.\n");
 
     osKernelStart();
 }
 
-void initPinyCore() { PinyCore::inst()->init(); }
+void initPinyCore() { PinyCore::instance()->init(); }

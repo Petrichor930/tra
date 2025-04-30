@@ -26,7 +26,7 @@ namespace RC {
 class Rc {
 private:
     Rc();
-    static Rc *instance;
+    static Rc *instance_;
     static SemaphoreHandle_t dataReadySem; // 数据更新信号量
     rc_ctrl_t data;
     UART_HandleTypeDef *uart_;
@@ -39,7 +39,7 @@ public:
     void init(UART_HandleTypeDef *huart);
 
     inline rc_ctrl_t getData() { return data; }
-    inline static Rc *inst() { return instance; }
+    inline static Rc *instance() { return instance_; }
 
     static void callBackFromISR(UART_HandleTypeDef *huart, uint16_t Pos);
     uint8_t parseData();
