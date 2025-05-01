@@ -1,19 +1,29 @@
 menu "Bsp config"
     config BSP_USE_CAN
-        bool "Enable CAN/FDCAN"
-        select BSP_USE_CAN1
+        bool "can/fdcan"
+        default n
+
+    config BSP_USE_DMA
+        bool "dma"
+        default y
+
+    config BSP_USE_PWM
+        bool "pwm"
         default y
 
     config BSP_USE_UART
-        bool "Enable USART" 
-        select BSP_USE_UART1
+        bool "uart/usart" 
         default y
 
     config BSP_USE_SPI
-        bool "Enable SPI"
+        bool "spi"
         default y
 
     config BSP_USE_IIC
-        bool "Enable IIC"
+        bool "iic"
+        default n
+
+    config BSP_USE_TIM
+        bool "tim"
         default y
 endmenu

@@ -14,6 +14,23 @@ add_custom_target(menuconfig
   USES_TERMINAL
 )
 
+if(EXISTS "${CMAKE_BINARY_DIR}")
+  message(STATUS "Found build: ${build_exists}")
+else()
+  message(WARNING "No found build, Using default config")
+
+  # kconfig default config
+  execute_process(
+    COMMAND ${KCONFIG_CONF}
+            --defconfig=${CMAKE_SOURCE_DIR}/Kconfig
+            ${CMAKE_SOURCE_DIR}/Kconfig
+    COMMAND ${Python_EXECUTABLE} ${PYTHON_SCRIPT} "${CMAKE_SOURCE_DIR}/.config"
+    COMMAND -B build --fresh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    RESULT_VARIABLE kconfig_result
+)
+endif()
+
 file(GLOB CONFIG_FILE "${CMAKE_SOURCE_DIR}/Src/sdkconfig.h")
 if(CONFIG_FILE)
   message(STATUS "Found config file: ${CONFIG_FILE}")

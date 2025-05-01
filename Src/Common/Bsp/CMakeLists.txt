@@ -1,15 +1,32 @@
-include (${CMAKE_SOURCE_DIR}/tools/cmake/FindInclude.cmake)
-
-# Add the sourses
-file(GLOB_RECURSE SOURCES  CMAKE_CONFIGURE_DEPENDS "*.c" "*.cpp")
-
 # Add the library
-add_library(Bsp STATIC ${SOURCES})
+add_library(Bsp STATIC)
 
-# Include the header directories
-FIND_INCLUDE_DIR(HEADERS ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(Bsp PUBLIC ${HEADERS})
+target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (BSP_USE_CAN)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Can/Bsp_can.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Can)
+endif()
+if (BSP_USE_UART)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Uart/Bsp_uart.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Uart)
+endif()
+if (BSP_USE_SPI)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Spi/Bsp_spi.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Spi)
+endif()
+if (BSP_USE_PWM)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Pwm/Bsp_pwm.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Pwm)
+endif()
+if (BSP_USE_tim)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Tim/Bsp_tim.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Tim)
+endif()
+if (BSP_USE_DMA)
+  target_sources(Bsp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Dma/Bsp_dma.cpp)
+  target_include_directories(Bsp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Dma)
+endif()
 
 # link
 target_link_libraries(Bsp PRIVATE System stm32cubemx Soc)
-
