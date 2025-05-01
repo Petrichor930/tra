@@ -4,7 +4,7 @@
     {
       "showDevDebugOutput": "none",
       "cwd": "${workspaceFolder}",
-      "executable": "./build/robot.elf",
+      "executable": "./build/PinyCore.elf",
       "name": "DebugSTM32",
       "request": "launch",
       "type": "cortex-debug",
