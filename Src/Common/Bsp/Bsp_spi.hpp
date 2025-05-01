@@ -4,7 +4,7 @@
 #include HAL_INCLUDE
 #include "BspBase.hpp"
 
-class Spi : public Bsp {
+class Spi : public BspBase<Spi> {
 public:
     void transmit(SPI_HandleTypeDef _spi, uint8_t *_txData,
                   uint16_t _dataLength, uint16_t _timeout);
@@ -33,12 +33,4 @@ public:
     void transmitReceiveDMA(SPI_HandleTypeDef _spi, uint8_t *_txData,
                             uint8_t *_rxData, uint16_t _dataLength);
 
-    /**
-    * @brief uart get Instance
-    */
-    inline static Spi &instance()
-    {
-        static Spi instance;
-        return instance;
-    }
 };

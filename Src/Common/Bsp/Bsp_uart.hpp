@@ -4,7 +4,7 @@
 #include "Soc.hpp"
 #include HAL_INCLUDE
 
-class Uart : public Bsp {
+class Uart : public BspBase<Uart> {
 public:
     using callback = void(UART_HandleTypeDef *, uint16_t);
     /**
@@ -27,12 +27,4 @@ public:
     HAL_StatusTypeDef RecvDmaInit(UART_HandleTypeDef *_huart,
                                   uint32_t *_dstAddress, uint32_t _dataLength);
 
-    /**
-    * @brief uart get Instance
-    */
-    inline static Uart &instance()
-    {
-        static Uart instance;
-        return instance;
-    }
 };

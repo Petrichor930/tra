@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include HAL_INCLUDE
 
-class Can : public Bsp {
+class Can : public BspBase<Can> {
 public:
     using callback = std::function<void(const uint8_t *)>;
     /**
@@ -35,15 +35,6 @@ public:
     * @brief can rx callbackFromISR
     */
     void callbackFromISR(canHandle *_hcan, uint32_t _rxFifo);
-
-    /**
-    * @brief can get Instance
-    */
-    inline static Can &instance()
-    {
-        static Can instance;
-        return instance;
-    }
 
 private:
     std::unordered_map<canHandle *, std::unordered_map<uint32_t, callback> >
