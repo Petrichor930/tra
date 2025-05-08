@@ -7,20 +7,18 @@
 namespace PINYMOTOR {
 
 #pragma pack(push, 1)
-struct DJIMotorMsg_s {
-    int16_t cmd[4];
+struct DJI_ODMotorMsg_s {
+    int16_t cmd[3];
 };
-struct DJIMotorFeedback_s {
+
+struct DJI_ODMotorFeedback_s {
     uint16_t rawScale;
-    int16_t rawRpm;
-    int16_t current;
-    uint8_t temperature;
+    int16_t rawTorq;
 };
 #pragma pack(pop)
-struct DJIMotorStats_s {
+struct DJI_ODMotorStats_s {
     float voltTxCodeSpan;
-    float currTxCodeSpan;
-    float currRxCodeSpan;
+    float torqRxCodeSpan;
     float currRated;    // A
     float torqRated;    // Nm
     float voltMax;      // V
@@ -28,12 +26,11 @@ struct DJIMotorStats_s {
     float torqMax;      // Nm
     float torqConstant; // Nm/A
 
-    DJIMotorStats_s& operator=(const DJIMotorStats_s& _other) {
+    DJI_ODMotorStats_s& operator=(const DJI_ODMotorStats_s& _other) {
         if (this != &_other)
         {
             voltTxCodeSpan = _other.voltTxCodeSpan;
-            currTxCodeSpan = _other.currTxCodeSpan;
-            currRxCodeSpan = _other.currRxCodeSpan;
+            torqRxCodeSpan = _other.torqRxCodeSpan;
             currRated = _other.currRated;
             torqRated = _other.torqRated;
             voltMax = _other.voltMax;
@@ -46,36 +43,28 @@ struct DJIMotorStats_s {
 };
 
 template <typename Derived>
-class DJIMotor : public QuadMotorBase<DJIMotor<Derived> > {
-    using Base = QuadMotorBase<DJIMotor<Derived> >;
+class DJI_ODMotor : public TripMotorBase<DJI_ODMotor<Derived> > {
+    using Base = TripMotorBase<DJI_ODMotor<Derived> >;
     inline Derived &derived() { return static_cast<Derived &>(*this); }
     inline const Derived &derived() const
     {
         return static_cast<const Derived &>(*this);
     }
-    
 
 private:
-    // 注册解析函数
     void registerRecvCallback();
 
 protected:
-    DJIMotorStats_s stats_;
+    DJI_ODMotorStats_s stats_;
 
     struct Cmd_s {
         bool SW;
         bool prevSW;
         struct {
-            float torq;
             float volt;
-            // float speed;
-            // float pos;
         };
         void clear() {
             SW = false;
-            torq = 0;
-            // speed = 0;
-            // pos = 0;
         }
         void updateSW(bool _sw)
         {
@@ -86,20 +75,18 @@ protected:
         }
     } cmd_;
 
-    uint16_t ctrlId_ = 0x00; // 控制ID - 根据工作模式变化
+    uint16_t ctrlId_ = 0x00;
 
 public:
-    inline DJIMotor(const char _name[16], InitConfig_s _config)
+    inline DJI_ODMotor(const char _name[16], InitConfig_s _config)
             : Base(_name, _config)
     {
         cmd_.clear();
         registerRecvCallback(); // 注册解析函数
     }
 
-    // 重写电机属性
-    inline void overrideStats(const DJIMotorStats_s& _newStats)
+    inline void overrideStats(const DJI_ODMotorStats_s& _newStats)
     {
-        // 将新的电机属性赋值给stats
         stats_ = _newStats;
     }
 
@@ -122,10 +109,9 @@ public:
 
     MotorTypeDef_e _ctrl_();
 
-    // 获取所在电机组
-    inline QuadMotorGroup_s *findGroup() const
+    inline TripMotorGroup_s *findGroup() const
     {
-        QuadMotorGroup_s *group = nullptr;
+        TripMotorGroup_s *group = nullptr;
         for (auto &entry : this->motorMap_) {
             if (entry.first == this->pComHandle_) {
                 auto it = entry.second.find(this->getGroupId()); // it" is a map
@@ -137,6 +123,5 @@ public:
         }
         return group;
     }
-    
 };
-}
+};
