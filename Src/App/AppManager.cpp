@@ -9,6 +9,8 @@
 #include "INS.hpp"
 #include "Bmi088.hpp"
 
+#include "Arm.hpp"
+
 #include "Cmd.hpp"
 
 #include "Buzzer.hpp"
@@ -45,6 +47,10 @@ Cmd *cmd;
 
 //---------------------------------------------------------------------------------------------------
 // Ctrl
+CHASSIS::Mecanum *mecanum;
+Chassis *chassis;
+Arm *arm;
+
 
 UI::App *ui;
 //---------------------------------------------------------------------------------------------------
@@ -52,6 +58,8 @@ UI::App *ui;
 void ctrlTask(void *_param)
 {
     while (true) {
+        chassis->update(_param);
+        arm->update(_param);
         vTaskDelay(1);
     }
 }
