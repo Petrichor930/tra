@@ -3,14 +3,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
-
-namespace CHASSIS {
-enum class FSMState_e : uint8_t;
-}
-
-namespace GIMBAL {
-enum class FSMState_e : uint8_t;
-}
+#include "Pump.hpp"
 
 struct MsgBus_s {
     QueueHandle_t chassisQueue;
@@ -29,8 +22,9 @@ struct GimbalMsg_s : public Msg {
     float roll, pitch, yaw;
 };
 
-struct ArmMsg_s : public Msg {
-    float j1, j2, j3, j4, j5, j6;
+struct armMsg : public Msg {
+    float j1, j2, j3, j4, j5, j6, j7;
+    PUMP::State_e pumpState;
 };
 
 //  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ other msg ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
