@@ -4,10 +4,7 @@
 
 namespace PINYMOTOR::UTMOTOR {
 
-class UT80106 : UTMotor {
-private:
-    MotorTypeDef_e checkBaseConfig();
-
+class UT80106 final : public UTMotor {
 public:
     /* 控制帧幅值 */
     static constexpr uint32_t P_MAX = 411774; // rad
