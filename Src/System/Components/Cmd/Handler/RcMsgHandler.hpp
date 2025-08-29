@@ -48,10 +48,5 @@ private:
 
     MsgBus_s *msgBus_;
 
-    static void updateRocker(float &_target, float _channel);
-
-    void chassisHandle();
-    void masterHandle();
-
-    ChassisMsg_s cmsg_;
+    bool isTpActivated_ = false; // 初始化为未激活
 };
