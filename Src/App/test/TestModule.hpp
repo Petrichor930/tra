@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Arm.hpp"
 #include "FSMState.hpp"
 #include "StmLog.hpp"
 

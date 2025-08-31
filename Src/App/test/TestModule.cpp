@@ -21,7 +21,7 @@ void TestModule::init() {}
 void TestModule::update()
 {
     rcMsg = RC::Rc::instance().getData();
-    stateFactory_.update();
+    // stateFactory_.update();
 }
 
 void TestModule::task()

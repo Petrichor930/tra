@@ -36,8 +36,15 @@ elseif(APP_USE_STACKED)
 endif()
 
 file(GLOB_RECURSE GIMBAL_SOURCES CMAKE_CONFIGURE_DEPENDS
-  "RobotModules/Gimbal/Actuators/${GIMBAL_TYPE}/*.cpp")
+     "RobotModules/Gimbal/Actuators/${GIMBAL_TYPE}/*.cpp")
 list(APPEND SOURCES ${GIMBAL_SOURCES})
+
+# arm type
+if(APP_USE_ARM)
+  file(GLOB_RECURSE ARM_SOURCES CMAKE_CONFIGURE_DEPENDS
+    "RobotModules/Arm/${ARM_TYPE}/*.cpp")
+  list(APPEND SOURCES ${ARM_SOURCES})
+endif()
 
 # ui
 if(APP_USE_UI)

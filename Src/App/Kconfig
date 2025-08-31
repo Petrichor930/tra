@@ -12,6 +12,12 @@ menu "app config"
 
     source "Src/App/RobotModules/Gimbal/Kconfig"
 
+    config APP_USE_ARM
+    bool "arm"
+    default y
+
+    source "Src/App/RobotModules/Arm/Kconfig"
+
     config APP_USE_TEST
     bool "test modules"
     default n

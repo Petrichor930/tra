@@ -13,6 +13,7 @@ enum class FSMState_e : uint8_t { STOP = 0, NORMAL, PLAN, TEACH };
 }
 
 class Arm {
+public:
     static constexpr float DEFAULT_JOINT_SPEED = 0.8f; // rad/s
     struct RouteData_s {
         const Joint7D *target_pose = nullptr;
@@ -22,7 +23,6 @@ class Arm {
         const PUMP::State_e *pump;
     }; //only used in plan state,need to arrange
 
-public:
     Arm();
 
     void update(void *_param);
@@ -39,12 +39,14 @@ public:
 
 
     ARM::Safety safety;
-    StateFactory stateFactory_;
-    armMsg msg_;
+
+    StateFactory<ARM::FSMState_e> stateFactory_;
+
+    ArmMsg_s msg_ = {};
+
     ARM::Motors motors;
 
     Joint7D target_joints;
-
 
 private:
     RouteData_s RouteDta;

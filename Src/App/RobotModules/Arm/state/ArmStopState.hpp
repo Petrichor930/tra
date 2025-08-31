@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Arm.hpp"
+#include "FSMState.hpp"
 
 namespace ARM {
 
-class StopState : public FSMState {
+class StopState : public FSMState<FSMState_e> {
 public:
-    StopState(Arm &_arm) : arm_(_arm) {};
+    StopState(Arm &_arm) : FSMState(FSMState_e::STOP), arm_(_arm) {};
 
     void enter() override
     {
@@ -18,22 +19,20 @@ public:
 
     void exit() override { LOG::info("Stop", "exit"); }
 
-    uint8_t checkChange() override
+    FSMState_e checkChange() override
     {
         // 根据指令来源和状态切换
         if (arm_.msg_.state == State_e::NORMAL) {
             if (arm_.msg_.source == ControlSource_e::RC) {
-                return static_cast<uint8_t>(
-                        FSMState_e::NORMAL); // 切换到正常状态
+                return FSMState_e::NORMAL; // 切换到正常状态
             } else if (arm_.msg_.source == ControlSource_e::TP) {
-                return static_cast<uint8_t>(
-                        FSMState_e::TEACH); // 切换到示教状态
+                return FSMState_e::TEACH; // 切换到示教状态
             }
         } else if (arm_.msg_.state == State_e::PLAN) {
-            return static_cast<uint8_t>(FSMState_e::PLAN);
+            return FSMState_e::PLAN;
         }
         // 否则保持停止状态
-        return static_cast<uint8_t>(FSMState_e::STOP);
+        return FSMState_e::STOP;
     }
 
 

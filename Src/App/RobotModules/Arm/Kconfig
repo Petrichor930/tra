@@ -1,0 +1,4 @@
+menu "Kconfig config"
+    depends on APP_USE_ARM
+
+endmenu

@@ -10,9 +10,10 @@
 
 namespace ARM {
 
-class PlanState : public FSMState {
+class PlanState : public FSMState<FSMState_e> {
 public:
-    PlanState(Arm &_arm) : arm_(_arm) {};
+    PlanState(Arm &_arm) : FSMState(FSMState_e::PLAN), arm_(_arm) {};
+
     void enter() override { LOG::info("Plan", "enter"); }
 
     void run() override
@@ -23,17 +24,17 @@ public:
 
     void exit() override { LOG::info("Plan", "exit"); }
 
-    uint8_t checkChange() override
+    FSMState_e checkChange() override
     {
         if (arm_.msg_.state == State_e::STOP) {
-            return static_cast<uint8_t>(FSMState_e::STOP);
+            return FSMState_e::STOP;
         } else if (arm_.msg_.state == State_e::NORMAL &&
                    arm_.msg_.source == ControlSource_e::RC) {
-            return static_cast<uint8_t>(FSMState_e::NORMAL);
+            return FSMState_e::NORMAL;
         } else if (arm_.msg_.state == State_e::TEACH) {
-            return static_cast<uint8_t>(FSMState_e::TEACH);
+            return FSMState_e::TEACH;
         }
-        return static_cast<uint8_t>(FSMState_e::PLAN);
+        return FSMState_e::PLAN;
     }
 
 private:

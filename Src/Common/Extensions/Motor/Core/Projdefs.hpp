@@ -106,12 +106,12 @@ struct Cmd_s {
     float velMax = -1.f; // rad/s
     float posMax = 0.f;  // rad
     float posMin = 0.f;  // rad
-    struct {
-        float pos;
-        float vel;
-        float torq;
-        float elec; // common elecric input (current or voltage)
-    };
+
+    float pos;
+    float vel;
+    float torq;
+    float elec; // common elecric input (current or voltage)
+
     void clear()
     {
         SW = prevSW = false;

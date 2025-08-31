@@ -45,13 +45,8 @@ void RcMsgHandler::handle()
     rcMsg_.xMove = rcData.mouse.x;
     rcMsg_.yMove = rcData.mouse.y;
     rcMsg_.zRoller = rcData.mouse.z;
-
-    masterHandle();
 }
 
-void RcMsgHandler::chassisHandle() {}
-
-void RcMsgHandler::masterHandle() {}
 
 void RcMsgHandler::notify(Msg *_msg, QueueHandle_t _queue)
 {

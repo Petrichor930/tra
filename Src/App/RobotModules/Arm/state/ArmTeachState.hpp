@@ -12,28 +12,35 @@
 
 namespace ARM {
 
-class ArmTeachState : public FSMState {
+class ArmTeachState : public FSMState<FSMState_e> {
 public:
-    ArmTeachState(Arm &_arm) : arm_(_arm) {};
+    ArmTeachState(Arm &_arm) : FSMState(FSMState_e::TEACH), arm_(_arm) {};
+
     void enter() override
     {
         LOG::info("Teach", "enter");
+        changingTime_.duration = 1000;
+
         Joint7D goal = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3, arm_.msg_.j4,
                          arm_.msg_.j5, arm_.msg_.j6, arm_.msg_.j7 };
 
         if (!arm_.motors.checkGoal(goal)) {
             LOG::error("Teach", "enter: init goal out of range");
-            this->setMode(FSMMode_e::PAUSE);
-            return;
-        }
-        Arm::JointState_e initState = Arm::JointState_e::MOVING_STATE;
-        while (initState == Arm::JointState_e::MOVING_STATE) {
-            initState = arm_.moveOneGoal(goal);
         }
 
-        LOG::info("Teach", "enter: init positioning finished");
-        this->setMode(FSMMode_e::NORMAL);
+        changingTime_.current++;
+
+        Arm::JointState_e initState = arm_.moveOneGoal(goal);
+
+        if (initState == Arm::JointState_e::FINISH_STATE) {
+            LOG::info("Teach", "enter: init positioning finished");
+        } else if (changingTime_.current <= changingTime_.duration) {
+            LOG::info("Teach", "enter: positioning moving");
+        } else if (changingTime_.current >= changingTime_.duration) {
+            LOG::error("Teach", "enter: fail positioning moving");
+        }
     }
+
     void run() override
     {
         if (arm_.msg_.source == ControlSource_e::TP) {
@@ -63,26 +70,26 @@ public:
 
     void exit() override { LOG::info("Teach", "exit"); }
 
-    uint8_t checkChange() override
+    FSMState_e checkChange() override
     {
         // 根据消息状态和来源判断是否切换状态
         if (arm_.msg_.state == State_e::STOP) {
-            return static_cast<uint8_t>(FSMState_e::STOP);
+            return FSMState_e::STOP;
         }
         // 若指令来源为遥控器且状态正常，切换到正常状态
         else if (arm_.msg_.state == State_e::NORMAL &&
                  arm_.msg_.source == ControlSource_e::RC) {
-            return static_cast<uint8_t>(FSMState_e::NORMAL);
+            return FSMState_e::NORMAL;
         }
         // 其他情况保持示教状态
         else if (arm_.msg_.state == State_e::TEACH) {
-            return static_cast<uint8_t>(FSMState_e::TEACH);
+            return FSMState_e::TEACH;
         }
         // 切换到规划状态
         else if (arm_.msg_.state == State_e::PLAN) {
-            return static_cast<uint8_t>(FSMState_e::PLAN);
+            return FSMState_e::PLAN;
         }
-        return 0;
+        return FSMState_e::TEACH;
     }
 
 private:

@@ -9,6 +9,7 @@ class RcMsgHandler : public Handler {
 
     static constexpr float ROCKER_PITCH_GAIN = 0.1f;
     static constexpr float ROCKER_YAW_GAIN = 0.1f;
+
     typedef struct {
         struct {
             float rx;
@@ -35,6 +36,9 @@ public:
     void init(MsgBus_s *_bus, EventGroupHandle_t _event) override;
     void handle() override;
     void notify(Msg *_msg, QueueHandle_t _queue) override;
+
+protected:
+    static void updateRocker(float &_target, float _channel);
 
 private:
     static constexpr float S_CURVE_ACC = 2.0f;

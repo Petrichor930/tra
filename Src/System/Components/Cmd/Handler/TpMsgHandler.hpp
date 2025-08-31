@@ -12,7 +12,7 @@ public:
 
 private:
     TP::TeachPendant &tp_ = TP::TeachPendant::instance();
-    armMsg armMsg_;
+    ArmMsg_s armMsg_;
     MsgBus_s *msgBus_;
     bool teachModeActive = false; // 初始化：未激活
 };

@@ -12,7 +12,7 @@
 
 #include "Common/Extensions/Tp/TpMsg.hpp"
 #include "Tp.hpp"
-#include "stm32h7xx_hal.h"
+#include "main.h"
 #include <cstdint>
 #include <cstring>
 #include "Crc.hpp"

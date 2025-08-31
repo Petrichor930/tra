@@ -48,10 +48,8 @@ Motors::Motors()
         .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
         .offsetId = static_cast<uint8_t>(4),
         .txFreq = 500.0f,
-        .posPID = std::unique_ptr<PID>(
-                new positonalPid(100.f, 0.0f, 100.f, 0.f, 0.f, 200.f, 0.01f)),
-        .velPID = std::unique_ptr<PID>(
-                new positonalPid(0.06f, 0.005f, 0.0f, 0.0f, 2.f, 25.2f, 0.1f)),
+        .posPID = new PositonalPid(100.f, 0.0f, 100.f, 0.f, 0.f, 200.f, 0.01f),
+        .velPID = new PositonalPid(0.06f, 0.005f, 0.0f, 0.0f, 2.f, 25.2f, 0.1f),
         .torqPID = nullptr
     };
 
@@ -65,14 +63,14 @@ Motors::Motors()
                               .velPID = nullptr,
                               .torqPID = nullptr };
 
-    motors.utMotor = new UTMOTOR::UT80106("joint1", std::move(ut80106Config),
-                                          &UNITREE_DMA);
-    motors.dmMotor1 = new DMMOTOR::DM8009("joint2", std::move(dmJointConf));
-    motors.dmMotor2 = new DMMOTOR::DM8009("joint3", std::move(dmJointConf));
-    motors.dmMotor3 = new DMMOTOR::DM4310("joint4", std::move(dmJointConf));
-    motors.dmMotor4 = new DMMOTOR::DM4310("joint5", std::move(dmJointConf));
-    motors.dmMotor5 = new DMMOTOR::DM4310("joint6", std::move(dmJointConf));
-    motors.djMotor = new DJIMOTOR::GM6020("joint7", std::move(gmConfig));
+    motors.utMotor =
+            new UTMOTOR::UT80106("joint1", ut80106Config, &UNITREE_DMA);
+    motors.dmMotor1 = new DMMOTOR::DM8009("joint2", dmJointConf);
+    motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf);
+    motors.dmMotor3 = new DMMOTOR::DM4310("joint4", dmJointConf);
+    motors.dmMotor4 = new DMMOTOR::DM4310("joint5", dmJointConf);
+    motors.dmMotor5 = new DMMOTOR::DM4310("joint6", dmJointConf);
+    motors.djMotor = new DJIMOTOR::GM6020("joint7", gmConfig);
 }
 
 void Motors::init()
@@ -107,12 +105,11 @@ void Motors::ctrl(const Joint7D &_target_joints)
 {
     // 依次发送目标角度and speed到每个关节电机
     for (int i = 1; i < 7; i++) {
-        motors.all_motors[i]->cmd(MotorCmdType_e::SET_POS, _target_joints.j[i]);
-        motors.all_motors[i]->cmd(MotorCmdType_e::SET_VEL, ref_speed._[i]);
+        motors.all_motors[i]->cmdPos(_target_joints.j[i]);
+        motors.all_motors[i]->cmdVel(ref_speed._[i]);
     }
-    motors.utMotor->cmd(MotorCmdType_e::SET_POS,
-                        _target_joints.j[0] + unitreeAngleFix);
-    motors.utMotor->cmd(MotorCmdType_e::SET_VEL, ref_speed.joint1);
+    motors.utMotor->cmdPos(_target_joints.j[0] + unitreeAngleFix);
+    motors.utMotor->cmdVel(ref_speed.joint1);
 }
 
 
@@ -163,8 +160,8 @@ bool Motors::homingUT()
         utResetState = true; // 标记为已完成
         return true;
     } else {
-        motors.utMotor->cmd(MotorCmdType_e::SET_VEL, ref_speed.joint1);
-        motors.utMotor->cmd(MotorCmdType_e::SET_POS, 0.f); //output targetJiont
+        motors.utMotor->cmdVel(ref_speed.joint1);
+        motors.utMotor->cmdPos(0.f); //output targetJiont
         return false;
         //ooutput
     }

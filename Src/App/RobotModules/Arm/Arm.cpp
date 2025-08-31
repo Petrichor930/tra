@@ -13,18 +13,16 @@ using namespace ARM;
 
 Arm::Arm() : safety(motors)
 {
-    msg_ = armMsg{};
     /* FSM */
-    stateFactory_.addState(static_cast<uint8_t>(FSMState_e::STOP),
+    stateFactory_.addState(FSMState_e::STOP,
                            std::make_unique<StopState>(*this));
-    stateFactory_.addState(static_cast<uint8_t>(FSMState_e::NORMAL),
+    stateFactory_.addState(FSMState_e::NORMAL,
                            std::make_unique<ArmNormalState>(*this));
-    stateFactory_.addState(static_cast<uint8_t>(FSMState_e::PLAN),
+    stateFactory_.addState(FSMState_e::PLAN,
                            std::make_unique<PlanState>(*this));
-    stateFactory_.addState(static_cast<uint8_t>(FSMState_e::TEACH),
+    stateFactory_.addState(FSMState_e::TEACH,
                            std::make_unique<ArmTeachState>(*this));
-    stateFactory_.init(stateFactory_.getNextState(
-            static_cast<uint8_t>(FSMState_e::STOP))); //new add
+    stateFactory_.init(stateFactory_.getNextState(FSMState_e::STOP)); //new add
     LOG::info("ARM", "register");
 }
 

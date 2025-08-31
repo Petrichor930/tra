@@ -39,7 +39,7 @@
         "set p pretty on"
       ],
       "postLaunchCommands": [
-        "b PinyCore::init",
+        // "b PinyCore::init",
         // "continue"
       ],
       "rttConfig": {

@@ -9,9 +9,9 @@
 
 namespace ARM {
 
-class ArmNormalState : public FSMState {
+class ArmNormalState : public FSMState<FSMState_e> {
 public:
-    ArmNormalState(Arm &_arm) : arm_(_arm) {};
+    ArmNormalState(Arm &_arm) : FSMState(FSMState_e::PLAN), arm_(_arm) {};
 
     void enter() override { LOG::info("Normal", " enter"); }
 
@@ -35,23 +35,23 @@ public:
 
     void exit() override { LOG::info("Normal", " exit"); }
 
-    uint8_t checkChange() override
+    FSMState_e checkChange() override
     {
         if (arm_.msg_.state == State_e::STOP) {
-            return static_cast<uint8_t>(FSMState_e::STOP);
+            return FSMState_e::STOP;
         }
         // 若指令来源为示教器且状态正常，切换到示教状态
         else if (arm_.msg_.state == State_e::TEACH &&
                  arm_.msg_.source == ControlSource_e::TP) {
-            return static_cast<uint8_t>(FSMState_e::TEACH);
+            return FSMState_e::TEACH;
         } else if (arm_.msg_.state == State_e::PLAN) {
-            return static_cast<uint8_t>(FSMState_e::PLAN);
+            return FSMState_e::PLAN;
         }
         // 保持正常状态
         else if (arm_.msg_.state == State_e::NORMAL) {
-            return static_cast<uint8_t>(FSMState_e::NORMAL);
+            return FSMState_e::NORMAL;
         }
-        return 0;
+        return FSMState_e::NORMAL;
     }
 
 private:

@@ -7,8 +7,8 @@ void TpMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
 {
     msgBus_ = _bus;
     this->event = _event;
-    extern UART_HandleTypeDef EXTENSION_UART_HANDLE;
-    tp_.init(&EXTENSION_UART_HANDLE, _event);
+    // extern UART_HandleTypeDef EXTENSION_UART_HANDLE;
+    // tp_.init(&EXTENSION_UART_HANDLE, _event);
 }
 
 void TpMsgHandler::handle()

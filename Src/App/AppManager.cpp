@@ -1,23 +1,15 @@
 #include "AppManager.hpp"
-
 #include "sdkconfig.h"
-
 #include "cmsis_os2.h"
-
 #include "MotorManager.hpp"
-
 #include "INS.hpp"
 #include "Bmi088.hpp"
-
 #include "Arm.hpp"
-
+#include "Mecanum.hpp"
 #include "Cmd.hpp"
-
 #include "Buzzer.hpp"
-
 #include "UI/App.hpp"
 #include "test/TestModule.hpp"
-
 
 extern SPI_HandleTypeDef IMU_SPI;
 
@@ -47,8 +39,7 @@ Cmd *cmd;
 
 //---------------------------------------------------------------------------------------------------
 // Ctrl
-CHASSIS::Mecanum *mecanum;
-Chassis *chassis;
+CHASSIS::Mecanum *chassis;
 Arm *arm;
 
 
@@ -59,7 +50,7 @@ void ctrlTask(void *_param)
 {
     while (true) {
         chassis->update(_param);
-        arm->update(_param);
+        // arm->update(_param);
         vTaskDelay(1);
     }
 }
@@ -133,17 +124,12 @@ void AppManager::createApp()
             "motor_task", 512, nullptr, osPriorityRealtime, nullptr);
 
     // Buzzer Once Task
-    xTaskCreate(
-            [](void *_param) -> void {
-                BUZZER::Buzzer::getInstance().playPinyCore();
-                vTaskDelete(nullptr); // 否则会进ExistError
-            },
-            "buzzer_task", 64, nullptr, osPriorityNormal, nullptr);
-
-    if constexpr (APP_USE_UI) {
-        xTaskCreate([](void *_param) { ui->task(_param); }, "ui_task", 256,
-                    nullptr, osPriorityHigh, nullptr);
-    }
+    // xTaskCreate(
+    //         [](void *_param) -> void {
+    //             BUZZER::Buzzer::getInstance().playPinyCore();
+    //             vTaskDelete(nullptr); // 否则会进ExistError
+    //         },
+    //         "buzzer_task", 64, nullptr, osPriorityNormal, nullptr);
 }
 
 void AppManager::initApp()
@@ -160,11 +146,13 @@ void AppManager::initApp()
         ins->init(accCali, gyroCali);
     }
 
-    // Buzzer
+    chassis = new CHASSIS::Mecanum;
+
+    arm = new Arm();
+
     BUZZER::Buzzer::getInstance().init(&BEEP_TIMER, BEEP_TIM_CHANNEL,
                                        BEEP_APB_FREQ);
 
-    // TestModule
     if constexpr (APP_USE_TEST) {
         TestModule::instance()->init();
     }
