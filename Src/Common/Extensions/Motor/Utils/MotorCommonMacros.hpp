@@ -18,6 +18,7 @@ namespace PINYMOTOR {
     (x) = ((M1) < (M2)) ?                                                 \
                   (((x) <= (M1)) ? (M1) : (((x) >= (M2)) ? (M2) : (x))) : \
                   (((x) <= (M2)) ? (M2) : (((x) >= (M1)) ? (M1) : (x))) //copy
+
 // You don't need to worry about the size of the input, just use it
 #define IS_WITHIN_RANGE(x, M1, M2)                      \
     ({                                                  \
@@ -30,7 +31,7 @@ namespace PINYMOTOR {
     }) //copy
 
 
-static inline float getMinorArc(float _cur, float _ref, float _range)
+static inline float getMinorArc(float _ref, float _cur, float _range)
 {
     // float temp =
     //         std::fmod(1.5f * _range, _range) -
