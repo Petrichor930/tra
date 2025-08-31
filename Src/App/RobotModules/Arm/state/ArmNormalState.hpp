@@ -9,9 +9,9 @@
 
 namespace ARM {
 
-class ArmNormalState : public FSMState<FSMState_e> {
+class NormalState : public FSMState<FSMState_e> {
 public:
-    ArmNormalState(Arm &_arm) : FSMState(FSMState_e::PLAN), arm_(_arm) {};
+    NormalState(Arm &_arm) : FSMState(FSMState_e::PLAN), arm_(_arm) {};
 
     void enter() override { LOG::info("Normal", " enter"); }
 

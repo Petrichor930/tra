@@ -17,11 +17,11 @@ Arm::Arm() : safety(motors)
     stateFactory_.addState(FSMState_e::STOP,
                            std::make_unique<StopState>(*this));
     stateFactory_.addState(FSMState_e::NORMAL,
-                           std::make_unique<ArmNormalState>(*this));
+                           std::make_unique<NormalState>(*this));
     stateFactory_.addState(FSMState_e::PLAN,
                            std::make_unique<PlanState>(*this));
     stateFactory_.addState(FSMState_e::TEACH,
-                           std::make_unique<ArmTeachState>(*this));
+                           std::make_unique<TeachState>(*this));
     stateFactory_.init(stateFactory_.getNextState(FSMState_e::STOP));
     LOG::info("ARM", "register");
 }

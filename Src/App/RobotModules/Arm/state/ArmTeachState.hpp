@@ -12,9 +12,9 @@
 
 namespace ARM {
 
-class ArmTeachState : public FSMState<FSMState_e> {
+class TeachState : public FSMState<FSMState_e> {
 public:
-    ArmTeachState(Arm &_arm) : FSMState(FSMState_e::TEACH), arm_(_arm) {};
+    TeachState(Arm &_arm) : FSMState(FSMState_e::TEACH), arm_(_arm) {};
 
     void enter() override
     {
