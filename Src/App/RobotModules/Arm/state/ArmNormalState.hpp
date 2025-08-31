@@ -37,18 +37,18 @@ public:
 
     FSMState_e checkChange() override
     {
-        if (arm_.msg_.state == State_e::STOP) {
+        if (arm_.msg_.state == FSMState_e::STOP) {
             return FSMState_e::STOP;
         }
         // 若指令来源为示教器且状态正常，切换到示教状态
-        else if (arm_.msg_.state == State_e::TEACH &&
+        else if (arm_.msg_.state == FSMState_e::TEACH &&
                  arm_.msg_.source == ControlSource_e::TP) {
             return FSMState_e::TEACH;
-        } else if (arm_.msg_.state == State_e::PLAN) {
+        } else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
         }
         // 保持正常状态
-        else if (arm_.msg_.state == State_e::NORMAL) {
+        else if (arm_.msg_.state == FSMState_e::NORMAL) {
             return FSMState_e::NORMAL;
         }
         return FSMState_e::NORMAL;

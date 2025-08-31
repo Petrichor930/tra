@@ -96,7 +96,7 @@ void Motors::update()
 
 void Motors::stop()
 {
-    for (int i = 0; i < 7; i++) {
+    for (uint8_t i = 0; i < 7; i++) {
         motors.all_motors[i]->cmd(MotorCmdType_e::OFF);
     }
 }

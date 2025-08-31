@@ -73,20 +73,20 @@ public:
     FSMState_e checkChange() override
     {
         // 根据消息状态和来源判断是否切换状态
-        if (arm_.msg_.state == State_e::STOP) {
+        if (arm_.msg_.state == FSMState_e::STOP) {
             return FSMState_e::STOP;
         }
         // 若指令来源为遥控器且状态正常，切换到正常状态
-        else if (arm_.msg_.state == State_e::NORMAL &&
+        else if (arm_.msg_.state == FSMState_e::NORMAL &&
                  arm_.msg_.source == ControlSource_e::RC) {
             return FSMState_e::NORMAL;
         }
         // 其他情况保持示教状态
-        else if (arm_.msg_.state == State_e::TEACH) {
+        else if (arm_.msg_.state == FSMState_e::TEACH) {
             return FSMState_e::TEACH;
         }
         // 切换到规划状态
-        else if (arm_.msg_.state == State_e::PLAN) {
+        else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
         }
         return FSMState_e::TEACH;

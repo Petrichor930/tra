@@ -1,12 +1,6 @@
 #pragma once
 
 #include <cstdint>
-enum class State_e : uint8_t {
-    STOP = 0,
-    NORMAL,
-    PLAN,
-    TEACH,
-};
 
 enum class MsgType_e : uint8_t {
     CHASSIS = 0,
@@ -22,7 +16,6 @@ enum class ControlSource_e : uint8_t {
 class Msg {
 public:
     MsgType_e msgType;
-    State_e state;
     ControlSource_e source; // 新增：标记指令来源
     virtual ~Msg() = default;
 };

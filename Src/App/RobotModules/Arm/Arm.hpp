@@ -8,6 +8,7 @@
 
 
 namespace ARM {
+
 enum class FSMState_e : uint8_t { STOP = 0, NORMAL, PLAN, TEACH };
 
 }

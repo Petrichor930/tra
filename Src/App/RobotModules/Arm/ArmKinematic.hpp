@@ -54,23 +54,3 @@ inline float AbsMaxOf7(const Joint7D &_joints)
     }
     return max;
 }
-
-inline float AbsMaxOf6(const Joint7D &_joints)
-{
-    float max = -1.0f;
-    for (uint8_t i = 0; i < 6; ++i) {
-        float val = std::fabs(_joints.j[i]);
-        max = std::max(max, val);
-    }
-    return max;
-}
-
-inline float AbsMaxOf5(const Joint7D &_joints)
-{
-    float max = -1.0f;
-    for (uint8_t i = 1; i < 6; ++i) {
-        float val = std::fabs(_joints.j[i]);
-        max = std::max(max, val);
-    }
-    return max;
-}

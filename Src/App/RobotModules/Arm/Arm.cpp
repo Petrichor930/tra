@@ -22,14 +22,13 @@ Arm::Arm() : safety(motors)
                            std::make_unique<PlanState>(*this));
     stateFactory_.addState(FSMState_e::TEACH,
                            std::make_unique<ArmTeachState>(*this));
-    stateFactory_.init(stateFactory_.getNextState(FSMState_e::STOP)); //new add
+    stateFactory_.init(stateFactory_.getNextState(FSMState_e::STOP));
     LOG::info("ARM", "register");
 }
 
 void Arm::update(void *_param)
 {
-    if (xQueueReceive((((MsgBus_s *)_param)->armQueue), &msg_, 0) == pdTRUE) {
-    };
+    xQueueReceive((((MsgBus_s *)_param)->armQueue), &msg_, 0);
     motors.update();
     stateFactory_.update();
 }
@@ -56,7 +55,7 @@ void Arm::moveRoute()
             RouteDta.point_cnt = 0;
             LOG::info("ARM", "Move all point done");
             //change state to normal
-            msg_.state = State_e::NORMAL;
+            msg_.state = FSMState_e::NORMAL;
         }
     }
 }

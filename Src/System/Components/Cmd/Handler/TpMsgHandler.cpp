@@ -1,7 +1,13 @@
 #include "TpMsgHandler.hpp"
+#include "Arm.hpp"
 #include "Rc.hpp" // 获取遥控器状态判断是否在示教模式
 #include "Pump.hpp"
 #include "sdkconfig.h"
+#include <cstdint>
+
+namespace ARM {
+enum class FSMState_e : uint8_t;
+}
 
 void TpMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
 {
@@ -27,11 +33,11 @@ void TpMsgHandler::handle()
     }
 
     armMsg_.source = ControlSource_e::TP;
-    armMsg_.state = State_e::STOP;
+    armMsg_.state = ARM::FSMState_e::STOP;
 
     if (teachModeActive) {
         //示教模式激活：生成有效指令
-        armMsg_.state = State_e::TEACH;
+        armMsg_.state = ARM::FSMState_e::TEACH;
         // 填充示教器的关节角度（绝对位置）
         armMsg_.j1 = tpData.joint[0];
         armMsg_.j2 = tpData.joint[1];
