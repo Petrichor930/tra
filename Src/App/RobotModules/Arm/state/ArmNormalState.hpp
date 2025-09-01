@@ -17,20 +17,15 @@ public:
 
     void run() override
     {
-        if (arm_.msg_.source == ControlSource_e::RC) {
-            Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
-                               arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
-                               arm_.msg_.j7 };
-            //UT缓启动
-            arm_.motors.setUTsmoothStart();
-            arm_.safety.setSpeed(1);
-            arm_.safety.setAllAngleLimit(target);
-            //output
-            arm_.motors.ctrl(target);
-        } else {
-            // 来源不符时，停止运动（安全处理）
-            arm_.motors.stop();
-        }
+        Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
+                           arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
+                           arm_.msg_.j7 };
+        //UT缓启动
+        arm_.motors.setUTsmoothStart();
+        arm_.safety.setSpeed(1);
+        arm_.safety.setAllAngleLimit(target);
+        //output
+        arm_.motors.ctrl(target);
     }
 
     void exit() override { LOG::info("Normal", " exit"); }
@@ -39,19 +34,14 @@ public:
     {
         if (arm_.msg_.state == FSMState_e::STOP) {
             return FSMState_e::STOP;
-        }
-        // 若指令来源为示教器且状态正常，切换到示教状态
-        else if (arm_.msg_.state == FSMState_e::TEACH &&
-                 arm_.msg_.source == ControlSource_e::TP) {
-            return FSMState_e::TEACH;
+        } else if (arm_.msg_.state == FSMState_e::NORMAL) {
+            return FSMState_e::NORMAL;
         } else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
+        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
+            return FSMState_e::TEACH;
         }
-        // 保持正常状态
-        else if (arm_.msg_.state == FSMState_e::NORMAL) {
-            return FSMState_e::NORMAL;
-        }
-        return FSMState_e::NORMAL;
+        return FSMState_e::STOP;
     }
 
 private:

@@ -29,6 +29,7 @@ Arm::Arm() : safety(motors)
 void Arm::update(void *_param)
 {
     xQueueReceive((((MsgBus_s *)_param)->armQueue), &msg_, 0);
+    xQueueReceive((((MsgBus_s *)_param)->tpQueue), &tpmsg_, 0);
     motors.update();
     stateFactory_.update();
 }

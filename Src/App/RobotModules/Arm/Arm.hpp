@@ -47,6 +47,8 @@ public:
 
     ArmMsg_s msg_ = {};
 
+    ArmMsg_s tpmsg_ = {};
+
     ARM::Motors motors;
 
     Joint7D target_joints = {};
