@@ -21,17 +21,15 @@ public:
 
     FSMState_e checkChange() override
     {
-        // 根据指令来源和状态切换
         if (arm_.msg_.state == FSMState_e::NORMAL) {
-            if (arm_.msg_.source == ControlSource_e::RC) {
-                return FSMState_e::NORMAL; // 切换到正常状态
-            } else if (arm_.msg_.source == ControlSource_e::TP) {
-                return FSMState_e::TEACH; // 切换到示教状态
-            }
+            return FSMState_e::NORMAL;
         } else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
+        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
+            return FSMState_e::TEACH;
+        } else if (arm_.msg_.state == FSMState_e::STOP) {
+            return FSMState_e::STOP;
         }
-        // 否则保持停止状态
         return FSMState_e::STOP;
     }
 

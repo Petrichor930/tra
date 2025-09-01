@@ -28,13 +28,14 @@ public:
     {
         if (arm_.msg_.state == FSMState_e::STOP) {
             return FSMState_e::STOP;
-        } else if (arm_.msg_.state == FSMState_e::NORMAL &&
-                   arm_.msg_.source == ControlSource_e::RC) {
+        } else if (arm_.msg_.state == FSMState_e::NORMAL) {
             return FSMState_e::NORMAL;
-        } else if (arm_.msg_.state == FSMState_e::TEACH) {
+        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
             return FSMState_e::TEACH;
+        } else if (arm_.tpmsg_.state == FSMState_e::PLAN) {
+            return FSMState_e::PLAN;
         }
-        return FSMState_e::PLAN;
+        return FSMState_e::STOP;
     }
 
 private:
