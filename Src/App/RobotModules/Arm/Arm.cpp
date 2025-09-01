@@ -60,7 +60,7 @@ void Arm::moveRoute()
     }
 }
 
-Arm::JointState_e Arm::moveOneGoal(const Joint7D &_goal)
+JointState_e Arm::moveOneGoal(const Joint7D &_goal)
 {
     Joint7D deltaJoints = _goal - motors.current_joints;
     float maxDeltaAngle = AbsMaxOf7(deltaJoints);

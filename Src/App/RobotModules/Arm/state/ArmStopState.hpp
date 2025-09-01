@@ -15,7 +15,10 @@ public:
         LOG::info("Stop", "enter");
     }
 
-    void run() override { arm_.motors.stop(); }
+    void run() override
+    {
+        // arm_.motors.stop();
+        }
 
     void exit() override { LOG::info("Stop", "exit"); }
 

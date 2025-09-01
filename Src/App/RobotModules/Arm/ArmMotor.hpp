@@ -38,6 +38,11 @@ typedef union {
     PINYMOTOR::IMotor *all_motors[7];
 } MultiTypeMotors_t;
 
+struct JointInfo_s {
+    float angle_min;
+    float angle_max;
+};
+
 class Motors {
     static constexpr float UNITREE_KP = 4.8;
     static constexpr float UNITREE_KD = 0.02;
@@ -49,19 +54,13 @@ public:
     void stop();
     void ctrl(const Joint7D &_target_joints);
 
-    LOG::Logger &log = LOG::Logger::instance();
-
-    struct JointInfo_s {
-        float angle_min;
-        float angle_max;
-    };
     JointInfo_s jointInfos[7];
 
     bool homingUT();
     bool checkGoal(Joint7D _goal);
     void setUTsmoothStart();
 
-    ArmSpeed_u ref_speed;
+    ArmSpeed_u ref_speed = {};
     Joint7D current_joints;
 
     void biasJoint3Angle();

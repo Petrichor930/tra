@@ -9,21 +9,24 @@
 
 namespace ARM {
 
+static constexpr float DEFAULT_JOINT_SPEED = 0.8f; // rad/s
+
 enum class FSMState_e : uint8_t { STOP = 0, NORMAL, PLAN, TEACH };
+
+enum class JointState_e : uint8_t { FINISH_STATE = 0, MOVING_STATE };
+
+struct RouteData_s {
+    const Joint7D *target_pose = nullptr;
+    uint8_t target_point = 0;
+    uint8_t point_cnt = 0;
+    int16_t rateCnt = 0;
+    const PUMP::State_e *pump;
+}; //only used in plan state,need to arrange
 
 }
 
 class Arm {
 public:
-    static constexpr float DEFAULT_JOINT_SPEED = 0.8f; // rad/s
-    struct RouteData_s {
-        const Joint7D *target_pose = nullptr;
-        uint8_t target_point = 0;
-        uint8_t point_cnt = 0;
-        int16_t rateCnt = 0;
-        const PUMP::State_e *pump;
-    }; //only used in plan state,need to arrange
-
     Arm();
 
     void update(void *_param);
@@ -32,12 +35,11 @@ public:
 
     void moveRoute();
 
-    enum class JointState_e : uint8_t { FINISH_STATE = 0, MOVING_STATE };
-    JointState_e jointStateFlag = JointState_e::FINISH_STATE;
-    JointState_e moveOneGoal(const Joint7D &_goal);
+    ARM::JointState_e jointStateFlag = ARM::JointState_e::FINISH_STATE;
+
+    ARM::JointState_e moveOneGoal(const Joint7D &_goal);
 
     PUMP::Controller pump;
-
 
     ARM::Safety safety;
 
@@ -47,8 +49,8 @@ public:
 
     ARM::Motors motors;
 
-    Joint7D target_joints;
+    Joint7D target_joints = {};
 
 private:
-    RouteData_s RouteDta;
+    ARM::RouteData_s RouteDta = {};
 };

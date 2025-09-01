@@ -26,7 +26,7 @@ Mecanum::Mecanum()
             .comType = ComType_e::CAN,
             .workMode = WorkMode_e::QUAD_CURR,
             .offsetId = i,
-            .txFreq = 100.0f,
+            .txFreq = 1000.0f,
             .posPID = nullptr,
             .velPID = new IncrementalPid(0.2f, 0.005f, 0.f, 4.f, 0.f),
             .torqPID = nullptr
@@ -39,10 +39,6 @@ Mecanum::Mecanum()
     this->stateFactory.addState(FSMState_e::STOP,
                                 std::make_unique<StopState>(this));
     this->stateFactory.init(this->stateFactory.getNextState(FSMState_e::STOP));
-
-    if constexpr (APP_USE_POWERCTRL) {
-        // TODO:
-    }
 }
 
 void Mecanum::stop()
@@ -115,10 +111,6 @@ void Mecanum::ctrl(const Speed_u &_refSpeed)
     WheelsSpeed_u refWSpeed = reverse(refSpeed);
 
     for (uint8_t i = 0; i < 4; i++) {
-        motors_._[i]->cmdVel(refWSpeed._[i]);
-    }
-
-    if constexpr (APP_USE_POWERCTRL) {
-        // TODO:
+        motors_._[i]->cmdVel(rpm2radps(refSpeed._[i]));
     }
 }

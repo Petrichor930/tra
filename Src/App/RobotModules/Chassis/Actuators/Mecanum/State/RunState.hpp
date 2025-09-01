@@ -3,22 +3,35 @@
 #include "FSMState.hpp"
 #include "StmLog.hpp"
 
+
+#include "PidBasic.hpp"
+
 namespace CHASSIS {
 
-class StopState : public FSMState<FSMState_e> {
+class RunState : public FSMState<FSMState_e> {
 public:
-    StopState(Mecanum *_chassis)
-            : FSMState(FSMState_e::STOP), chassis_(_chassis) {};
+    RunState(Mecanum *_chassis)
+            : FSMState(FSMState_e::RUN), chassis_(_chassis) {};
 
-    void enter() final
+    void enter() final { LOG::info("ChassisRun", " enter"); }
+
+    void run() final
     {
-        chassis_->stop();
-        LOG::info("ChassisStop", " enter");
+        Speed_u ref;
+
+        ref.vx = chassis_->msg.vx;
+        ref.vy = chassis_->msg.vy;
+        // ref.wz = wzAngPid_.calc(0, PINYMOTOR::getMinorArc(chassis_->msg.yaw,
+        //                                                   chassis_->yaw()));
+        ref.wz = 0;
+        chassis_->ctrl(ref);
     }
 
-    void run() final { chassis_->stop(); }
-
-    void exit() final { LOG::info("ChassisStop", " exit"); }
+    void exit() final
+    {
+        wzAngPid_.reset();
+        LOG::info("ChassisRun", " exit");
+    }
 
 
     FSMState_e checkChange() final
@@ -32,6 +45,7 @@ public:
 
 private:
     Mecanum *chassis_;
+    PositonalPid wzAngPid_{ 0, 0, 0, 0.001f, 0, 0, 0 };
 };
 
 } // namespace CHASSIS

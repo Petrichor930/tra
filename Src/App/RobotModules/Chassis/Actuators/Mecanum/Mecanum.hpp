@@ -69,9 +69,10 @@ protected:
     WheelsSpeed_u reverse(const Speed_u &_speed);
 
 private:
-    Motors_u motors_;
-    WheelsSpeed_u wSpeed_;
-    Speed_u curSpeed_;
+    Motors_u motors_ = {};
+
+    WheelsSpeed_u wSpeed_ = {};
+    Speed_u curSpeed_ = {};
 
     FILTER::IIR3 iir3_;
 };

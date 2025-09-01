@@ -30,9 +30,9 @@ public:
 
         changingTime_.current++;
 
-        Arm::JointState_e initState = arm_.moveOneGoal(goal);
+        JointState_e initState = arm_.moveOneGoal(goal);
 
-        if (initState == Arm::JointState_e::FINISH_STATE) {
+        if (initState == JointState_e::FINISH_STATE) {
             LOG::info("Teach", "enter: init positioning finished");
         } else if (changingTime_.current <= changingTime_.duration) {
             LOG::info("Teach", "enter: positioning moving");

@@ -22,7 +22,7 @@ public:
     {
     }
 
-    float j[7];
+    float j[7] = {};
     uint32_t delay = 0;
 
     friend Joint7D operator-(const Joint7D &_joints1, const Joint7D &_joints2);

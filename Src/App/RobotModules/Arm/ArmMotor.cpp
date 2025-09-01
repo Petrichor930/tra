@@ -42,20 +42,61 @@ Motors::Motors()
                                    .velPID = nullptr,
                                    .torqPID = nullptr };
 
-    InitConfig_s dmJointConf = {
-        .pComHandle = reinterpret_cast<uint32_t *>(&HCAN2),
-        .comType = PINYMOTOR::ComType_e::FDCAN,
-        .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
-        .offsetId = static_cast<uint8_t>(4),
-        .txFreq = 500.0f,
-        .posPID = new PositonalPid(100.f, 0.0f, 100.f, 0.f, 0.f, 200.f, 0.01f),
-        .velPID = new PositonalPid(0.06f, 0.005f, 0.0f, 0.0f, 2.f, 25.2f, 0.1f),
-        .torqPID = nullptr
-    };
+    InitConfig_s dmJointConf2 = { .pComHandle =
+                                          reinterpret_cast<uint32_t *>(&HCAN2),
+                                  .comType = PINYMOTOR::ComType_e::FDCAN,
+                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                                  .offsetId = static_cast<uint8_t>(2),
+                                  .txFreq = 500.0f,
+                                  .posPID = nullptr,
+                                  .velPID = nullptr,
+                                  .torqPID = nullptr,
+                                  .isReverse = true };
+
+    InitConfig_s dmJointConf3 = { .pComHandle =
+                                          reinterpret_cast<uint32_t *>(&HCAN2),
+                                  .comType = PINYMOTOR::ComType_e::FDCAN,
+                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                                  .offsetId = static_cast<uint8_t>(3),
+                                  .txFreq = 500.0f,
+                                  .posPID = nullptr,
+                                  .velPID = nullptr,
+                                  .torqPID = nullptr };
+
+    InitConfig_s dmJointConf4 = { .pComHandle =
+                                          reinterpret_cast<uint32_t *>(&HCAN2),
+                                  .comType = PINYMOTOR::ComType_e::FDCAN,
+                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                                  .offsetId = static_cast<uint8_t>(4),
+                                  .txFreq = 500.0f,
+                                  .posPID = nullptr,
+                                  .velPID = nullptr,
+                                  .torqPID = nullptr };
+
+    InitConfig_s dmJointConf5 = { .pComHandle =
+                                          reinterpret_cast<uint32_t *>(&HCAN2),
+                                  .comType = PINYMOTOR::ComType_e::FDCAN,
+                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                                  .offsetId = static_cast<uint8_t>(5),
+                                  .txFreq = 500.0f,
+                                  .posPID = nullptr,
+                                  .velPID = nullptr,
+                                  .torqPID = nullptr };
+
+    InitConfig_s dmJointConf6 = { .pComHandle =
+                                          reinterpret_cast<uint32_t *>(&HCAN2),
+                                  .comType = PINYMOTOR::ComType_e::FDCAN,
+                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                                  .offsetId = static_cast<uint8_t>(6),
+                                  .txFreq = 500.0f,
+                                  .posPID = nullptr,
+                                  .velPID = nullptr,
+                                  .torqPID = nullptr };
+
 
     InitConfig_s gmConfig = { .pComHandle =
                                       reinterpret_cast<uint32_t *>(&HCAN3),
-                              .comType = PINYMOTOR::ComType_e::FDCAN,
+                              .comType = PINYMOTOR::ComType_e::CAN,
                               .workMode = PINYMOTOR::WorkMode_e::QUAD_CURR,
                               .offsetId = static_cast<uint8_t>(7),
                               .txFreq = 500.0f,
@@ -65,11 +106,11 @@ Motors::Motors()
 
     motors.utMotor =
             new UTMOTOR::UT80106("joint1", ut80106Config, &UNITREE_DMA);
-    motors.dmMotor1 = new DMMOTOR::DM8009("joint2", dmJointConf);
-    motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf);
-    motors.dmMotor3 = new DMMOTOR::DM4310("joint4", dmJointConf);
-    motors.dmMotor4 = new DMMOTOR::DM4310("joint5", dmJointConf);
-    motors.dmMotor5 = new DMMOTOR::DM4310("joint6", dmJointConf);
+    motors.dmMotor1 = new DMMOTOR::DM8009("joint2", dmJointConf2);
+    motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf3);
+    motors.dmMotor3 = new DMMOTOR::DM4310("joint4", dmJointConf4);
+    motors.dmMotor4 = new DMMOTOR::DM4310("joint5", dmJointConf5);
+    motors.dmMotor5 = new DMMOTOR::DM4310("joint6", dmJointConf6);
     motors.djMotor = new DJIMOTOR::GM6020("joint7", gmConfig);
 }
 
@@ -78,8 +119,8 @@ void Motors::init()
     homingUT();
     //TODO:check motor offline
     //enable all motor
-    for (int i = 0; i < 7; i++) {
-        motors.all_motors[i]->cmd(MotorCmdType_e::ON);
+    for (auto &motor : motors.all_motors) {
+        motor->cmd(MotorCmdType_e::ON);
     }
 }
 
@@ -87,24 +128,31 @@ void Motors::update()
 {
     // 更新所有电机状态
     for (int i = 0; i < 7; i++) {
-        current_joints.j[i] = motors.all_motors[i]->data().singleCirAng;
+        /* singleCirAng range: 0 ~ 2PI, we need range: -pi ~ pi */
+        if (motors.all_motors[i]->data().singleCirAng >= PI) {
+            current_joints.j[i] =
+                    motors.all_motors[i]->data().singleCirAng - 2 * PI;
+        } else {
+            current_joints.j[i] = motors.all_motors[i]->data().singleCirAng;
+        }
     }
-
+    /* gm6020 run multi cirang */
+    // current_joints.j[6] = motors.all_motors[7]->data().multipCirAng;
     /*平行四边形关系 - 确保关节3角度在安全范围内*/
     biasJoint3Angle();
 }
 
 void Motors::stop()
 {
-    for (uint8_t i = 0; i < 7; i++) {
-        motors.all_motors[i]->cmd(MotorCmdType_e::OFF);
+    for (auto &motor : motors.all_motors) {
+        motor->cmd(MotorCmdType_e::OFF);
     }
 }
 
 void Motors::ctrl(const Joint7D &_target_joints)
 {
     // 依次发送目标角度and speed到每个关节电机
-    for (int i = 1; i < 7; i++) {
+    for (int i = 0; i < 7; i++) {
         motors.all_motors[i]->cmdPos(_target_joints.j[i]);
         motors.all_motors[i]->cmdVel(ref_speed._[i]);
     }
@@ -172,7 +220,7 @@ bool Motors::checkGoal(Joint7D _goal)
     for (int i = 0; i < 2; i++) {
         if (!IS_WITHIN_RANGE(_goal.j[i], jointInfos[i].angle_min,
                              jointInfos[i].angle_max)) {
-            log.error(LOCATION, "ARM", "Joint%d move goal error", i + 1);
+            LOG::error("ARM", "Joint%d move goal error", i + 1);
             return false;
         }
     }
@@ -180,14 +228,14 @@ bool Motors::checkGoal(Joint7D _goal)
     float highTemp = joint3HighPoint(_goal.j[1]);
     float lowTemp = joint3LowPoint(_goal.j[1]);
     if (!IS_WITHIN_RANGE(_goal.j[2], highTemp, lowTemp)) {
-        log.error(LOCATION, "ARM", "Joint3 move goal error");
+        LOG::error("ARM", "Joint3 move goal error");
         return false;
     }
     /*joint4 - joint7*/
     for (int i = 3; i < 7; i++) {
         if (!IS_WITHIN_RANGE(_goal.j[i], jointInfos[i].angle_min,
                              jointInfos[i].angle_max)) {
-            log.error(LOCATION, "ARM", "Joint%d move goal error", i + 1);
+            LOG::error("ARM", "Joint%d move goal error", i + 1);
             return false;
         }
     }
