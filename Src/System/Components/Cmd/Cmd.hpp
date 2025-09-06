@@ -10,8 +10,9 @@
 #define EVENT_MASK (RTT_READY_EVENT | RC_READY_EVENT | TP_READY_EVENT)
 class Cmd {
 public:
-    void init();
-    void task();
+    Cmd();
+
+    static void task(void *_param);
     MsgBus_s *getMsgBus() { return &msgBus_; }
 
 protected:
