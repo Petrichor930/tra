@@ -21,6 +21,7 @@ struct MsgBus_s {
     QueueHandle_t chassisQueue;
     QueueHandle_t gimbalQueue;
     QueueHandle_t armQueue;
+    QueueHandle_t tpQueue;
 };
 
 //  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ctrl msg ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

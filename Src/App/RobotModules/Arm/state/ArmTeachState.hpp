@@ -43,28 +43,22 @@ public:
 
     void run() override
     {
-        if (arm_.msg_.source == ControlSource_e::TP) {
-            Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
+        Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
+                           arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
+                           arm_.msg_.j7 };
+
+        arm_.target_joints = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
                                arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
                                arm_.msg_.j7 };
-
-            arm_.target_joints = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
-                                   arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
-                                   arm_.msg_.j7 };
-            arm_.safety.setSpeed(0.5);
-            arm_.safety.setAllAngleLimit(arm_.target_joints);
-            arm_.motors.ctrl(arm_.target_joints); //output
+        arm_.safety.setSpeed(0.5);
+        arm_.safety.setAllAngleLimit(arm_.target_joints);
+        arm_.motors.ctrl(arm_.target_joints); //output
 
 
-            if (arm_.msg_.pumpState == PUMP::State_e::ON) {
-                arm_.pump.set(PUMP::Device_e::VALVE_2, PUMP::State_e::ON);
-            } else {
-                arm_.pump.set(PUMP::Device_e::VALVE_2, PUMP::State_e::OFF);
-            }
-
+        if (arm_.msg_.pumpState == PUMP::State_e::ON) {
+            arm_.pump.set(PUMP::Device_e::VALVE_2, PUMP::State_e::ON);
         } else {
-            // 来源不符时，停止运动（安全处理）
-            arm_.motors.stop();
+            arm_.pump.set(PUMP::Device_e::VALVE_2, PUMP::State_e::OFF);
         }
     }
 
@@ -72,24 +66,16 @@ public:
 
     FSMState_e checkChange() override
     {
-        // 根据消息状态和来源判断是否切换状态
         if (arm_.msg_.state == FSMState_e::STOP) {
             return FSMState_e::STOP;
-        }
-        // 若指令来源为遥控器且状态正常，切换到正常状态
-        else if (arm_.msg_.state == FSMState_e::NORMAL &&
-                 arm_.msg_.source == ControlSource_e::RC) {
+        } else if (arm_.msg_.state == FSMState_e::NORMAL) {
             return FSMState_e::NORMAL;
-        }
-        // 其他情况保持示教状态
-        else if (arm_.msg_.state == FSMState_e::TEACH) {
+        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
             return FSMState_e::TEACH;
-        }
-        // 切换到规划状态
-        else if (arm_.msg_.state == FSMState_e::PLAN) {
+        } else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
         }
-        return FSMState_e::TEACH;
+        return FSMState_e::STOP;
     }
 
 private:

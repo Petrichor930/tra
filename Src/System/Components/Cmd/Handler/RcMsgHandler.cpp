@@ -1,4 +1,6 @@
 #include "RcMsgHandler.hpp"
+#include "Arm.hpp"
+
 #include <algorithm>
 #include "sdkconfig.h"
 
@@ -45,6 +47,46 @@ void RcMsgHandler::handle()
     rcMsg_.xMove = rcData.mouse.x;
     rcMsg_.yMove = rcData.mouse.y;
     rcMsg_.zRoller = rcData.mouse.z;
+
+    ChassisMsg_s cmsg = {};
+    ArmMsg_s amsg = {};
+
+    if (rcData.rc.switchRight == RC_SW_DOWN) {
+        cmsg.state = CHASSIS::FSMState_e::STOP;
+        amsg.state = ARM::FSMState_e::STOP;
+    } else if (rcData.rc.switchRight == RC_SW_MID) {
+        if (rcData.rc.switchLeft == RC_SW_DOWN) {
+            cmsg.state = CHASSIS::FSMState_e::RUN;
+            cmsg.vx = s_curve(Chassis::MAX_VX_SPEED, rcMsg_.ry); // Scale to m/s
+            cmsg.vy = s_curve(Chassis::MAX_VY_SPEED, rcMsg_.rx); // Scale to m/s
+            cmsg.yaw =
+                    s_curve(Chassis::MAX_WZ_SPEED, rcMsg_.lx); // Scale to m/s
+        } else if (rcData.rc.switchLeft == RC_SW_MID) {
+            amsg.state = ARM::FSMState_e::NORMAL;
+            amsg.j1 -= rcMsg_.rx / 314 / 300;
+            amsg.j2 += rcMsg_.ry / 314 / 150;
+            amsg.j3 -= rcMsg_.ly / 314 / 100;
+            amsg.j4 += rcMsg_.lx / 314 / 100;
+            amsg.j5 -= static_cast<float>(rcMsg_.zRoller) / 314 / 100;
+            amsg.j6 += static_cast<float>(rcMsg_.xMove) / 314 / 100;
+            amsg.j7 += static_cast<float>(rcMsg_.yMove) / 314 / 50;
+        } else if (rcData.rc.switchLeft == RC_SW_UP) {
+            if (rcData.rc.ch1 == -660) {
+                amsg.state = ARM::FSMState_e::PLAN;
+            }
+        }
+    } else {
+        cmsg.state = CHASSIS::FSMState_e::STOP;
+        amsg.state = ARM::FSMState_e::STOP;
+        cmsg.vx = 0.f;
+        cmsg.vy = 0.f;
+        cmsg.yaw = 0.f;
+    }
+
+    memcpy(&rcMsgPrev_, &rcMsg_, sizeof(rcMsg_));
+
+    notify(&cmsg, msgBus_->chassisQueue);
+    notify(&amsg, msgBus_->armQueue);
 }
 
 

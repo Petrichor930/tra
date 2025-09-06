@@ -23,6 +23,7 @@ void TpMsgHandler::handle()
     TpCtrl_t tpData = tp_.getData();
     RC::RcRawMsg_t rcData = RC::Rc::instance().getData();
 
+
     // 直接更新 teachModeActive_，无需中间变量 isTeachMode
     if (rcData.rc.switchLeft == RC_SW_UP) {
         if (!teachModeActive && rcData.rc.ch1 == 660) {
@@ -30,9 +31,12 @@ void TpMsgHandler::handle()
         } //首次激活后，即使右摇杆回位，TP 仍保持有效。
     } else {
         teachModeActive = false;
-    }
+    } // tp can move arm only when left switch is up and chassis is moving
 
-    armMsg_.source = ControlSource_e::TP;
+    // 合并 teachModeActive 的赋值，避免冗余
+    teachModeActive = (rcData.rc.switchLeft == RC_SW_DOWN) ||
+                      (rcData.rc.switchLeft == RC_SW_UP && teachModeActive);
+
     armMsg_.state = ARM::FSMState_e::STOP;
 
     if (teachModeActive) {
@@ -54,7 +58,7 @@ void TpMsgHandler::handle()
         }
     }
 
-    notify(&armMsg_, msgBus_->armQueue);
+    notify(&armMsg_, msgBus_->tpQueue);
 }
 
 void TpMsgHandler::notify(Msg *_msg, QueueHandle_t _queue)
