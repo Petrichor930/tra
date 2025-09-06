@@ -111,6 +111,6 @@ void Mecanum::ctrl(const Speed_u &_refSpeed)
     WheelsSpeed_u refWSpeed = reverse(refSpeed);
 
     for (uint8_t i = 0; i < 4; i++) {
-        motors_._[i]->cmdVel(rpm2radps(refSpeed._[i]));
+        motors_._[i]->cmdVel(rpm2radps(refWSpeed._[i]));
     }
 }
