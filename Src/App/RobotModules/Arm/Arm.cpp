@@ -6,7 +6,6 @@
 #include "ArmStopState.hpp"
 #include "ArmPlanState.hpp"
 #include "ArmTeachState.hpp"
-#include "Dwt.h"
 #include "MotorCommonMacros.hpp"
 
 using namespace ARM;
@@ -48,7 +47,7 @@ void Arm::moveRoute()
         /*为了到达某点后停止一段时间*/
         if (RouteDta.target_pose[RouteDta.point_cnt].delay != 0) {
             LOG::error("ARM", "Start move delay");
-            dwt_delay_ms(RouteDta.target_pose[RouteDta.point_cnt].delay);
+            dwt.delayMs(RouteDta.target_pose[RouteDta.point_cnt].delay);
             LOG::error("ARM", "End move delay");
         }
         RouteDta.point_cnt++;

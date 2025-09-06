@@ -5,6 +5,7 @@
 #include "ArmMotor.hpp"
 #include "MsgImpl.hpp"
 #include "Pump.hpp"
+#include "Dwt.hpp"
 
 
 namespace ARM {
@@ -55,4 +56,5 @@ public:
 
 private:
     ARM::RouteData_s RouteDta = {};
+    Dwt dwt = Dwt::instance();
 };
