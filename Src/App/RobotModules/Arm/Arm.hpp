@@ -1,18 +1,24 @@
 #pragma once
 
-#include "ARMSafety.hpp"
 #include "FSMState.hpp"
-#include "ArmMotor.hpp"
 #include "MsgImpl.hpp"
 #include "Pump.hpp"
 #include "Dwt.hpp"
+#include "ArmKinematic.hpp"
+#include "ArmMotor.hpp"
 
 
 namespace ARM {
 
-static constexpr float DEFAULT_JOINT_SPEED = 0.8f; // rad/s
-
 enum class FSMState_e : uint8_t { STOP = 0, NORMAL, PLAN, TEACH };
+
+struct Msg_s : public Msg {
+    FSMState_e state;
+    Joint7D target;
+    PUMP::State_e pumpState;
+};
+
+static constexpr float DEFAULT_JOINT_SPEED = 0.8f; // rad/s
 
 enum class JointState_e : uint8_t { FINISH_STATE = 0, MOVING_STATE };
 
@@ -24,13 +30,13 @@ struct RouteData_s {
     const PUMP::State_e *pump;
 }; //only used in plan state,need to arrange
 
-}
+} //namespace ARM
 
 class Arm {
 public:
     Arm();
 
-    void update(void *_param);
+    void update();
 
     void setTargetPose(const JointRoute_s _route);
 
@@ -42,13 +48,12 @@ public:
 
     PUMP::Controller pump;
 
-    ARM::Safety safety;
 
     StateFactory<ARM::FSMState_e> stateFactory_;
 
-    ArmMsg_s msg_ = {};
+    ARM::Msg_s msg_ = {};
 
-    ArmMsg_s tpmsg_ = {};
+    ARM::Msg_s tpmsg_ = {};
 
     ARM::Motors motors;
 

@@ -6,6 +6,7 @@
 #include "UTMotor.hpp"
 #include "DMMotor.hpp"
 #include "MotorManager.hpp"
+#include "ARMSafety.hpp"
 
 
 namespace ARM {
@@ -49,9 +50,10 @@ class Motors {
 
 public:
     Motors();
-    void init();
+    bool init();
     void update();
     void stop();
+    void enable();
     void ctrl(const Joint7D &_target_joints);
 
     JointInfo_s jointInfos[7];
@@ -66,6 +68,8 @@ public:
     void biasJoint3Angle();
     float joint3HighPoint(float _target);
     float joint3LowPoint(float _target);
+
+    Safety safety;
 
 private:
     MultiTypeMotors_t motors;

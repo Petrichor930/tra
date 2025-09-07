@@ -1,3 +1,4 @@
+#include "ARMSafety.hpp"
 #include "PidBasic.hpp"
 #include "Projdefs.hpp"
 
@@ -22,7 +23,7 @@ extern DMA_HandleTypeDef UNITREE_DMA;
 using namespace PINYMOTOR;
 using namespace ARM;
 
-Motors::Motors()
+Motors::Motors() : safety(*this)
 {
     jointInfos[0] = { .angle_min = -2.90f, .angle_max = 0.f };
     jointInfos[1] = { .angle_min = 0.f, .angle_max = 1.17f };
@@ -114,14 +115,11 @@ Motors::Motors()
     motors.djMotor = new DJIMOTOR::GM6020("joint7", gmConfig);
 }
 
-void Motors::init()
+bool Motors::init()
 {
-    homingUT();
+    return homingUT();
+
     //TODO:check motor offline
-    //enable all motor
-    for (auto &motor : motors.all_motors) {
-        motor->cmd(MotorCmdType_e::ON);
-    }
 }
 
 void Motors::update()
@@ -149,6 +147,13 @@ void Motors::stop()
     }
 }
 
+void Motors::enable()
+{
+    for (auto &motor : motors.all_motors) {
+        motor->cmd(MotorCmdType_e::ON);
+    }
+}
+
 void Motors::ctrl(const Joint7D &_target_joints)
 {
     // 依次发送目标角度and speed到每个关节电机
@@ -163,10 +168,8 @@ void Motors::ctrl(const Joint7D &_target_joints)
 
 void Motors::biasJoint3Angle()
 {
-    jointInfos[2].angle_min =
-            joint3HighPoint(motors.utMotor->data().singleCirAng);
-    jointInfos[2].angle_max =
-            joint3LowPoint(motors.utMotor->data().singleCirAng);
+    jointInfos[2].angle_min = joint3HighPoint(current_joints.j[1]);
+    jointInfos[2].angle_max = joint3LowPoint(current_joints.j[1]);
 }
 
 float Motors::joint3HighPoint(float _target)
@@ -185,12 +188,11 @@ float Motors::joint3LowPoint(float _target)
 
 bool Motors::homingUT()
 {
-    static bool utResetState = false; // 新增：记录回零是否完成
+    static bool utResetState = false;
     if (utResetState)
-        return true; // 已完成则直接返回
+        return true;
 
-    PINYMOTOR::UTMOTOR::TransmitMsg_s utTxMsg;
-    memset(&utTxMsg, 0, sizeof(PINYMOTOR::UTMOTOR::TransmitMsg_s));
+    PINYMOTOR::UTMOTOR::TransmitMsg_s utTxMsg = {};
 
     motors.utMotor->setKd(0.03f);
     ref_speed.joint1 = 2.0f; // target speed

@@ -11,36 +11,41 @@ namespace ARM {
 
 class NormalState : public FSMState<FSMState_e> {
 public:
-    NormalState(Arm &_arm) : FSMState(FSMState_e::PLAN), arm_(_arm) {};
+    NormalState(Arm &_arm) : FSMState(FSMState_e::NORMAL), arm_(_arm) {};
 
-    void enter() override { LOG::info("Normal", " enter"); }
+    void enter() override
+    {
+        arm_.motors.enable();
+        LOG::info("Normal", "enter");
+    }
+
+    bool change() override { return arm_.motors.init(); }
 
     void run() override
     {
-        Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
-                           arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
-                           arm_.msg_.j7 };
+        for (uint8_t i = 0; i < 7; i++) {
+            arm_.target_joints.j[i] = arm_.msg_.target.j[i];
+        }
         //UT缓启动
         arm_.motors.setUTsmoothStart();
-        arm_.safety.setSpeed(1);
-        arm_.safety.setAllAngleLimit(target);
+        arm_.motors.safety.setSpeed(1);
+        arm_.motors.safety.setAllAngleLimit(arm_.target_joints);
         //output
-        arm_.motors.ctrl(target);
+        arm_.motors.ctrl(arm_.target_joints);
     }
 
-    void exit() override { LOG::info("Normal", " exit"); }
+    void exit() override { LOG::info("Normal", "exit"); }
 
     FSMState_e checkChange() override
     {
-        if (arm_.msg_.state == FSMState_e::STOP) {
+        if (arm_.msg_.state == FSMState_e::STOP)
             return FSMState_e::STOP;
-        } else if (arm_.msg_.state == FSMState_e::NORMAL) {
+        else if (arm_.msg_.state == FSMState_e::NORMAL)
             return FSMState_e::NORMAL;
-        } else if (arm_.msg_.state == FSMState_e::PLAN) {
-            return FSMState_e::PLAN;
-        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
+        else if (arm_.msg_.state == FSMState_e::TEACH)
             return FSMState_e::TEACH;
-        }
+        else if (arm_.msg_.state == FSMState_e::PLAN)
+            return FSMState_e::PLAN;
         return FSMState_e::STOP;
     }
 

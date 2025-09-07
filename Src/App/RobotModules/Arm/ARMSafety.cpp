@@ -1,6 +1,7 @@
 #include "ARMSafety.hpp"
 #include "ArmKinematic.hpp"
 #include "MotorCommonMacros.hpp"
+#include "ArmMotor.hpp"
 
 namespace ARM {
 

@@ -3,6 +3,7 @@
 #include "Tp.hpp"
 #include "MsgImpl.hpp"
 #include "MsgBase.hpp"
+#include "Arm.hpp"
 
 class TpMsgHandler : public Handler {
 public:
@@ -12,7 +13,7 @@ public:
 
 private:
     TP::TeachPendant &tp_ = TP::TeachPendant::instance();
-    ArmMsg_s armMsg_;
+    ARM::Msg_s armMsg_;
     MsgBus_s *msgBus_;
     bool teachModeActive = false; // 初始化：未激活
 };

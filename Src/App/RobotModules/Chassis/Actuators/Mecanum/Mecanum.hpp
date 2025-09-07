@@ -51,7 +51,7 @@ public:
     void stop();
     void enter();
     void ctrl(const Speed_u &_speed);
-    void update(void *_param);
+    void update();
 
 protected:
     /*

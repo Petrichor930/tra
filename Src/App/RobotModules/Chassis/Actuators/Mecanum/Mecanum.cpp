@@ -3,6 +3,7 @@
 #include "Bsp_can.hpp"
 #include "PidBasic.hpp"
 #include <numbers>
+#include "Cmd.hpp"
 
 #include "M3508.hpp"
 
@@ -12,6 +13,8 @@
 #include "./State/RunState.hpp"
 
 extern canHandle HCAN1;
+
+extern Cmd cmd;
 
 using namespace CHASSIS;
 using namespace PINYMOTOR;
@@ -55,9 +58,9 @@ void Mecanum::enter()
     }
 }
 
-void Mecanum::update(void *_param)
+void Mecanum::update()
 {
-    xQueueReceive((((MsgBus_s *)_param)->chassisQueue), &msg, 0);
+    xQueueReceive(cmd.getMsgBus()->chassisQueue, &msg, 0);
 
     for (uint8_t i = 0; i < 4; i++) {
         wSpeed_._[i] = iir3_.process(motors_._[i]->data().spdRpm);

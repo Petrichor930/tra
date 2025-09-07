@@ -17,22 +17,25 @@ public:
 
     void run() override
     {
-        // arm_.motors.stop();
+        /* low freq */
+        static TickType_t updateCnt = 0;
+        if (xTaskGetTickCount() - updateCnt >= 100) {
+            updateCnt = xTaskGetTickCount();
+
+            arm_.motors.stop();
         }
+    }
 
     void exit() override { LOG::info("Stop", "exit"); }
 
     FSMState_e checkChange() override
     {
-        if (arm_.msg_.state == FSMState_e::NORMAL) {
+        if (arm_.msg_.state == FSMState_e::NORMAL)
             return FSMState_e::NORMAL;
-        } else if (arm_.msg_.state == FSMState_e::PLAN) {
-            return FSMState_e::PLAN;
-        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
+        else if (arm_.msg_.state == FSMState_e::TEACH)
             return FSMState_e::TEACH;
-        } else if (arm_.msg_.state == FSMState_e::STOP) {
-            return FSMState_e::STOP;
-        }
+        else if (arm_.msg_.state == FSMState_e::PLAN)
+            return FSMState_e::PLAN;
         return FSMState_e::STOP;
     }
 

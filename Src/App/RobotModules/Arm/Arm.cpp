@@ -7,10 +7,11 @@
 #include "ArmPlanState.hpp"
 #include "ArmTeachState.hpp"
 #include "MotorCommonMacros.hpp"
+#include "Cmd.hpp"
 
 using namespace ARM;
 
-Arm::Arm() : safety(motors)
+Arm::Arm()
 {
     /* FSM */
     stateFactory_.addState(FSMState_e::STOP,
@@ -22,13 +23,17 @@ Arm::Arm() : safety(motors)
     stateFactory_.addState(FSMState_e::TEACH,
                            std::make_unique<TeachState>(*this));
     stateFactory_.init(stateFactory_.getNextState(FSMState_e::STOP));
+
     LOG::info("ARM", "register");
+
+    motors.stop();
 }
 
-void Arm::update(void *_param)
+void Arm::update()
 {
-    xQueueReceive((((MsgBus_s *)_param)->armQueue), &msg_, 0);
-    xQueueReceive((((MsgBus_s *)_param)->tpQueue), &tpmsg_, 0);
+    extern Cmd cmd;
+    xQueueReceive(cmd.getMsgBus()->armQueue, &msg_, 0);
+    xQueueReceive(cmd.getMsgBus()->tpQueue, &tpmsg_, 0);
     motors.update();
     stateFactory_.update();
 }
@@ -46,9 +51,10 @@ void Arm::moveRoute()
         jointStateFlag) { //bug
         /*为了到达某点后停止一段时间*/
         if (RouteDta.target_pose[RouteDta.point_cnt].delay != 0) {
-            LOG::error("ARM", "Start move delay");
-            dwt.delayMs(RouteDta.target_pose[RouteDta.point_cnt].delay);
-            LOG::error("ARM", "End move delay");
+            LOG::info("ARM", "Start move delay");
+            Dwt::instance().delayMs(
+                    RouteDta.target_pose[RouteDta.point_cnt].delay);
+            LOG::info("ARM", "End move delay");
         }
         RouteDta.point_cnt++;
         if (RouteDta.point_cnt == RouteDta.target_point) {
@@ -111,8 +117,8 @@ JointState_e Arm::moveOneGoal(const Joint7D &_goal)
         target_joints.j[6] = motors.current_joints.j[6];
 
         float maxTime = maxDeltaAngle / DEFAULT_JOINT_SPEED;
-        safety.setJointSpeedLimit(maxTime, deltaJoints);
-        safety.setAllAngleLimit(target_joints);
+        motors.safety.setJointSpeedLimit(maxTime, deltaJoints);
+        motors.safety.setAllAngleLimit(target_joints);
 
         pump.apply(&RouteDta.pump[RouteDta.point_cnt]);
 

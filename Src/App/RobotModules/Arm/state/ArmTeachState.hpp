@@ -21,8 +21,11 @@ public:
         LOG::info("Teach", "enter");
         changingTime_.duration = 1000;
 
-        Joint7D goal = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3, arm_.msg_.j4,
-                         arm_.msg_.j5, arm_.msg_.j6, arm_.msg_.j7 };
+        Joint7D goal;
+        for (uint8_t i = 0; i < 7; i++) {
+            goal.j[i] = arm_.msg_.target.j[i];
+        }
+
 
         if (!arm_.motors.checkGoal(goal)) {
             LOG::error("Teach", "enter: init goal out of range");
@@ -43,17 +46,13 @@ public:
 
     void run() override
     {
-        Joint7D target = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
-                           arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
-                           arm_.msg_.j7 };
+        for (uint8_t i = 0; i < 7; i++) {
+            arm_.target_joints.j[i] = arm_.msg_.target.j[i];
+        }
 
-        arm_.target_joints = { arm_.msg_.j1, arm_.msg_.j2, arm_.msg_.j3,
-                               arm_.msg_.j4, arm_.msg_.j5, arm_.msg_.j6,
-                               arm_.msg_.j7 };
-        arm_.safety.setSpeed(0.5);
-        arm_.safety.setAllAngleLimit(arm_.target_joints);
+        arm_.motors.safety.setSpeed(0.5);
+        arm_.motors.safety.setAllAngleLimit(arm_.target_joints);
         arm_.motors.ctrl(arm_.target_joints); //output
-
 
         if (arm_.msg_.pumpState == PUMP::State_e::ON) {
             arm_.pump.set(PUMP::Device_e::VALVE_2, PUMP::State_e::ON);
@@ -66,16 +65,15 @@ public:
 
     FSMState_e checkChange() override
     {
-        if (arm_.msg_.state == FSMState_e::STOP) {
+        if (arm_.msg_.state == FSMState_e::STOP)
             return FSMState_e::STOP;
-        } else if (arm_.msg_.state == FSMState_e::NORMAL) {
+        else if (arm_.msg_.state == FSMState_e::NORMAL)
             return FSMState_e::NORMAL;
-        } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
+        else if (arm_.msg_.state == FSMState_e::TEACH)
             return FSMState_e::TEACH;
-        } else if (arm_.msg_.state == FSMState_e::PLAN) {
+        else if (arm_.msg_.state == FSMState_e::PLAN)
             return FSMState_e::PLAN;
-        }
-        return FSMState_e::STOP;
+        return FSMState_e::TEACH;
     }
 
 private:

@@ -7,11 +7,11 @@
 
 #pragma once
 
-
-#include "ArmMotor.hpp"
+#include "./ArmKinematic.hpp"
 
 namespace ARM {
 
+class Motors;
 
 class Safety {
     static constexpr float DEFAULT_JOINT_SPEED_MIN = 0.f;          // rad/s
@@ -30,7 +30,7 @@ public:
 
 
 private:
-    Motors &motors_; // Reference to motor controller
+    Motors &motors_;
 
     float jointSpeedRatio = 1;
 };

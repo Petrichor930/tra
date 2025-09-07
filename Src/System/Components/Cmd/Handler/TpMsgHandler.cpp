@@ -40,16 +40,11 @@ void TpMsgHandler::handle()
     armMsg_.state = ARM::FSMState_e::STOP;
 
     if (teachModeActive) {
-        //示教模式激活：生成有效指令
         armMsg_.state = ARM::FSMState_e::TEACH;
-        // 填充示教器的关节角度（绝对位置）
-        armMsg_.j1 = tpData.joint[0];
-        armMsg_.j2 = tpData.joint[1];
-        armMsg_.j3 = tpData.joint[2];
-        armMsg_.j4 = tpData.joint[3];
-        armMsg_.j5 = tpData.joint[4];
-        armMsg_.j6 = tpData.joint[5];
-        armMsg_.j7 = tpData.joint[6];
+
+        for (uint8_t i = 0; i < 7; ++i) {
+            armMsg_.target.j[0] = tpData.joint[0];
+        }
 
         if (tpData.push == 1) {
             armMsg_.pumpState = PUMP::State_e::ON;
