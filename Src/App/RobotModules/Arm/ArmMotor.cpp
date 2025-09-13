@@ -117,7 +117,10 @@ Motors::Motors() : safety(*this)
 
 bool Motors::init()
 {
-    return homingUT();
+    return true;
+
+    //BUG:
+    // return homingUT();
 
     //TODO:check motor offline
 }
