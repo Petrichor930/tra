@@ -21,6 +21,13 @@ using namespace PINYMOTOR;
 
 constexpr float F_PI = std::numbers::pi_v<float>;
 
+// IncrementalPid rfVelPid(0.91f, 0.002f, 0.f, 4.f, 0.f);
+// IncrementalPid lfVelPid(0.91f, 0.002f, 0.f, 4.f, 0.f);
+// IncrementalPid lbVelPid(0.88f, 0.002f, 0.f, 4.f, 0.f);
+// IncrementalPid rbVelPid(0.88f, 0.002f, 0.f, 4.f, 0.f);
+
+IncrementalPid velPid(0.91f, 0.002f, 0.f, 4.f, 0.f);
+
 Mecanum::Mecanum()
 {
     for (uint8_t i = 1; i <= 4; i++) {
@@ -31,11 +38,60 @@ Mecanum::Mecanum()
             .offsetId = i,
             .txFreq = 1000.0f,
             .posPID = nullptr,
-            .velPID = new IncrementalPid(0.2f, 0.005f, 0.f, 4.f, 0.f),
+            .velPID = &velPid,
             .torqPID = nullptr
         };
         motors_._[i - 1] = new DJIMOTOR::M3508("M3508", m3508Config);
     }
+    //     InitConfig_s rfm3508Config = {
+    //         .pComHandle = reinterpret_cast<uint32_t *>(&HCAN1),
+    //         .comType = ComType_e::CAN,
+    //         .workMode = WorkMode_e::QUAD_CURR,
+    //         .offsetId = 1,
+    //         .txFreq = 1000.0f,
+    //         .posPID = nullptr,
+    //         .velPID = &rfVelPid,
+    //         .torqPID = nullptr
+    //     };
+
+    //     InitConfig_s lfm3508Config = {
+    //         .pComHandle = reinterpret_cast<uint32_t *>(&HCAN1),
+    //         .comType = ComType_e::CAN,
+    //         .workMode = WorkMode_e::QUAD_CURR,
+    //         .offsetId = 2,
+    //         .txFreq = 1000.0f,
+    //         .posPID = nullptr,
+    //         .velPID = &lfVelPid,
+    //         .torqPID = nullptr
+    //     };
+
+    //     InitConfig_s lbm3508Config = {
+    //         .pComHandle = reinterpret_cast<uint32_t *>(&HCAN1),
+    //         .comType = ComType_e::CAN,
+    //         .workMode = WorkMode_e::QUAD_CURR,
+    //         .offsetId = 3,
+    //         .txFreq = 1000.0f,
+    //         .posPID = nullptr,
+    //         .velPID = &lbVelPid,
+    //         .torqPID = nullptr
+    //     };
+
+    //     InitConfig_s rbm3508Config = {
+    //         .pComHandle = reinterpret_cast<uint32_t *>(&HCAN1),
+    //         .comType = ComType_e::CAN,
+    //         .workMode = WorkMode_e::QUAD_CURR,
+    //         .offsetId = 4,
+    //         .txFreq = 1000.0f,
+    //         .posPID = nullptr,
+    //         .velPID = &rbVelPid,
+    //         .torqPID = nullptr
+    //     };
+
+    // motors_.RF = new DJIMOTOR::M3508("M3508_RF", rfm3508Config);
+    // motors_.LF = new DJIMOTOR::M3508("M3508_LF", lfm3508Config);
+    // motors_.LB = new DJIMOTOR::M3508("M3508_LB", lbm3508Config);
+    // motors_.RB = new DJIMOTOR::M3508("M3508_RB", rbm3508Config);
+
 
     this->stateFactory.addState(FSMState_e::RUN,
                                 std::make_unique<RunState>(this));
