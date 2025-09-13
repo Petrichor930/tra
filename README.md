@@ -1,4 +1,4 @@
-# PinyCore
+# PinyEngineer
 <p align="center">
     <a href="http://commitizen.github.io/cz-cli/"><img
             src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"
@@ -7,11 +7,6 @@
             src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release"
             alt="semantic-release: angular"/></a>
 </p>
-
-目前本仓库不会实现任何具体兵种，只会提供一个基础框架, 只有通用的代码需要pr到本仓库, 当app层模块稳定实现且兼容所有代码或特定时期（如完整形态考核等）才需要pr到本仓库，其他需要自己实现的地方：
-
-1. app层
-2. cmd输入的逻辑配置
 
 # 🎯Requirements
 
@@ -46,10 +41,6 @@ cmake --build ./build --target menuconfig
 2. [cortex-debug](https://github.com/Marus/cortex-debug) / [codelldb](https://github.com/vadimcn/codelldb) (vscode-plugin)
 3. Ozone 3.24
 4. systemview
-
-## 📝Note
-
-1. 全局变量构造不要有 hal 库的操作，但可以初始化 hal 指针，因为 hal 是在 main 中初始化，而全局变量是在 main 之前构造!
 
 # 🙌Contributing
 

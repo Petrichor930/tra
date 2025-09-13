@@ -45,7 +45,7 @@ struct JointInfo_s {
 };
 
 class Motors {
-    static constexpr float UNITREE_KP = 4.8;
+    static constexpr float UNITREE_KP = 0.8;
     static constexpr float UNITREE_KD = 0.02;
 
 public:

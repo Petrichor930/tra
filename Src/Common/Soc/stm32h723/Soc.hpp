@@ -6,6 +6,9 @@
 /*can*/
 #define SOC_FDCAN
 #define SOC_CAN_NUM          (3)
+#define HCAN1                hfdcan1
+#define HCAN2                hfdcan2
+#define HCAN3                hfdcan3
 #define canHandle            FDCAN_HandleTypeDef
 #define canHeader            FDCAN_RxHeaderTypeDef
 #define RX_FIFO0             FDCAN_RX_FIFO0
@@ -26,3 +29,14 @@
 #define SOC_DMA_SRAM_D2     0x30000000
 #define SOC_DMA_SRAM_D2_END 0x30007FFF
 enum DmaRam_e { SRAM, SRAM_D2 };
+
+/* gpio */
+
+#define Power_OUT1_ON  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET)
+#define Power_OUT1_OFF HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET)
+
+#define Power_OUT2_ON  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_SET)
+#define Power_OUT2_OFF HAL_GPIO_WritePin(GPIOC, GPIO_PIN_14, GPIO_PIN_RESET)
+
+#define Power_OUT3_ON  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET)
+#define Power_OUT3_OFF HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET)

@@ -1,4 +1,5 @@
 #include "AppManager.hpp"
+#include "Chassis.hpp"
 #include "sdkconfig.h"
 #include "cmsis_os2.h"
 #include "MotorManager.hpp"
@@ -18,11 +19,11 @@ INS_SYS::INS ins;
 #endif
 
 // CMD
-Cmd cmd;
+Cmd *cmd;
 
 // Ctrl
-CHASSIS::Mecanum chassis;
-Arm arm;
+CHASSIS::Mecanum *chassis;
+Arm *arm;
 
 
 #if APP_USE_UI
@@ -37,6 +38,13 @@ void AppManager::initApp()
     BUZZER::Buzzer::getInstance().init(&BEEP_TIMER, BEEP_TIM_CHANNEL,
                                        BEEP_APB_FREQ);
 
+    cmd = new Cmd();
+
+    arm = new Arm();
+
+    chassis = new CHASSIS::Mecanum();
+    schedule([]() { chassis->update(); });
+
 #if APP_USE_UI
     ui.init();
     schedule([]() { ui.task(); });
@@ -47,9 +55,14 @@ void AppManager::initApp()
         TestModule::instance()->init();
     }
 
-    schedule([]() { chassis.update(); });
 
-    schedule([]() { arm.update(); });
+
+    schedule([]() { arm->update(); });
+
+
+    Power_OUT1_OFF; //5v_off
+    Power_OUT2_OFF; //5v_off
+    Power_OUT3_ON;  //5v_on
 
     // Generate threads at the end
     this->createApp();
@@ -63,7 +76,7 @@ void AppManager::schedule(std::function<void()> _callback)
 void AppManager::createApp()
 {
     // Robot-Ctrl Continuous Task
-    xTaskCreate(AppManager::ctrlTask, "ctrl_task", 256, this,
+    xTaskCreate(AppManager::ctrlTask, "ctrl_task", 512, this,
                 osPriorityRealtime, nullptr);
 
     // Test-Module Continuous Task
@@ -87,6 +100,9 @@ void AppManager::createApp()
                 vTaskDelete(nullptr); // 否则会进ExistError
             },
             "buzzer_task", 64, nullptr, osPriorityNormal, nullptr);
+
+    uint32_t freeHeap = xPortGetFreeHeapSize();
+    LOG::info("App", "init complete, Free Heap: %u", freeHeap);
 }
 
 void AppManager::ctrlTask(void *_param)

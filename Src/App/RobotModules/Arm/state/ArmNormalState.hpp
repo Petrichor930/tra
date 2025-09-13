@@ -27,11 +27,11 @@ public:
             arm_.target_joints.j[i] = arm_.msg_.target.j[i];
         }
         //UT缓启动
-        arm_.motors.setUTsmoothStart();
+        // arm_.motors.setUTsmoothStart();
         arm_.motors.safety.setSpeed(1);
         arm_.motors.safety.setAllAngleLimit(arm_.target_joints);
         //output
-        arm_.motors.ctrl(arm_.target_joints);
+        // arm_.motors.ctrl(arm_.target_joints);
     }
 
     void exit() override { LOG::info("Normal", "exit"); }
