@@ -14,7 +14,7 @@
 
 extern canHandle HCAN1;
 
-extern Cmd *cmd;
+extern Cmd* cmd;
 
 using namespace CHASSIS;
 using namespace PINYMOTOR;
