@@ -3,12 +3,19 @@
 #include "sdkconfig.h"
 #include "cmsis_os2.h"
 #include "MotorManager.hpp"
+#if APP_USE_COMM
+#include "CommManager.hpp"
+#endif
 #include "INS.hpp"
 #include "Cmd.hpp"
 #include "Buzzer.hpp"
 #include "UI/UIApp.hpp"
 #include "test/TestModule.hpp"
 #include "Mecanum.hpp"
+
+#if APP_USE_DAEMONS
+#include "Daemons/Daemons.hpp"
+#endif
 
 extern TIM_HandleTypeDef BEEP_TIMER;
 
@@ -41,13 +48,22 @@ void AppManager::initApp()
     cmd = new Cmd();
 
     arm = new Arm();
+    schedule([]() { arm->update(); });
 
     chassis = new CHASSIS::Mecanum();
     schedule([]() { chassis->update(); });
 
+#if APP_USE_COMM
+    schedule([]() { CommManager::instance().rxTask(); });
+#endif
+
 #if APP_USE_UI
     ui.init();
     schedule([]() { ui.task(); });
+#endif
+
+#if APP_USE_DAEMONS
+    schedule([]() { Daemons::instance().update(); });
 #endif
 
     // TestModule
@@ -56,13 +72,13 @@ void AppManager::initApp()
     }
 
 
-
-    schedule([]() { arm->update(); });
-
-
     Power_OUT1_OFF; //5v_off
     Power_OUT2_OFF; //5v_off
     Power_OUT3_ON;  //5v_on
+
+#if APP_USE_COMM
+    schedule([]() { CommManager::instance().txTask(); });
+#endif
 
     // Generate threads at the end
     this->createApp();
