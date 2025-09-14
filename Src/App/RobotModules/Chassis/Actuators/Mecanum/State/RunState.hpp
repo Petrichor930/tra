@@ -13,7 +13,11 @@ public:
     RunState(Mecanum *_chassis)
             : FSMState(FSMState_e::RUN), chassis_(_chassis) {};
 
-    void enter() final { LOG::info("ChassisRun", " enter"); }
+    void enter() final
+    {
+        LOG::info("ChassisRun", " enter");
+        chassis_->enter();
+    }
 
     void run() final
     {
@@ -23,7 +27,8 @@ public:
         ref.vy = chassis_->msg.vy;
         // ref.wz = wzAngPid_.calc(0, PINYMOTOR::getMinorArc(chassis_->msg.yaw,
         //                                                   chassis_->yaw()));
-        ref.wz = 0;
+        // ref.wz = 0;
+        ref.wz = chassis_->msg.yaw;
         chassis_->ctrl(ref);
     }
 

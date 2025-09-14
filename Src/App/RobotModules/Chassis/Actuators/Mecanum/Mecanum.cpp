@@ -21,19 +21,30 @@ using namespace PINYMOTOR;
 
 constexpr float F_PI = std::numbers::pi_v<float>;
 
+IncrementalPid motorPids[4] = { IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
+                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
+                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
+                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f,
+                                               0.0f) };
+
+// IncrementalPid motorPids[4] = { IncrementalPid(0.91f, 0.002f, 0.f, 4.0f, 0.0f),
+//                                 IncrementalPid(0.91f, 0.002f, 0.f, 4.0f, 0.0f),
+//                                 IncrementalPid(0.88f, 0.002f, 0.f, 4.0f, 0.0f),
+//                                 IncrementalPid(0.88f, 0.002f, 0.f, 4.0f,
+//                                                0.0f) };
+
 Mecanum::Mecanum()
 {
     for (uint8_t i = 1; i <= 4; i++) {
-        InitConfig_s m3508Config = {
-            .pComHandle = reinterpret_cast<uint32_t *>(&HCAN1),
-            .comType = ComType_e::CAN,
-            .workMode = WorkMode_e::QUAD_CURR,
-            .offsetId = i,
-            .txFreq = 1000.0f,
-            .posPID = nullptr,
-            .velPID = new IncrementalPid(0.2f, 0.005f, 0.f, 4.f, 0.f),
-            .torqPID = nullptr
-        };
+        InitConfig_s m3508Config = { .pComHandle = reinterpret_cast<uint32_t *>(
+                                             &HCAN1),
+                                     .comType = ComType_e::CAN,
+                                     .workMode = WorkMode_e::QUAD_CURR,
+                                     .offsetId = i,
+                                     .txFreq = 1000.0f,
+                                     .posPID = nullptr,
+                                     .velPID = &motorPids[i - 1],
+                                     .torqPID = nullptr };
         motors_._[i - 1] = new DJIMOTOR::M3508("M3508", m3508Config);
     }
 
