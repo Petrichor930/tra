@@ -2,12 +2,11 @@
 #include "DJIMotor.hpp"
 #include "IMotor.hpp"
 #include "ArmKinematic.hpp"
-#include "StmLog.hpp"
 #include "UTMotor.hpp"
 #include "DMMotor.hpp"
 #include "MotorManager.hpp"
 #include "ARMSafety.hpp"
-
+#include "Smooth.hpp"
 
 namespace ARM {
 
@@ -45,7 +44,7 @@ struct JointInfo_s {
 };
 
 class Motors {
-    static constexpr float UNITREE_KP = 0.8;
+    static constexpr float UNITREE_KP = 1.0;
     static constexpr float UNITREE_KD = 0.02;
 
 public:
@@ -56,7 +55,13 @@ public:
     void enable();
     void ctrl(const Joint7D &_target_joints);
 
-    JointInfo_s jointInfos[7];
+    JointInfo_s jointInfos[7] = { { .angle_min = -3.15f, .angle_max = 3.15f },
+                                  { .angle_min = -0.01f, .angle_max = 1.30f },
+                                  { .angle_min = -0.04f, .angle_max = 0.88f },
+                                  { .angle_min = -1.06f, .angle_max = 1.20f },
+                                  { .angle_min = -3.14f, .angle_max = 1.34f },
+                                  { .angle_min = -2.20f, .angle_max = 2.17f },
+                                  { .angle_min = -6.14f, .angle_max = 6.14f } };
 
     bool homingUT();
     bool checkGoal(Joint7D _goal);
@@ -75,6 +80,10 @@ private:
     MultiTypeMotors_t motors;
 
     float unitreeAngleFix = 0; // 宇树电机角度补偿
+
+    LinearInterpolator kp;
+    LinearInterpolator kd;
+    bool isKpKdSynced = false;
 };
 
 } // namespace ARM

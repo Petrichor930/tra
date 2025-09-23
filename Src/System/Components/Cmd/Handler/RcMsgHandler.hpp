@@ -1,6 +1,8 @@
 #pragma once
 #include "Rc.hpp"
 #include "Handler.hpp"
+#include "Arm.hpp"
+
 
 class RcMsgHandler : public Handler {
     static constexpr float ROCKER_VX_GAIN = 2.f;
@@ -42,7 +44,7 @@ protected:
 
 private:
     static constexpr float S_CURVE_ACC = 2.0f;
-    static constexpr uint8_t T_ACC_CNT = 100;
+    // static constexpr uint8_t T_ACC_CNT = 100;
 
     RC::Rc &rc_ = RC::Rc::instance();
 
@@ -50,6 +52,8 @@ private:
 
     RcMsg_t rcMsgPrev_ = {};
 
+    ChassisMsg_s cmsg = {};
+    ARM::Msg_s amsg = {};
     MsgBus_s *msgBus_;
 
     bool isTpActivated_ = false; // 初始化为未激活
