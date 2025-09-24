@@ -55,24 +55,19 @@ public:
     void enable();
     void ctrl(const Joint7D &_target_joints);
 
-    JointInfo_s jointInfos[7] = { { .angle_min = -3.15f, .angle_max = 3.15f },
-                                  { .angle_min = -0.01f, .angle_max = 1.30f },
-                                  { .angle_min = -0.04f, .angle_max = 0.88f },
-                                  { .angle_min = -1.06f, .angle_max = 1.20f },
-                                  { .angle_min = -3.14f, .angle_max = 1.34f },
-                                  { .angle_min = -2.20f, .angle_max = 2.17f },
-                                  { .angle_min = -6.14f, .angle_max = 6.14f } };
 
     bool homingUT();
     bool checkGoal(Joint7D _goal);
-    void setUTsmoothStart();
-
-    ArmSpeed_u ref_speed = {};
-    Joint7D current_joints;
 
     void biasJoint3Angle();
     float joint3HighPoint(float _target);
     float joint3LowPoint(float _target);
+
+    JointInfo_s jointInfos[7];
+    ArmSpeed_u ref_speed = {};
+    Joint7D current_joints;
+    LinearInterpolator joint0;
+    LinearInterpolator joint7;
 
     Safety safety;
 
@@ -80,10 +75,6 @@ private:
     MultiTypeMotors_t motors;
 
     float unitreeAngleFix = 0; // 宇树电机角度补偿
-
-    LinearInterpolator kp;
-    LinearInterpolator kd;
-    bool isKpKdSynced = false;
 };
 
 } // namespace ARM

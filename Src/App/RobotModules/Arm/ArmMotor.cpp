@@ -28,8 +28,16 @@ using namespace ARM;
 IncrementalPid joint7PosPid(10.f, 0.0f, 1.f, 2.0f, 0.01f);
 IncrementalPid joint7VelPid(0.00006f, 0.0005f, 0.f, 25.2f, 0.1f);
 
-Motors::Motors() : safety(*this), kp(0.001, 0), kd(0.001, 0)
+Motors::Motors() : joint0(0.002, 0), joint7(0.002, 0), safety(*this)
 {
+    jointInfos[0] = { .angle_min = -3.15f, .angle_max = 3.15f };
+    jointInfos[1] = { .angle_min = -0.01f, .angle_max = 1.30f };
+    jointInfos[2] = { .angle_min = -0.04f, .angle_max = 0.88f };
+    jointInfos[3] = { .angle_min = -1.06f, .angle_max = 1.20f };
+    jointInfos[4] = { .angle_min = -3.14f, .angle_max = 1.34f };
+    jointInfos[5] = { .angle_min = -2.20f, .angle_max = 2.17f };
+    jointInfos[6] = { .angle_min = -6.14f, .angle_max = 6.14f };
+
     InitConfig_s ut80106Config = { .pComHandle = reinterpret_cast<uint32_t *>(
                                            &UNITREE_UART),
                                    .comType = PINYMOTOR::ComType_e::RS485,
@@ -122,13 +130,7 @@ Motors::Motors() : safety(*this), kp(0.001, 0), kd(0.001, 0)
     // }
 }
 
-bool Motors::init()
-{
-    return true;
-
-    //BUG:
-    return homingUT();
-}
+bool Motors::init() { return homingUT(); }
 
 void Motors::update()
 {
@@ -250,21 +252,3 @@ bool Motors::checkGoal(Joint7D _goal)
     }
     return true;
 } //checkGoal
-
-void Motors::setUTsmoothStart()
-{
-    if (!isKpKdSynced) {
-        float currentKp = motors.utMotor->getKp();
-        float currentKd = motors.utMotor->getKd();
-        kp.syncPosition(currentKp);
-        kp.setTarget(UNITREE_KP);
-        kd.syncPosition(currentKd);
-        kd.setTarget(UNITREE_KD);
-        isKpKdSynced = true;
-    }
-    float newKp = kp.update();
-    float newKd = kd.update();
-
-    motors.utMotor->setKp(newKp);
-    motors.utMotor->setKd(newKd);
-}
