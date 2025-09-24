@@ -62,6 +62,4 @@ public:
 private:
     ARM::RouteData_s RouteDta = {};
     Dwt dwt = Dwt::instance();
-    LinearInterpolator joint0;
-    LinearInterpolator joint6;
 };

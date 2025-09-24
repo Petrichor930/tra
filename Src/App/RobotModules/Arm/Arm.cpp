@@ -11,7 +11,7 @@
 
 using namespace ARM;
 
-Arm::Arm() : joint0(0.002, 0), joint6(0.002, 0)
+Arm::Arm()
 {
     /* FSM */
     stateFactory_.addState(FSMState_e::STOP,
@@ -75,8 +75,8 @@ JointState_e Arm::moveOneGoal(const Joint7D &_goal)
         RouteDta.rateCnt++;
         float rate = static_cast<float>(RouteDta.rateCnt) / 2000.0f;
 
-        target_joints.j[0] = joint0.update();
-        target_joints.j[6] = joint6.update();
+        target_joints.j[0] = motors.joint1.update();
+        target_joints.j[6] = motors.joint7.update();
     }
     /*第一次进入*/
     if (jointStateFlag == JointState_e::FINISH_STATE) {
@@ -111,10 +111,10 @@ JointState_e Arm::moveOneGoal(const Joint7D &_goal)
             target_joints.j[i] = _goal.j[i];
         }
 
-        joint0.syncPosition(motors.current_joints.j[0]);
-        joint0.setTarget(_goal.j[0]);
-        joint6.syncPosition(motors.current_joints.j[6]);
-        joint6.setTarget(_goal.j[6]);
+        motors.joint1.syncPosition(motors.current_joints.j[0]);
+        motors.joint1.setTarget(_goal.j[0]);
+        motors.joint7.syncPosition(motors.current_joints.j[6]);
+        motors.joint7.setTarget(_goal.j[6]);
 
         target_joints.j[0] = motors.current_joints.j[0];
         target_joints.j[6] = motors.current_joints.j[6];

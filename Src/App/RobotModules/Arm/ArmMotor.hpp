@@ -66,7 +66,7 @@ public:
     JointInfo_s jointInfos[7];
     ArmSpeed_u ref_speed = {};
     Joint7D current_joints;
-    LinearInterpolator joint0;
+    LinearInterpolator joint1;
     LinearInterpolator joint7;
 
     Safety safety;

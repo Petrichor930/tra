@@ -28,7 +28,7 @@ using namespace ARM;
 IncrementalPid joint7PosPid(10.f, 0.0f, 1.f, 2.0f, 0.01f);
 IncrementalPid joint7VelPid(0.00006f, 0.0005f, 0.f, 25.2f, 0.1f);
 
-Motors::Motors() : joint0(0.002, 0), joint7(0.002, 0), safety(*this)
+Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
 {
     jointInfos[0] = { .angle_min = -3.15f, .angle_max = 3.15f };
     jointInfos[1] = { .angle_min = -0.01f, .angle_max = 1.30f };
