@@ -32,8 +32,6 @@ public:
         for (uint8_t i = 0; i < 7; i++) {
             arm_.target_joints.j[i] += arm_.msg_.target.j[i];
         }
-        //UT缓启动
-        arm_.motors.setUTsmoothStart();
         arm_.motors.safety.setSpeed(1);
         arm_.motors.safety.setAllAngleLimit(arm_.target_joints);
         //output
