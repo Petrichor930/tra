@@ -59,14 +59,14 @@ void RcMsgHandler::handle()
             cmsg.vy = sCurve(Chassis::MAX_VY_SPEED, rcMsg_.rx);  // Scale to m/s
             cmsg.yaw = sCurve(Chassis::MAX_WZ_SPEED, rcMsg_.lx); // Scale to m/s
         } else if (rcData.rc.switchLeft == RC_SW_MID) {
-            amsg.target.j[0] = rcMsg_.rx / 314 / 200;
+            amsg.target.j[0] = -rcMsg_.rx / 314 / 200;
             amsg.target.j[1] = rcMsg_.ry / 314 / 100;
             amsg.target.j[2] = rcMsg_.ly / 314 / 50;
             amsg.target.j[3] = rcMsg_.lx / 314 / 50;
         } else if (rcData.rc.switchLeft == RC_SW_UP) {
             amsg.target.j[4] = rcMsg_.lx / 314 / 50;
             amsg.target.j[5] = rcMsg_.ly / 314 / 50;
-            amsg.target.j[6] = rcMsg_.rx / 314 / 20;
+            amsg.target.j[6] = rcMsg_.rx / 314 / 50;
             if (rcData.rc.ch1 == -660) {
                 amsg.state = ARM::FSMState_e::PLAN;
             }
