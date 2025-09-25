@@ -25,8 +25,8 @@ using namespace PINYMOTOR;
 using namespace ARM;
 
 
-IncrementalPid joint7PosPid(10.f, 0.0f, 1.f, 2.0f, 0.01f);
-IncrementalPid joint7VelPid(0.00006f, 0.0005f, 0.f, 25.2f, 0.1f);
+IncrementalPid joint7PosPid(4.3f, 0.0f, 3.3f, 200.f, 0.003f);
+IncrementalPid joint7VelPid(0.004f, 0.002f, 0.f, 25.2f, 0.01f);
 
 Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
 {
@@ -47,7 +47,7 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
                                    .posPID = nullptr,
                                    .velPID = nullptr,
                                    .torqPID = nullptr,
-                                   .isReverse = true };
+                                   .isReverse = false };
 
     InitConfig_s dmJointConf2 = { .pComHandle =
                                           reinterpret_cast<uint32_t *>(&HCAN2),
@@ -108,7 +108,7 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
     InitConfig_s gmConfig = { .pComHandle =
                                       reinterpret_cast<uint32_t *>(&HCAN3),
                               .comType = PINYMOTOR::ComType_e::CAN,
-                              .workMode = PINYMOTOR::WorkMode_e::QUAD_CURR,
+                              .workMode = PINYMOTOR::WorkMode_e::QUAD_VOLT,
                               .offsetId = static_cast<uint8_t>(7),
                               .txFreq = 500.0f,
                               .posPID = &joint7PosPid,
@@ -145,7 +145,7 @@ void Motors::update()
         }
     }
     /* gm6020 run multi cirang */
-    current_joints.j[6] = motors.all_motors[7]->data().multipCirAng;
+    current_joints.j[6] = motors.all_motors[6]->data().multipCirAng;
     /*平行四边形关系 - 确保关节3角度在安全范围内*/
     // biasJoint3Angle(); TODO:BUG
 }
@@ -205,15 +205,16 @@ bool Motors::homingUT()
 
     PINYMOTOR::UTMOTOR::TransmitMsg_s utTxMsg = {};
 
-    motors.utMotor->setKd(0.03f);
-    ref_speed.joint1 = -1.0f;
+    motors.utMotor->setKp(0);
+    motors.utMotor->setKd(0.08f);
+    ref_speed.joint1 = 2.f;
 
-    if (fabs(motors.utMotor->data().torq) >= 0.37f &&
-        fabs(motors.utMotor->data().spdRadps) < 0.1f) {
+    if (fabs(motors.utMotor->data().torq) >= 0.2f &&
+        fabs(motors.utMotor->data().spdRadps) < 0.5f) {
         unitreeAngleFix = motors.utMotor->data().multipCirAng;
 
         motors.utMotor->setKp(0.5f);
-        motors.utMotor->setKd(0.f);
+        motors.utMotor->setKd(0.02f);
         ref_speed.joint1 = 0;
 
         motors.utMotor->setZeroAng();
