@@ -6,6 +6,7 @@
 #include "RttMsgHandler.hpp"
 #include "RcMsgHandler.hpp"
 #include "TpMsgHandler.hpp"
+#include "PcMsgHandler.hpp"
 
 #define EVENT_MASK (RTT_READY_EVENT | RC_READY_EVENT | TP_READY_EVENT)
 class Cmd {
@@ -24,5 +25,6 @@ private:
 
     RcMsgHandler rcHandler_;
     RTTMsgHandler rttHandler_;
-    TpMsgHandler tpHandler_; //new add
+    TpMsgHandler tpHandler_;
+    PcMsgHandler pcHandler_;
 };

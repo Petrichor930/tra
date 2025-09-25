@@ -12,6 +12,7 @@ Cmd::Cmd() : eventGroup_(xEventGroupCreate())
 
     rttHandler_.init(&msgBus_, eventGroup_);
     rcHandler_.init(&msgBus_, eventGroup_);
+    pcHandler_.init(&msgBus_, eventGroup_);
 
     xTaskCreate(Cmd::task, "cmd_task", 256, this, osPriorityNormal, nullptr);
 
@@ -32,6 +33,9 @@ void Cmd::parseMsg()
     }
     if (xBits & RTT_READY_EVENT) {
         rttHandler_.handle();
+    }
+    if (xBits & PC_READY_EVENT) {
+        pcHandler_.handle();
     }
 }
 
