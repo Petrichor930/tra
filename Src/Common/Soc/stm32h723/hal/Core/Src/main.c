@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -149,6 +148,7 @@ int main(void)
   MX_ADC1_Init();
   MX_SPI6_Init();
   MX_UART9_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
     initPinyCore();
   /* USER CODE END 2 */

@@ -1,16 +1,4 @@
-/**
- * @file teach_pendant.cpp
- * @brief 示教器处理类实现
- *
- * @version Version 1.0.0
- * @author [可补充作者]
- * @date [可补充日期]
- *
- * @copyright [可补充版权信息]
- *
- */
-
-#include "Common/Extensions/Tp/TpMsg.hpp"
+#include "TpMsg.hpp"
 #include "Tp.hpp"
 #include "main.h"
 #include <cstdint>

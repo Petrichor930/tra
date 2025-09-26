@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ArmKinematic.hpp"
 #include "TpMsg.hpp"
 #include "main.h"
 #include <cstdint>
@@ -36,7 +35,8 @@ public:
     static void rawCallBackFromISR(UART_HandleTypeDef *_huart, uint16_t _Pos);
     void convert();
 
-    const Joint7D homePose = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+    // BUG: extension file can't find app file, don't use Joint7D
+    // const Joint7D homePose = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
 };
 
 } // namespace TP
