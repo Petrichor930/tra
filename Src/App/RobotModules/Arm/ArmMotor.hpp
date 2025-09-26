@@ -2,12 +2,11 @@
 #include "DJIMotor.hpp"
 #include "IMotor.hpp"
 #include "ArmKinematic.hpp"
-#include "StmLog.hpp"
 #include "UTMotor.hpp"
 #include "DMMotor.hpp"
 #include "MotorManager.hpp"
 #include "ARMSafety.hpp"
-
+#include "Smooth.hpp"
 
 namespace ARM {
 
@@ -45,7 +44,7 @@ struct JointInfo_s {
 };
 
 class Motors {
-    static constexpr float UNITREE_KP = 0.8;
+    static constexpr float UNITREE_KP = 1.0;
     static constexpr float UNITREE_KD = 0.02;
 
 public:
@@ -56,18 +55,19 @@ public:
     void enable();
     void ctrl(const Joint7D &_target_joints);
 
-    JointInfo_s jointInfos[7];
 
     bool homingUT();
     bool checkGoal(Joint7D _goal);
-    void setUTsmoothStart();
-
-    ArmSpeed_u ref_speed = {};
-    Joint7D current_joints;
 
     void biasJoint3Angle();
     float joint3HighPoint(float _target);
     float joint3LowPoint(float _target);
+
+    JointInfo_s jointInfos[7];
+    ArmSpeed_u ref_speed = {};
+    Joint7D current_joints;
+    LinearInterpolator joint1;
+    LinearInterpolator joint7;
 
     Safety safety;
 

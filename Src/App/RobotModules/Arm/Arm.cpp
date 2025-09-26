@@ -70,17 +70,13 @@ void Arm::moveRoute()
 
 JointState_e Arm::moveOneGoal(const Joint7D &_goal)
 {
-    Joint7D deltaJoints = _goal - motors.current_joints;
-    float maxDeltaAngle = AbsMaxOf7(deltaJoints);
-
     /*第一次进入之后*/
     if (jointStateFlag == JointState_e::MOVING_STATE) {
         RouteDta.rateCnt++;
         float rate = static_cast<float>(RouteDta.rateCnt) / 2000.0f;
-        target_joints.j[0] =
-                PINYMOTOR::s_curve_acc(target_joints.j[0], _goal.j[0], 35, 2);
-        target_joints.j[6] =
-                PINYMOTOR::s_curve_acc(target_joints.j[6], _goal.j[6], 30, 3);
+
+        target_joints.j[0] = motors.joint1.update();
+        target_joints.j[6] = motors.joint7.update();
     }
     /*第一次进入*/
     if (jointStateFlag == JointState_e::FINISH_STATE) {
@@ -88,8 +84,8 @@ JointState_e Arm::moveOneGoal(const Joint7D &_goal)
         for (int i = 0; i < 2; i++) {
             if (!IS_WITHIN_RANGE(_goal.j[i], motors.jointInfos[i].angle_min,
                                  motors.jointInfos[i].angle_max)) {
-                return jointStateFlag;
                 LOG::error("ARM", "Joint%d move goal error", i + 1);
+                return jointStateFlag;
             }
         }
 
@@ -115,18 +111,27 @@ JointState_e Arm::moveOneGoal(const Joint7D &_goal)
             target_joints.j[i] = _goal.j[i];
         }
 
+        motors.joint1.syncPosition(motors.current_joints.j[0]);
+        motors.joint1.setTarget(_goal.j[0]);
+        motors.joint7.syncPosition(motors.current_joints.j[6]);
+        motors.joint7.setTarget(_goal.j[6]);
+
         target_joints.j[0] = motors.current_joints.j[0];
         target_joints.j[6] = motors.current_joints.j[6];
 
-        float maxTime = maxDeltaAngle / DEFAULT_JOINT_SPEED;
-        motors.safety.setJointSpeedLimit(maxTime, deltaJoints);
+        Joint7D initDeltaJoints = _goal - motors.current_joints;
+        float initMaxDeltaAngle = AbsMaxOf7(initDeltaJoints);
+
+        float maxTime = initMaxDeltaAngle / DEFAULT_JOINT_SPEED;
+        motors.safety.setJointSpeedLimit(maxTime, initDeltaJoints);
         motors.safety.setAllAngleLimit(target_joints);
 
         pump.apply(&RouteDta.pump[RouteDta.point_cnt]);
 
         jointStateFlag = JointState_e::MOVING_STATE;
     }
-
+    Joint7D deltaJoints = _goal - motors.current_joints;
+    float maxDeltaAngle = AbsMaxOf7(deltaJoints);
     if (maxDeltaAngle < 0.02f) {
         RouteDta.rateCnt = 0;
         jointStateFlag = JointState_e::FINISH_STATE;

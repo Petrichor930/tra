@@ -6,6 +6,7 @@
 
 #include "Arm.hpp"
 #include "ArmMotor.hpp"
+#include "StmLog.hpp"
 
 namespace ARM {
 
@@ -15,23 +16,34 @@ public:
 
     void enter() override
     {
-        arm_.motors.enable();
+        arm_.target_joints = arm_.motors.current_joints;
         LOG::info("Normal", "enter");
     }
 
-    bool change() override { return arm_.motors.init(); }
+    bool change() override
+    {
+        if (arm_.msg_.state == FSMState_e::STOP) {
+            isEnabled_ = false;
+            return true;
+        }
+        if (!isEnabled_) {
+            arm_.motors.enable();
+            isEnabled_ = true;
+            LOG::info("Normal", "motor enabled, start homing");
+            return false;
+        }
+        return arm_.motors.init();
+    }
 
     void run() override
     {
         for (uint8_t i = 0; i < 7; i++) {
-            arm_.target_joints.j[i] = arm_.msg_.target.j[i];
+            arm_.target_joints.j[i] += arm_.msg_.target.j[i];
         }
-        //UT缓启动
-        // arm_.motors.setUTsmoothStart();
         arm_.motors.safety.setSpeed(1);
         arm_.motors.safety.setAllAngleLimit(arm_.target_joints);
         //output
-        // arm_.motors.ctrl(arm_.target_joints);
+        arm_.motors.ctrl(arm_.target_joints);
     }
 
     void exit() override { LOG::info("Normal", "exit"); }
@@ -51,6 +63,7 @@ public:
 
 private:
     Arm &arm_;
+    bool isEnabled_ = false;
 };
 
 } // namespace ARM
