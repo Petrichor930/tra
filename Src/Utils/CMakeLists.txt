@@ -46,6 +46,10 @@ endif()
 target_sources(${CMAKE_PROJECT_NAME}
                PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/OperatorNew/OperatorNew.cpp)
 
+target_link_directories(utils PUBLIC
+    ${CMAKE_SOURCE_DIR}/Lib/CMSIS-DSP
+)
+
 # link
 target_link_libraries(utils PRIVATE
   Soc

@@ -3,7 +3,7 @@
 #include "Chassis.hpp"
 
 #include "IMotor.hpp"
-#include "dsp/fast_math_functions.h"
+#include "arm_math.h"
 #include "IIR.hpp"
 
 namespace CHASSIS {

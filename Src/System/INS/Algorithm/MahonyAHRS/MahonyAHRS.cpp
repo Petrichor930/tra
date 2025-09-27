@@ -1,5 +1,5 @@
 #include "MahonyAHRS.hpp"
-#include "dsp/fast_math_functions.h"
+#include "arm_math.h"
 
 using namespace IMU_MAHONY_AHRS;
 

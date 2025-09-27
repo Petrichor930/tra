@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dsp/matrix_functions.h"
+#include "arm_math.h"
 #include <initializer_list>
 
 
