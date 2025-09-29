@@ -20,6 +20,7 @@ struct MsgBus_s {
     QueueHandle_t gimbalQueue;
     QueueHandle_t armQueue;
     QueueHandle_t tpQueue;
+    QueueHandle_t refereeQueue;
 };
 
 //  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ctrl msg ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -33,6 +34,11 @@ struct GimbalMsg_s : public Msg {
     float roll, pitch, yaw;
 };
 
+
+struct RefereeMsg_s : public Msg {
+    uint16_t currentHP, shooterHeatLimit, chassisPowerLimit, chassisPowerBuffer;
+    float bulletSpeed;
+};
 
 //  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ other msg ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 struct GimbalEularMsg_s : public Msg {

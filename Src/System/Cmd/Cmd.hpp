@@ -7,8 +7,10 @@
 #include "RcMsgHandler.hpp"
 #include "TpMsgHandler.hpp"
 #include "PcMsgHandler.hpp"
+#include "RefereeHandler.hpp"
 
-#define EVENT_MASK (RTT_READY_EVENT | RC_READY_EVENT | TP_READY_EVENT)
+#define EVENT_MASK (RTT_READY_EVENT | RC_READY_EVENT | TP_READY_EVENT | REFEREE_READY_EVENT)
+
 class Cmd {
 public:
     Cmd();
@@ -27,4 +29,5 @@ private:
     RTTMsgHandler rttHandler_;
     TpMsgHandler tpHandler_;
     PcMsgHandler pcHandler_;
+    RefereeHandler refereeHandler_;
 };
