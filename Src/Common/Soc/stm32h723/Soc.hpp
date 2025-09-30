@@ -15,7 +15,7 @@
 #define RX_FIFO1    FDCAN_RX_FIFO1
 
 /*uart*/
-#define SOC_UART_DMA_DR      _huart->Instance->RDR
+#define SOC_UART_DMA_DR      huart_->Instance->RDR
 #define RS485_DIR1_Pin       GPIO_PIN_4
 #define RS485_DIR1_GPIO_Port GPIOD
 #define SET_485_1_DE_UP() \
@@ -40,3 +40,6 @@ enum DmaRam_e { SRAM, SRAM_D2 };
 
 #define Power_OUT3_ON  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET)
 #define Power_OUT3_OFF HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET)
+
+/*usb*/
+#define SOC_USB_HS

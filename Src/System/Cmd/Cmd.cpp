@@ -1,9 +1,8 @@
 #include "Cmd.hpp"
 #include "MsgImpl.hpp"
 #include "StmLog.hpp"
-#include "sdkconfig.h"
 
-Cmd::Cmd() : eventGroup_(xEventGroupCreate())
+Cmd::Cmd() : eventGroup_(xEventGroupCreate()), rcHandler_(&RC_UART)
 {
     msgBus_.chassisQueue = xQueueCreate(30, sizeof(ChassisMsg_s));
     msgBus_.gimbalQueue = xQueueCreate(30, sizeof(GimbalMsg_s));
@@ -13,8 +12,9 @@ Cmd::Cmd() : eventGroup_(xEventGroupCreate())
     rttHandler_.init(&msgBus_, eventGroup_);
     rcHandler_.init(&msgBus_, eventGroup_);
     pcHandler_.init(&msgBus_, eventGroup_);
-    if constexpr (APP_USE_REFEREE)
-        refereeHandler_.init(&msgBus_, eventGroup_);
+#if defined APP_USE_REFEREE
+    refereeHandler_.init(&msgBus_, eventGroup_);
+#endif
 
     xTaskCreate(Cmd::task, "cmd_task", 256, this, 1, nullptr);
 
@@ -38,12 +38,12 @@ void Cmd::parseMsg()
     }
     if (xBits & PC_READY_EVENT) {
         pcHandler_.handle();
-        if constexpr (APP_USE_REFEREE) {
-            if (xBits & REFEREE_READY_EVENT) {
-                refereeHandler_.handle();
-            }
-        }
     }
+#if defined APP_USE_REFEREE
+    if (xBits & REFEREE_READY_EVENT) {
+        refereeHandler_.handle();
+    }
+#endif
 }
 
 void Cmd::task(void *_param)
