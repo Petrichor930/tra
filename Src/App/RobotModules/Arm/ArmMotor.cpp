@@ -116,8 +116,8 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
                               .torqPID = nullptr,
                               .isReverse = false };
 
-    motors.utMotor =
-            new UTMOTOR::UT80106("joint1", ut80106Config, &UNITREE_DMA);
+    motors.utMotor = new UTMOTOR::UT80106("joint1", ut80106Config,
+                                          &UNITREE_UART, &UNITREE_DMA);
     motors.dmMotor1 = new DMMOTOR::DM8009("joint2", dmJointConf2);
     motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf3);
     motors.dmMotor3 = new DMMOTOR::DM4310("joint4", dmJointConf4);
