@@ -37,7 +37,11 @@ add_subdirectory(Src/Utils)
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE Src/PinyCore.cpp)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE Src Lib/CMSIS-DSP/Include)
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC Src
+                                                         Lib/CMSIS-DSP/Include)
+
+target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC
+                        ${CMAKE_SOURCE_DIR}/Lib/CMSIS-DSP/Lib)
 
 target_link_libraries(
   ${CMAKE_PROJECT_NAME} Extensions Bsp utils freertos_kernel
