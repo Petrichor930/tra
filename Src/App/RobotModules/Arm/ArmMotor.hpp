@@ -4,6 +4,7 @@
 #include "ArmKinematic.hpp"
 #include "UTMotor.hpp"
 #include "DMMotor.hpp"
+#include "MTMotor.hpp"
 #include "MotorManager.hpp"
 #include "ARMSafety.hpp"
 #include "Smooth.hpp"
@@ -27,9 +28,11 @@ typedef union {
     struct {
         PINYMOTOR::UTMOTOR::UTMotor *utMotor;
         PINYMOTOR::DMMOTOR::DMMotor *dmMotor1;
-        PINYMOTOR::DMMOTOR::DMMotor *dmMotor2;
+        // PINYMOTOR::DMMOTOR::DMMotor *dmMotor2;
+        PINYMOTOR::MTMOTOR::MTMotor *mtMotor2;
         PINYMOTOR::DMMOTOR::DMMotor *dmMotor3;
-        PINYMOTOR::DMMOTOR::DMMotor *dmMotor4;
+        // PINYMOTOR::DMMOTOR::DMMotor *dmMotor4;
+        PINYMOTOR::MTMOTOR::MTMotor *mtMotor4;
         PINYMOTOR::DMMOTOR::DMMotor *dmMotor5;
         PINYMOTOR::DJIMOTOR::DJIMotor *djMotor;
     };

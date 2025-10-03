@@ -9,6 +9,8 @@
 #include "DM4310.hpp"
 #include "DM8009.hpp"
 #include "UT8010_6.hpp"
+#include "RMD-X4-36.hpp"
+#include "RMD-X2-7.hpp"
 
 #include "GM6020.hpp"
 #include "MotorCommonMacros.hpp"
@@ -60,16 +62,27 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
                                   .torqPID = nullptr,
                                   .isReverse = false };
 
-    InitConfig_s dmJointConf3 = { .pComHandle =
-                                          reinterpret_cast<uint32_t *>(&HCAN2),
-                                  .comType = PINYMOTOR::ComType_e::FDCAN,
-                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
-                                  .offsetId = static_cast<uint8_t>(3),
-                                  .txFreq = 500.0f,
-                                  .posPID = nullptr,
-                                  .velPID = nullptr,
-                                  .torqPID = nullptr,
-                                  .isReverse = true };
+    InitConfig_s mtConfig3 = { .pComHandle =
+                                       reinterpret_cast<uint32_t *>(&HCAN3),
+                               .comType = PINYMOTOR::ComType_e::CAN,
+                               .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                               .offsetId = static_cast<uint8_t>(3),
+                               .txFreq = 500.0f,
+                               .posPID = nullptr,
+                               .velPID = nullptr,
+                               .torqPID = nullptr,
+                               .isReverse = true };
+
+    // InitConfig_s dmJointConf3 = { .pComHandle =
+    //                                       reinterpret_cast<uint32_t *>(&HCAN2),
+    //                               .comType = PINYMOTOR::ComType_e::FDCAN,
+    //                               .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+    //                               .offsetId = static_cast<uint8_t>(3),
+    //                               .txFreq = 500.0f,
+    //                               .posPID = nullptr,
+    //                               .velPID = nullptr,
+    //                               .torqPID = nullptr,
+    //                               .isReverse = true };
 
     InitConfig_s dmJointConf4 = { .pComHandle =
                                           reinterpret_cast<uint32_t *>(&HCAN2),
@@ -82,16 +95,27 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
                                   .torqPID = nullptr,
                                   .isReverse = false };
 
-    InitConfig_s dmJointConf5 = { .pComHandle =
-                                          reinterpret_cast<uint32_t *>(&HCAN2),
-                                  .comType = PINYMOTOR::ComType_e::FDCAN,
-                                  .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
-                                  .offsetId = static_cast<uint8_t>(5),
-                                  .txFreq = 500.0f,
-                                  .posPID = nullptr,
-                                  .velPID = nullptr,
-                                  .torqPID = nullptr,
-                                  .isReverse = false };
+    InitConfig_s mtConfig5 = { .pComHandle =
+                                       reinterpret_cast<uint32_t *>(&HCAN3),
+                               .comType = PINYMOTOR::ComType_e::CAN,
+                               .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+                               .offsetId = static_cast<uint8_t>(5),
+                               .txFreq = 500.0f,
+                               .posPID = nullptr,
+                               .velPID = nullptr,
+                               .torqPID = nullptr,
+                               .isReverse = false };
+
+    // InitConfig_s dmJointConf5 = { .pComHandle =
+    //                                       reinterpret_cast<uint32_t *>(&HCAN2),
+    //                               .comType = PINYMOTOR::ComType_e::FDCAN,
+    //                               .workMode = PINYMOTOR::WorkMode_e::PDESVDES,
+    //                               .offsetId = static_cast<uint8_t>(5),
+    //                               .txFreq = 500.0f,
+    //                               .posPID = nullptr,
+    //                               .velPID = nullptr,
+    //                               .torqPID = nullptr,
+    //                               .isReverse = false };
 
     InitConfig_s dmJointConf6 = { .pComHandle =
                                           reinterpret_cast<uint32_t *>(&HCAN2),
@@ -119,9 +143,11 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
     motors.utMotor = new UTMOTOR::UT80106("joint1", ut80106Config,
                                           &UNITREE_UART, &UNITREE_DMA);
     motors.dmMotor1 = new DMMOTOR::DM8009("joint2", dmJointConf2);
-    motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf3);
+    // motors.dmMotor2 = new DMMOTOR::DM8009("joint3", dmJointConf3);
+    motors.mtMotor2 = new MTMOTOR::RMDX436("joint3", mtConfig3);
     motors.dmMotor3 = new DMMOTOR::DM4310("joint4", dmJointConf4);
-    motors.dmMotor4 = new DMMOTOR::DM4310("joint5", dmJointConf5);
+    // motors.dmMotor4 = new DMMOTOR::DM4310("joint5", dmJointConf5);
+    motors.mtMotor4 = new MTMOTOR::RMDX27("joint5", mtConfig5);
     motors.dmMotor5 = new DMMOTOR::DM4310("joint6", dmJointConf6);
     motors.djMotor = new DJIMOTOR::GM6020("joint7", gmConfig);
 
@@ -130,7 +156,11 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
     // }
 }
 
-bool Motors::init() { return homingUT(); }
+bool Motors::init()
+{
+    return true;
+    // homingUT();
+}
 
 void Motors::update()
 {
@@ -147,7 +177,7 @@ void Motors::update()
     /* gm6020 run multi cirang */
     current_joints.j[6] = motors.all_motors[6]->data().multipCirAng;
     /*平行四边形关系 - 确保关节3角度在安全范围内*/
-    // biasJoint3Angle(); TODO:BUG
+    biasJoint3Angle();
 }
 
 void Motors::stop()
@@ -159,6 +189,9 @@ void Motors::stop()
 
 void Motors::enable()
 {
+    unitreeAngleFix = motors.utMotor->data().multipCirAng;
+    motors.utMotor->setKp(0.5f);
+    motors.utMotor->setKd(0.02f);
     for (auto &motor : motors.all_motors) {
         motor->cmd(MotorCmdType_e::ON);
     }
@@ -179,8 +212,8 @@ void Motors::ctrl(const Joint7D &_target_joints)
 
 void Motors::biasJoint3Angle()
 {
-    jointInfos[2].angle_min = joint3HighPoint(current_joints.j[1]);
-    jointInfos[2].angle_max = joint3LowPoint(current_joints.j[1]);
+    jointInfos[2].angle_max = -joint3HighPoint(current_joints.j[1]);
+    jointInfos[2].angle_min = -joint3LowPoint(current_joints.j[1]);
 }
 
 float Motors::joint3HighPoint(float _target)
