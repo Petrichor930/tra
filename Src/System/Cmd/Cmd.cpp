@@ -1,8 +1,13 @@
 #include "Cmd.hpp"
 #include "MsgImpl.hpp"
 #include "StmLog.hpp"
+#include "TpMsgHandler.hpp"
+#include "sdkconfig.h"
 
-Cmd::Cmd() : eventGroup_(xEventGroupCreate()), rcHandler_(&RC_UART)
+Cmd::Cmd()
+        : eventGroup_(xEventGroupCreate())
+        , rcHandler_(&RC_UART)
+        , tpHandler_(&RC_UART, &EXTENSION_UART_HANDLE)
 {
     msgBus_.chassisQueue = xQueueCreate(30, sizeof(ChassisMsg_s));
     msgBus_.gimbalQueue = xQueueCreate(30, sizeof(GimbalMsg_s));
@@ -11,6 +16,7 @@ Cmd::Cmd() : eventGroup_(xEventGroupCreate()), rcHandler_(&RC_UART)
 
     rttHandler_.init(&msgBus_, eventGroup_);
     rcHandler_.init(&msgBus_, eventGroup_);
+    tpHandler_.init(&msgBus_, eventGroup_);
     pcHandler_.init(&msgBus_, eventGroup_);
 #if defined APP_USE_REFEREE
     refereeHandler_.init(&msgBus_, eventGroup_);

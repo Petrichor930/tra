@@ -6,32 +6,29 @@
 #include "Crc.hpp"
 #include "Bsp_uart.hpp"
 #include "Bsp_dma.hpp"
+#include "RefereeProt.hpp"
 
 namespace TP {
 
-TeachPendant::TeachPendant()
+TP::TP(UART_HandleTypeDef *_huart) : uart_(_huart)
 {
     memset(&teachJoint_, 0, sizeof(teachJoint_));
-    //init parsed data
 }
 
-void TeachPendant::init(UART_HandleTypeDef *_huart, EventGroupHandle_t _event)
+void TP::init(EventGroupHandle_t _event)
 {
-    uart_ = _huart;
     event_ = _event;
     tpRxData = (VtTpFrame_t *)Dma::instance().ram_alloc(sizeof(VtTpFrame_t));
-    Uart::instance().RecvDmaInit(_huart, (uint32_t *)tpRxData,
-                                 sizeof(VtTpFrame_t));
-    Uart::instance().registerCallback(_huart,
-                                      &TeachPendant::rawCallBackFromISR);
+
+    uart_.recvDmaInit((uint32_t *)tpRxData, sizeof(VtTpFrame_t));
+    uart_.registerCallback(
+            [this](UART_HandleTypeDef *_huart, uint16_t _dataLength) {
+                callBackFromISR(_huart, _dataLength);
+            });
 }
 
-void TeachPendant::rawCallBackFromISR(UART_HandleTypeDef *_huart, uint16_t _pos)
-{
-    TeachPendant::instance().callBackFromISR(_huart, _pos);
-}
 
-void TeachPendant::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
+void TP::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     BaseType_t higherPriorityTaskWoken = pdFALSE;
@@ -42,17 +39,15 @@ void TeachPendant::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
     __HAL_DMA_DISABLE_IT(_uart->hdmarx, DMA_IT_HT); // NOLINT
 }
 
-//handle
-void TeachPendant::convert()
+void TP::convert()
 {
-    //need referee
-    // if (Verify_CRC8_Check_Sum((uint8_t *)tpRxData,
-    //                           sizeof(frame_header_t)) &&
-    //     Verify_CRC16_Check_Sum((uint8_t *)tpRxData, sizeof(VtTpFrame_t))) {
-    //     for (uint8_t i = 0; i < 7; i++) {
-    //         teachJoint_.joint[i] = tpRxData->tpData.joint[i];
-    //     }
-    // }
+    if (Verify_CRC8_Check_Sum((uint8_t *)tpRxData,
+                              sizeof(REFEREE::FrameHeader_s)) &&
+        Verify_CRC16_Check_Sum((uint8_t *)tpRxData, sizeof(VtTpFrame_t))) {
+        for (uint8_t i = 0; i < 7; i++) {
+            teachJoint_.joint[i] = tpRxData->tpData.joint[i];
+        }
+    }
 }
 
 } // namespace TP

@@ -5,38 +5,29 @@
 #include <cstdint>
 #include <FreeRTOS.h>
 #include "event_groups.h"
+#include "Bsp.hpp"
 
 
-#define TP_READY_EVENT (1 << 2) // 示教器事件
+#define TP_READY_EVENT (1 << 2)
 
 namespace TP {
 
-class TeachPendant {
+class TP {
 private:
-    TeachPendant();
     TpCtrl_t teachJoint_;
-    UART_HandleTypeDef *uart_;
     VtTpFrame_t *tpRxData;
     EventGroupHandle_t event_;
+    Uart uart_;
 
 public:
-    TeachPendant(const TeachPendant &) = delete;
-    TeachPendant &operator=(const TeachPendant &) = delete;
+    TP(UART_HandleTypeDef *_huart);
+    void init(EventGroupHandle_t _event);
 
     TpCtrl_t &getData() { return teachJoint_; }
-    static TeachPendant &instance()
-    {
-        static TeachPendant instance_;
-        return instance_;
-    }
 
-    void init(UART_HandleTypeDef *_huart, EventGroupHandle_t _event);
     void callBackFromISR(UART_HandleTypeDef *_huart, uint16_t _pos);
     static void rawCallBackFromISR(UART_HandleTypeDef *_huart, uint16_t _Pos);
     void convert();
-
-    // BUG: extension file can't find app file, don't use Joint7D
-    // const Joint7D homePose = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
 };
 
 } // namespace TP
