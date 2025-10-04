@@ -21,11 +21,12 @@ using namespace PINYMOTOR;
 
 constexpr float F_PI = std::numbers::pi_v<float>;
 
-IncrementalPid motorPids[4] = { IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
-                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
-                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f, 0.0f),
-                                IncrementalPid(0.90f, 0.002f, 0.f, 4.0f,
-                                               0.0f) };
+IncrementalPid motorPids[4] = {
+    IncrementalPid(0.0024f, 0.00002f, 0.f, 1.0f, 0.8f),
+    IncrementalPid(0.0024f, 0.00002f, 0.f, 1.0f, 0.8f),
+    IncrementalPid(0.0024f, 0.00002f, 0.f, 1.0f, 0.8f),
+    IncrementalPid(0.0024f, 0.00002f, 0.f, 1.0f, 0.8f)
+};
 
 // IncrementalPid motorPids[4] = { IncrementalPid(0.91f, 0.002f, 0.f, 4.0f, 0.0f),
 //                                 IncrementalPid(0.91f, 0.002f, 0.f, 4.0f, 0.0f),
@@ -115,14 +116,7 @@ WheelsSpeed_u Mecanum::reverse(const Speed_u &_speed)
 
 void Mecanum::ctrl(const Speed_u &_refSpeed)
 {
-    float cosYaw = arm_cos_f32(deltaYaw_);
-    float sinYaw = arm_sin_f32(deltaYaw_);
-    Speed_u refSpeed = {
-        .vx = (_refSpeed.vx * cosYaw) - (_refSpeed.vy * sinYaw),
-        .vy = (_refSpeed.vy * cosYaw) + (_refSpeed.vx * sinYaw),
-        .wz = _refSpeed.wz
-    };
-    WheelsSpeed_u refWSpeed = reverse(refSpeed);
+    WheelsSpeed_u refWSpeed = reverse(_refSpeed);
 
     for (uint8_t i = 0; i < 4; i++) {
         motors_._[i]->cmdVel(rpm2radps(refWSpeed._[i]));

@@ -10,9 +10,9 @@ enum FSMMode_e : uint8_t;
 
 class Chassis {
 public:
-    static constexpr float MAX_VX_SPEED = 2.f;
-    static constexpr float MAX_VY_SPEED = 2.f;
-    static constexpr float MAX_WZ_SPEED = 3.f;
+    static constexpr float MAX_VX_SPEED = 18.f;
+    static constexpr float MAX_VY_SPEED = 18.f;
+    static constexpr float MAX_WZ_SPEED = 30.f;
     static constexpr float MOUSE_CAL = 200.f;
 
     void update(void *_param);
