@@ -35,7 +35,6 @@ class RcMsgHandler : public Handler {
     } RcMsg_t;
 
 public:
-    RcMsgHandler(UART_HandleTypeDef *_huart);
     void init(MsgBus_s *_bus, EventGroupHandle_t _event) override;
     void handle() override;
     void notify(Msg *_msg, QueueHandle_t _queue) override;
@@ -46,8 +45,6 @@ protected:
 private:
     static constexpr float S_CURVE_ACC = 2.0f;
     // static constexpr uint8_t T_ACC_CNT = 100;
-
-    RC::Rc rc_;
 
     RcMsg_t rcMsg_ = {};
 

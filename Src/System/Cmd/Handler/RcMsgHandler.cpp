@@ -16,8 +16,6 @@
 #include <cmath>
 #include <cstring>
 
-RcMsgHandler::RcMsgHandler(UART_HandleTypeDef *_huart) : rc_(_huart) {};
-
 
 void RcMsgHandler::updateRocker(float &_target, float _channel)
 {
@@ -29,14 +27,15 @@ void RcMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
 {
     msgBus_ = _bus;
     this->event = _event;
-    rc_.init(_event);
+    rc = std::make_unique<RC::Rc>(&RC_UART);
+    rc->init(_event);
 }
 
 
 void RcMsgHandler::handle()
 {
-    rc_.parseData();
-    RC::RcRawMsg_t rcData = rc_.getData();
+    rc->parseData();
+    RC::RcRawMsg_t rcData = rc->getData();
 
     updateRocker(rcMsg_.rx, (float)rcData.rc.ch0);
     updateRocker(rcMsg_.ry, (float)rcData.rc.ch1);
@@ -58,15 +57,15 @@ void RcMsgHandler::handle()
         if (rcData.rc.switchLeft == RC_SW_DOWN) {
             cmsg.state = CHASSIS::FSMState_e::RUN;
             cmsg.vx = sCurve(Chassis::MAX_VX_SPEED, rcMsg_.ry);  // Scale to m/s
-            cmsg.vy = sCurve(Chassis::MAX_VY_SPEED, rcMsg_.rx);  // Scale to m/s
+            cmsg.vy = sCurve(Chassis::MAX_VY_SPEED, -rcMsg_.rx); // Scale to m/s
             cmsg.yaw = sCurve(Chassis::MAX_WZ_SPEED, rcMsg_.lx); // Scale to m/s
         } else if (rcData.rc.switchLeft == RC_SW_MID) {
-            amsg.target.j[0] = -rcMsg_.rx / 314 / 200;
+            amsg.target.j[0] = rcMsg_.rx / 314 / 200;
             amsg.target.j[1] = rcMsg_.ry / 314 / 100;
-            amsg.target.j[2] = rcMsg_.ly / 314 / 50;
+            amsg.target.j[2] = rcMsg_.ly / 314 / 150;
             amsg.target.j[3] = rcMsg_.lx / 314 / 50;
         } else if (rcData.rc.switchLeft == RC_SW_UP) {
-            amsg.target.j[4] = rcMsg_.lx / 314 / 50;
+            amsg.target.j[4] = -rcMsg_.lx / 314 / 100;
             amsg.target.j[5] = rcMsg_.ly / 314 / 50;
             amsg.target.j[6] = rcMsg_.rx / 314 / 50;
             if (rcData.rc.ch1 == -660) {

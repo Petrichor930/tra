@@ -1,27 +1,24 @@
 #include "TpMsgHandler.hpp"
 #include "Arm.hpp"
-#include "Rc.hpp" // 获取遥控器状态判断是否在示教模式
+#include "Rc.hpp"
+#include "Tp.hpp"
 #include "Pump.hpp"
 #include "sdkconfig.h"
 #include <cstdint>
 
-TpMsgHandler::TpMsgHandler(UART_HandleTypeDef *_rchuart,
-                           UART_HandleTypeDef *_tphuart)
-        : rc_(_rchuart), tp_(_tphuart)
-{
-}
 
 void TpMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
 {
     msgBus_ = _bus;
     this->event = _event;
+    tp = std::make_unique<TP::Tp>(&EXTENSION_UART_HANDLE);
 }
 
 void TpMsgHandler::handle()
 {
-    tp_.convert();
-    TpCtrl_t tpData = tp_.getData();
-    RC::RcRawMsg_t rcData = rc_.getData();
+    tp->convert();
+    TpCtrl_t tpData = tp->getData();
+    RC::RcRawMsg_t rcData = rc->getData();
 
     if (rcData.rc.switchLeft == RC_SW_UP) {
         if (!teachModeActive && rcData.rc.ch1 == 660) {

@@ -10,12 +10,12 @@
 
 namespace TP {
 
-TP::TP(UART_HandleTypeDef *_huart) : uart_(_huart)
+Tp::Tp(UART_HandleTypeDef *_huart) : uart_(_huart)
 {
     memset(&teachJoint_, 0, sizeof(teachJoint_));
 }
 
-void TP::init(EventGroupHandle_t _event)
+void Tp::init(EventGroupHandle_t _event)
 {
     event_ = _event;
     tpRxData = (VtTpFrame_t *)Dma::instance().ram_alloc(sizeof(VtTpFrame_t));
@@ -28,7 +28,7 @@ void TP::init(EventGroupHandle_t _event)
 }
 
 
-void TP::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
+void Tp::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     BaseType_t higherPriorityTaskWoken = pdFALSE;
@@ -39,7 +39,7 @@ void TP::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
     __HAL_DMA_DISABLE_IT(_uart->hdmarx, DMA_IT_HT); // NOLINT
 }
 
-void TP::convert()
+void Tp::convert()
 {
     if (Verify_CRC8_Check_Sum((uint8_t *)tpRxData,
                               sizeof(REFEREE::FrameHeader_s)) &&

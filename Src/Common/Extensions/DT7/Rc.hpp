@@ -21,6 +21,8 @@
 #include "main.h"
 #include "event_groups.h"
 #include "Bsp.hpp"
+#include <memory>
+
 
 #define RC_READY_EVENT (1 << 1)
 
@@ -49,3 +51,5 @@ public:
 };
 
 } // namespace RC
+
+inline std::unique_ptr<RC::Rc> rc;

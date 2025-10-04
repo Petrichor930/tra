@@ -6,13 +6,14 @@
 #include <FreeRTOS.h>
 #include "event_groups.h"
 #include "Bsp.hpp"
+#include <memory>
 
 
 #define TP_READY_EVENT (1 << 2)
 
 namespace TP {
 
-class TP {
+class Tp {
 private:
     TpCtrl_t teachJoint_;
     VtTpFrame_t *tpRxData;
@@ -20,7 +21,7 @@ private:
     Uart uart_;
 
 public:
-    TP(UART_HandleTypeDef *_huart);
+    Tp(UART_HandleTypeDef *_huart);
     void init(EventGroupHandle_t _event);
 
     TpCtrl_t &getData() { return teachJoint_; }
@@ -31,3 +32,5 @@ public:
 };
 
 } // namespace TP
+
+inline std::unique_ptr<TP::Tp> tp;
