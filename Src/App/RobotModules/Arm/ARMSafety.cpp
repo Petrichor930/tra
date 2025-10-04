@@ -9,9 +9,9 @@ namespace ARM {
 void Safety::setSpeed(const float _speed)
 {
     motors_.ref_speed.joint2 = _speed;
-    motors_.ref_speed.joint3 = _speed;
+    motors_.ref_speed.joint3 = _speed * 5.f;
     motors_.ref_speed.joint4 = _speed;
-    motors_.ref_speed.joint5 = _speed * 1.5f;
+    motors_.ref_speed.joint5 = _speed * 10.f;
     motors_.ref_speed.joint6 = _speed * 1.5f;
 }
 

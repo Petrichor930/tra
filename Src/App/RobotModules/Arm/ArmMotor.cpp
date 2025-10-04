@@ -27,8 +27,8 @@ using namespace PINYMOTOR;
 using namespace ARM;
 
 
-IncrementalPid joint7PosPid(4.3f, 0.0f, 3.3f, 200.f, 0.003f);
-IncrementalPid joint7VelPid(0.004f, 0.002f, 0.f, 25.2f, 0.01f);
+IncrementalPid joint7PosPid(260.f, 0.0f, 260.f, 200.f, 0.004f);
+IncrementalPid joint7VelPid(0.26f, 0.0026f, 0.f, 25.2f, 0.01f);
 
 Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
 {
@@ -156,11 +156,7 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
     // }
 }
 
-bool Motors::init()
-{
-    return true;
-    // homingUT();
-}
+bool Motors::init() { return homingUT(); }
 
 void Motors::update()
 {
@@ -189,9 +185,6 @@ void Motors::stop()
 
 void Motors::enable()
 {
-    unitreeAngleFix = motors.utMotor->data().multipCirAng;
-    motors.utMotor->setKp(0.5f);
-    motors.utMotor->setKd(0.02f);
     for (auto &motor : motors.all_motors) {
         motor->cmd(MotorCmdType_e::ON);
     }

@@ -35,7 +35,7 @@ void Arm::update()
     if (xQueueReceive(cmd->getMsgBus()->armQueue, &msg_, 0) == pdTRUE) {
         uint32_t i = 0;
     }
-    // xQueueReceive(cmd.getMsgBus()->tpQueue, &tpmsg_, 0);
+    xQueueReceive(cmd->getMsgBus()->tpQueue, &tpmsg_, 0);
     motors.update();
     stateFactory_.update();
 }
