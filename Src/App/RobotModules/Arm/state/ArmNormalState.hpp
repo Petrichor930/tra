@@ -17,18 +17,19 @@ public:
     void enter() override
     {
         arm_.target_joints = arm_.motors.current_joints;
+
         LOG::info("Normal", "enter");
     }
 
     bool change() override
     {
         if (arm_.msg_.state == FSMState_e::STOP) {
-            isEnabled_ = false;
+            arm_.isEnabled = false; //change中stop
             return true;
         }
-        if (!isEnabled_) {
+        if (!arm_.isEnabled) {
             arm_.motors.enable();
-            isEnabled_ = true;
+            arm_.isEnabled = true;
             LOG::info("Normal", "motor enabled, start homing");
             return false;
         }
@@ -63,7 +64,6 @@ public:
 
 private:
     Arm &arm_;
-    bool isEnabled_ = false;
 };
 
 } // namespace ARM

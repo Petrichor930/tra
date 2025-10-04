@@ -12,6 +12,7 @@ public:
     void enter() override
     {
         arm_.motors.stop();
+        arm_.isEnabled = false;
         LOG::info("Stop", "enter");
     }
 

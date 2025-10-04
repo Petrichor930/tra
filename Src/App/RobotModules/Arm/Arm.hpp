@@ -59,6 +59,8 @@ public:
 
     Joint7D target_joints = {};
 
+    bool isEnabled = false;
+
 private:
     ARM::RouteData_s RouteDta = {};
     Dwt dwt = Dwt::instance();
