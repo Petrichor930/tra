@@ -2,6 +2,7 @@
 #include "Rc.hpp"
 #include "Handler.hpp"
 #include "Arm.hpp"
+#include "Pump.hpp"
 
 
 class RcMsgHandler : public Handler {
@@ -55,4 +56,6 @@ private:
     MsgBus_s *msgBus_;
 
     bool isTpActivated_ = false; // 初始化为未激活
+
+    PUMP::Controller pump_;
 };

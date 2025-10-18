@@ -49,7 +49,7 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
                                    .posPID = nullptr,
                                    .velPID = nullptr,
                                    .torqPID = nullptr,
-                                   .isReverse = false };
+                                   .isReverse = true };
 
     InitConfig_s dmJointConf2 = { .pComHandle =
                                           reinterpret_cast<uint32_t *>(&HCAN2),

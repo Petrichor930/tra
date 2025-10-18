@@ -1,6 +1,9 @@
 #include "RcMsgHandler.hpp"
 #include "Arm.hpp"
 
+
+#include "Pump.hpp"
+#include "RcMsg.hpp"
 #include <algorithm>
 #include "sdkconfig.h"
 
@@ -52,6 +55,10 @@ void RcMsgHandler::handle()
     if (rcData.rc.switchRight == RC_SW_DOWN) {
         cmsg.state = CHASSIS::FSMState_e::STOP;
         amsg.state = ARM::FSMState_e::STOP;
+        pump_.apply(PUMP::ALL_OFF);
+        cmsg.vx = 0.f;
+        cmsg.vy = 0.f;
+        cmsg.yaw = 0.f;
     } else if (rcData.rc.switchRight == RC_SW_MID) {
         amsg.state = ARM::FSMState_e::NORMAL;
         if (rcData.rc.switchLeft == RC_SW_DOWN) {
@@ -72,12 +79,8 @@ void RcMsgHandler::handle()
                 amsg.state = ARM::FSMState_e::PLAN;
             }
         }
-    } else {
-        cmsg.state = CHASSIS::FSMState_e::STOP;
-        amsg.state = ARM::FSMState_e::STOP;
-        cmsg.vx = 0.f;
-        cmsg.vy = 0.f;
-        cmsg.yaw = 0.f;
+    } else if (rcData.rc.switchRight == RC_SW_UP) {
+        pump_.apply(PUMP::ALL_ON);
     }
 
     memcpy(&rcMsgPrev_, &rcMsg_, sizeof(rcMsg_));
