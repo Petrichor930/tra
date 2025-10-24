@@ -20,7 +20,7 @@ void Tp::init(EventGroupHandle_t _event)
     event_ = _event;
     tpRxData = (VtTpFrame_t *)Dma::instance().ram_alloc(sizeof(VtTpFrame_t));
 
-    uart_.recvDmaInit((uint32_t *)tpRxData, sizeof(VtTpFrame_t));
+    uart_.recvDmaInit((uint8_t *)tpRxData, sizeof(VtTpFrame_t));
     uart_.registerCallback(
             [this](UART_HandleTypeDef *_huart, uint16_t _dataLength) {
                 callBackFromISR(_huart, _dataLength);
@@ -34,7 +34,7 @@ void Tp::callBackFromISR(UART_HandleTypeDef *_uart, uint16_t _pos)
     BaseType_t higherPriorityTaskWoken = pdFALSE;
     xEventGroupSetBitsFromISR(event_, TP_READY_EVENT, &higherPriorityTaskWoken);
     portYIELD_FROM_ISR(higherPriorityTaskWoken);
-    HAL_UARTEx_ReceiveToIdle_DMA(_uart, (uint8_t *)&tpRxData,
+    HAL_UARTEx_ReceiveToIdle_DMA(_uart, (uint8_t *)tpRxData,
                                  sizeof(VtTpFrame_t));
     __HAL_DMA_DISABLE_IT(_uart->hdmarx, DMA_IT_HT); // NOLINT
 }

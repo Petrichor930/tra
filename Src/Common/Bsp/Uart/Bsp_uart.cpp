@@ -44,12 +44,11 @@ HAL_StatusTypeDef Uart::recvDmaMultiBufInit(uint32_t *_dstAddress,
     return result;
 }
 
-HAL_StatusTypeDef Uart::recvDmaInit(uint32_t *_dstAddress, uint32_t _dataLength)
+HAL_StatusTypeDef Uart::recvDmaInit(uint8_t *_dstAddress, uint32_t _dataLength)
 {
     HAL_StatusTypeDef result = HAL_OK;
     __HAL_UART_ENABLE_IT(huart_, UART_IT_IDLE);
-    result = HAL_UARTEx_ReceiveToIdle_DMA(huart_, (uint8_t *)&_dstAddress,
-                                          _dataLength);
+    result = HAL_UARTEx_ReceiveToIdle_DMA(huart_, _dstAddress, _dataLength);
     __HAL_DMA_DISABLE_IT(huart_->hdmarx, DMA_IT_HT);
     return result;
 }

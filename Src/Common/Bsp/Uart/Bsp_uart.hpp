@@ -27,7 +27,7 @@ public:
     /**
     * @brief uart multi_DMA_rx_buf init
     */
-    HAL_StatusTypeDef recvDmaInit(uint32_t *_dstAddress, uint32_t _dataLength);
+    HAL_StatusTypeDef recvDmaInit(uint8_t *_dstAddress, uint32_t _dataLength);
 
     /**
     * @brief uart rx callbackFromISR
