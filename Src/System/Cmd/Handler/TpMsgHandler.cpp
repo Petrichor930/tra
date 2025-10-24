@@ -12,6 +12,7 @@ void TpMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
     msgBus_ = _bus;
     this->event = _event;
     tp = std::make_unique<TP::Tp>(&EXTENSION_UART_HANDLE);
+    tp->init(_event);
 }
 
 void TpMsgHandler::handle()
