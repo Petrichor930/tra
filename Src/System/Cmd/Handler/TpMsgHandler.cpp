@@ -1,6 +1,7 @@
 #include "TpMsgHandler.hpp"
 #include "Arm.hpp"
 #include "Rc.hpp"
+#include "RcMsg.hpp"
 #include "Tp.hpp"
 #include "Pump.hpp"
 #include "sdkconfig.h"
@@ -20,31 +21,35 @@ void TpMsgHandler::handle()
     tp->convert();
     TpCtrl_t tpData = tp->getData();
     RC::RcRawMsg_t rcData = rc->getData();
-
-    if (rcData.rc.switchLeft == RC_SW_UP) {
-        if (!teachModeActive && rcData.rc.ch1 == 660) {
-            teachModeActive = true;
-        }
+    if (rcData.rc.switchRight == RC_SW_DOWN) {
+        armMsg_.state = ARM::FSMState_e::STOP;
     } else {
-        teachModeActive = false;
-    } // tp can move arm only when left switch is up and chassis is moving
-
-    teachModeActive = (rcData.rc.switchLeft == RC_SW_DOWN) ||
-                      (rcData.rc.switchLeft == RC_SW_UP && teachModeActive);
-
-    armMsg_.state = ARM::FSMState_e::STOP;
-
-    if (teachModeActive) {
-        armMsg_.state = ARM::FSMState_e::TEACH;
-
-        for (uint8_t i = 0; i < 7; ++i) {
-            armMsg_.target.j[0] = tpData.joint[0];
-        }
-
-        if (tpData.push == 1) {
-            armMsg_.pumpState = PUMP::State_e::ON;
+        if (rcData.rc.switchLeft == RC_SW_UP) {
+            if (!teachModeActive && rcData.rc.ch1 == 660) {
+                teachModeActive = true;
+            }
         } else {
-            armMsg_.pumpState = PUMP::State_e::OFF;
+            teachModeActive = false;
+        } // tp can move arm only when left switch is up and chassis is moving
+
+
+        teachModeActive = (rcData.rc.switchLeft == RC_SW_DOWN) ||
+                          (rcData.rc.switchLeft == RC_SW_UP && teachModeActive);
+
+        // armMsg_.state = ARM::FSMState_e::STOP;
+
+        if (teachModeActive) {
+            armMsg_.state = ARM::FSMState_e::TEACH;
+
+            for (uint8_t i = 0; i < 7; ++i) {
+                armMsg_.target.j[i] = tpData.joint[i];
+            }
+
+            if (tpData.push == 1) {
+                armMsg_.pumpState = PUMP::State_e::ON;
+            } else {
+                armMsg_.pumpState = PUMP::State_e::OFF;
+            }
         }
     }
 

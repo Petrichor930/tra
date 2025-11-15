@@ -42,11 +42,14 @@ public:
 
 protected:
     static void updateRocker(float &_target, float _channel);
+    static void kupdateRocker(float &_target, float _channel);
+
 
 private:
     static constexpr float S_CURVE_ACC = 2.0f;
     // static constexpr uint8_t T_ACC_CNT = 100;
 
+    uint32_t isKeyPressed(uint16_t _key);
     RcMsg_t rcMsg_ = {};
 
     RcMsg_t rcMsgPrev_ = {};
@@ -56,6 +59,8 @@ private:
     MsgBus_s *msgBus_;
 
     bool isTpActivated_ = false; // 初始化为未激活
+
+    float  accK_ = 1.f;
 
     PUMP::Controller pump_;
 };

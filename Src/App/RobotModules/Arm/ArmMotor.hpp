@@ -52,6 +52,7 @@ class Motors {
 
 public:
     Motors();
+    void utinit();
     bool init();
     void update();
     void stop();

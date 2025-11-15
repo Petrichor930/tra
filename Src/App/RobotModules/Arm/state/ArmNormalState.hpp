@@ -7,6 +7,7 @@
 #include "Arm.hpp"
 #include "ArmMotor.hpp"
 #include "StmLog.hpp"
+#include <cstdint>
 
 namespace ARM {
 
@@ -16,13 +17,17 @@ public:
 
     void enter() override
     {
-        arm_.target_joints = arm_.motors.current_joints;
+        arm_.target_joints.j[0] = 0.f;
+        for (uint8_t i = 1; i < 7; i++) {
+            arm_.target_joints.j[i] = arm_.motors.current_joints.j[i];
+        }
 
         LOG::info("Normal", "enter");
     }
 
     bool change() override
     {
+        // arm_.motors.utinit();
         if (arm_.msg_.state == FSMState_e::STOP) {
             arm_.isEnabled = false; //change中stop
             return true;
@@ -33,6 +38,7 @@ public:
             LOG::info("Normal", "motor enabled, start homing");
             return false;
         }
+
         return arm_.motors.init();
     }
 
@@ -53,10 +59,10 @@ public:
     {
         if (arm_.msg_.state == FSMState_e::STOP)
             return FSMState_e::STOP;
+        else if (arm_.tpmsg_.state == FSMState_e::TEACH)
+            return FSMState_e::TEACH;
         else if (arm_.msg_.state == FSMState_e::NORMAL)
             return FSMState_e::NORMAL;
-        else if (arm_.msg_.state == FSMState_e::TEACH)
-            return FSMState_e::TEACH;
         else if (arm_.msg_.state == FSMState_e::PLAN)
             return FSMState_e::PLAN;
         return FSMState_e::STOP;

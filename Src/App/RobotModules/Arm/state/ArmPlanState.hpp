@@ -32,7 +32,7 @@ public:
             return FSMState_e::NORMAL;
         } else if (arm_.tpmsg_.state == FSMState_e::TEACH) {
             return FSMState_e::TEACH;
-        } else if (arm_.tpmsg_.state == FSMState_e::PLAN) {
+        } else if (arm_.msg_.state == FSMState_e::PLAN) {
             return FSMState_e::PLAN;
         }
         return FSMState_e::STOP;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include <functional>
 
 class AppManager {
@@ -24,5 +24,5 @@ private:
     AppManager() = default;
     void createApp();
 
-    std::list<std::function<void()> > tasks;
+    std::vector<std::function<void()> > tasks;
 };

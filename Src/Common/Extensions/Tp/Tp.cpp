@@ -19,7 +19,8 @@ void Tp::init(EventGroupHandle_t _event)
 {
     event_ = _event;
     tpRxData = (VtTpFrame_t *)Dma::instance().ram_alloc(sizeof(VtTpFrame_t));
-
+    __HAL_UART_CLEAR_FEFLAG(&huart9);       // 清除帧错误标志
+    huart9.ErrorCode = HAL_UART_ERROR_NONE; // 重置错误码
     uart_.recvDmaInit((uint8_t *)tpRxData, sizeof(VtTpFrame_t));
     uart_.registerCallback(
             [this](UART_HandleTypeDef *_huart, uint16_t _dataLength) {

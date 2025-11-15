@@ -19,10 +19,15 @@
 #include <cmath>
 #include <cstring>
 
-
+RC::RcRawMsg_t arcData;
 void RcMsgHandler::updateRocker(float &_target, float _channel)
 {
     float delta = (_channel * T_ACC_CNT / 660.0f) - _target;
+    _target += std::fmax(-S_CURVE_ACC, std::fmin(S_CURVE_ACC, delta));
+}
+void RcMsgHandler::kupdateRocker(float &_target, float _channel)
+{
+    float delta = (_channel * T_ACC_CNT) - _target;
     _target += std::fmax(-S_CURVE_ACC, std::fmin(S_CURVE_ACC, delta));
 }
 
@@ -34,12 +39,17 @@ void RcMsgHandler::init(MsgBus_s *_bus, EventGroupHandle_t _event)
     rc->init(_event);
 }
 
+uint32_t RcMsgHandler::isKeyPressed(uint16_t _key)
+{
+    RC::RcRawMsg_t rcData = rc->getData();
+    return ((rcData.keyboard.keyCode & _key) == _key);
+}
 
 void RcMsgHandler::handle()
 {
     rc->parseData();
     RC::RcRawMsg_t rcData = rc->getData();
-
+    arcData = rcData;
     updateRocker(rcMsg_.rx, (float)rcData.rc.ch0);
     updateRocker(rcMsg_.ry, (float)rcData.rc.ch1);
     updateRocker(rcMsg_.lx, (float)rcData.rc.ch2);
@@ -80,7 +90,50 @@ void RcMsgHandler::handle()
             }
         }
     } else if (rcData.rc.switchRight == RC_SW_UP) {
-        pump_.apply(PUMP::ALL_ON);
+        // pump_.apply(PUMP::ALL_ON);
+        cmsg.state = CHASSIS::FSMState_e::RUN;
+
+        if (isKeyPressed(RC::SHIFT))
+            accK_ = 1.5f;
+        else
+            accK_ = 1.f;
+
+        if (isKeyPressed(RC::W)) {
+            kupdateRocker(rcMsg_.ry, 1); //加速向前，ry 增加并趋近于最大值。
+        } else if (isKeyPressed(RC::S)) {
+            updateRocker(rcMsg_.ry, -1); //加速向后，ry 减少并趋近于最小值。
+        } else {
+            kupdateRocker(rcMsg_.ry, 0); //自然减速回中，ry 向 0 值靠近。
+        }
+
+        if (isKeyPressed(RC::A)) {
+            kupdateRocker(rcMsg_.rx, 1);
+        } else if (isKeyPressed(RC::D)) {
+            kupdateRocker(rcMsg_.rx, -1);
+        } else {
+            kupdateRocker(rcMsg_.rx, 0);
+        }
+
+        if (rcData.rc.switchLeft == 1)
+            kupdateRocker(rcMsg_.lx, -1);
+        else
+            kupdateRocker(rcMsg_.lx, 0);
+
+        if (rcData.rc.switchRight == 1)
+            kupdateRocker(rcMsg_.lx, 1);
+        else
+            kupdateRocker(rcMsg_.lx, 0);
+
+
+        // rcMsg_.lx = ((float)rcData->mouse.y * (GAIN_MOUSE_X));
+        // rcMsg_.ly = -((float)rcData->mouse.x * (GAIN_MOUSE_Y));
+
+        cmsg.vx = sCurve(accK_ * Chassis::MAX_VX_SPEED,
+                         rcMsg_.ry); // Scale to m/s
+        cmsg.vy = sCurve(accK_ * Chassis::MAX_VY_SPEED,
+                         -rcMsg_.rx); // Scale to m/s
+        cmsg.yaw = sCurve(accK_ * Chassis::MAX_WZ_SPEED,
+                          rcMsg_.lx); // Scale to m/s
     }
 
     memcpy(&rcMsgPrev_, &rcMsg_, sizeof(rcMsg_));

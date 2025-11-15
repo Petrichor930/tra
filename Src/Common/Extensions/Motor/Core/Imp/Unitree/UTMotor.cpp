@@ -5,6 +5,7 @@
 #include "StmLog.hpp"
 
 #include "../../../Utils/MotorCommonMacros.hpp"
+#include "UTMotorMsg.hpp"
 
 using namespace PINYMOTOR;
 using namespace UTMOTOR;
@@ -81,19 +82,21 @@ MotorTypeDef_e UTMotor::send(uint16_t _sendId, TransmitMsg_s *_txBuf,
 MotorTypeDef_e UTMotor::parse(Feedback_s *_rxBuf)
 {
     Feedback_s *fb = _rxBuf;
+    Feedback_s a = *fb;
     if (fb->CRC16 != Get_CRC16_Check_Sum((uint8_t *)(fb), 14, 0)) {
+        uart_.receiveDma((uint8_t *)rxBuf_, sizeof(Feedback_s));
+        __HAL_DMA_DISABLE_IT(uart_.hdma_, DMA_IT_HT);
         return 0; //TODO: CRC error
     } else {
         constexpr float B2C = 2 * PI / 32768;
         this->status_.error_ = static_cast<ErrorStatus_e>(fb->mode.status);
-        this->data_.angLast = this->data_.rawAng;
         float noumenaAng = static_cast<float>(fb->fbk.pos) * B2C;
         this->data_.rawAng = regInfo_.isReverse ? (2 * PI) - noumenaAng :
                                                   noumenaAng;
-        float del = this->data_.rawAng - this->data_.zeroAng;
-        this->data_.ang = del < 0 ? del + (2 * std::numbers::pi_v<float>) : del;
+        float del = (this->data_.rawAng - this->data_.zeroAng);
+        this->data_.ang = del;
         this->data_.multipCirAng +=
-                (this->data_.rawAng - this->data_.angLast) / this->rr();
+                (this->data_.ang - this->data_.angLast) / this->rr();
         this->data_.cirNum = this->data_.multipCirAng / (2 * PI);
         this->data_.singleCirAng =
                 rangeMap(this->data_.multipCirAng, 0, (2 * PI));
@@ -104,6 +107,7 @@ MotorTypeDef_e UTMotor::parse(Feedback_s *_rxBuf)
         this->data_.torq = regInfo_.isReverse ? -noumenaTorq : noumenaTorq;
         this->data_.curr = this->data_.torq / status_.Kn;
         this->data_.tempture = fb->fbk.temp;
+        this->data_.angLast = this->data_.ang;
     }
 
     uart_.receiveDma((uint8_t *)rxBuf_, sizeof(Feedback_s));
@@ -163,8 +167,9 @@ MotorTypeDef_e UTMotor::update()
     taskEXIT_CRITICAL();
 
     this->calcRecvFreq();
-    MotorTypeDef_e rslt = ctrl();
-    return rslt;
+    // MotorTypeDef_e rslt = ctrl();
+    // return rslt;
+    return 0;
 }
 
 void UTMotor::setKp(const float _kp) { kp_ = clamp(_kp, 0.0f, 25.599f); }

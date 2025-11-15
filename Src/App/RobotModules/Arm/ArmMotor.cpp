@@ -156,7 +156,19 @@ Motors::Motors() : joint1(0.002, 0), joint7(0.002, 0), safety(*this)
     // }
 }
 
-bool Motors::init() { return homingUT(); }
+void Motors::utinit()
+{
+    motors.utMotor->setZeroAng();
+    ref_speed.joint1 = 0.f;
+    motors.utMotor->setKp(0.1f);
+    motors.utMotor->setKd(0.005f);
+}
+
+bool Motors::init()
+{
+    return true;
+    // return homingUT();
+}
 
 void Motors::update()
 {
@@ -192,6 +204,7 @@ void Motors::enable()
 
 void Motors::ctrl(const Joint7D &_target_joints)
 {
+    unitreeAngleFix = motors.utMotor->data().multipCirAng;
     motors.utMotor->cmdPosVel(_target_joints.j[0] + unitreeAngleFix,
                               ref_speed.joint1);
     motors.all_motors[1]->cmdPosVel(_target_joints.j[1], ref_speed._[1]);
@@ -205,19 +218,19 @@ void Motors::ctrl(const Joint7D &_target_joints)
 
 void Motors::biasJoint3Angle()
 {
-    jointInfos[2].angle_max = -joint3HighPoint(current_joints.j[1]);
-    jointInfos[2].angle_min = -joint3LowPoint(current_joints.j[1]);
+    jointInfos[2].angle_max = joint3HighPoint(current_joints.j[1]);
+    jointInfos[2].angle_min = joint3LowPoint(current_joints.j[1]);
 }
 
 float Motors::joint3HighPoint(float _target)
 {
-    return ((-0.8119f) * _target) - 1.05f;
+    return ((1.4803f) * _target) + 0.1689f;
 }
 
 float Motors::joint3LowPoint(float _target)
 {
     if (_target > 0.68f) {
-        return ((-1.08163f) * _target) + 0.7355f;
+        return (0.2742f * _target) + 0.0455f;
     } else {
         return 0.0f;
     }
@@ -226,25 +239,31 @@ float Motors::joint3LowPoint(float _target)
 bool Motors::homingUT()
 {
     static bool utResetState = false;
-    if (utResetState)
+    if (utResetState) {
+        // ref_speed.joint1 = 0.f;
+        // motors.utMotor->cmdVel(ref_speed.joint1);
         return true;
+    }
 
-    PINYMOTOR::UTMOTOR::TransmitMsg_s utTxMsg = {};
+    LOG::info("ARM", "UT8010-6 homing...");
 
     motors.utMotor->setKp(0);
     motors.utMotor->setKd(0.08f);
-    ref_speed.joint1 = 2.f;
+    ref_speed.joint1 = 1.5f;
 
-    if (fabs(motors.utMotor->data().torq) >= 0.2f &&
-        fabs(motors.utMotor->data().spdRadps) < 0.5f) {
-        unitreeAngleFix = motors.utMotor->data().multipCirAng;
-
-        motors.utMotor->setKp(0.5f);
-        motors.utMotor->setKd(0.02f);
-        ref_speed.joint1 = 0;
-
+    if (fabs(motors.utMotor->data().torq) >= 0.15f &&
+        fabs(motors.utMotor->data().spdRadps) < 1.f) {
         motors.utMotor->setZeroAng();
-        current_joints.j[0] = 0;
+        // unitreeAngleFix = motors.utMotor->data().multipCirAng;
+        //unitreeAngleFix==0;
+        motors.utMotor->setKp(0.3f);
+        motors.utMotor->setKd(0.01f);
+        ref_speed.joint1 = 0.f;
+        // motors.utMotor->cmdVel(ref_speed.joint1);
+        // uint32_t torq = motors.utMotor->data().torq * 1000;
+        // LOG::info("ARM", "UT8010-6 %d", torq);
+
+        // current_joints.j[0] = 0;
         utResetState = true;
         return true;
     } else {
@@ -255,7 +274,7 @@ bool Motors::homingUT()
 
 bool Motors::checkGoal(Joint7D _goal)
 {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 1; i < 2; i++) {
         if (!IS_WITHIN_RANGE(_goal.j[i], jointInfos[i].angle_min,
                              jointInfos[i].angle_max)) {
             LOG::error("ARM", "Joint%d move goal error", i + 1);
@@ -270,7 +289,7 @@ bool Motors::checkGoal(Joint7D _goal)
         return false;
     }
     /*joint4 - joint7*/
-    for (int i = 3; i < 7; i++) {
+    for (int i = 3; i < 4; i++) {
         if (!IS_WITHIN_RANGE(_goal.j[i], jointInfos[i].angle_min,
                              jointInfos[i].angle_max)) {
             LOG::error("ARM", "Joint%d move goal error", i + 1);

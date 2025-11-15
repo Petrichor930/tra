@@ -66,5 +66,6 @@
       "h",
       "hpp"
     ]
-  }
+  },
+  "idf.pythonInstallPath": "/usr/bin/python3"
 }
