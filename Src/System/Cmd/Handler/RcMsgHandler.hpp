@@ -50,6 +50,7 @@ private:
     // static constexpr uint8_t T_ACC_CNT = 100;
 
     uint32_t isKeyPressed(uint16_t _key);
+    float lx_command = 0; 
     RcMsg_t rcMsg_ = {};
 
     RcMsg_t rcMsgPrev_ = {};

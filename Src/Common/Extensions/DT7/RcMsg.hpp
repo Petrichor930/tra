@@ -56,23 +56,23 @@
 
 namespace RC {
 
-enum KeyCodes_e : uint8_t {
+enum KeyCodes_e : uint16_t {
     W = 1,
-    S = 2,
-    A = 3,
-    D = 4,
-    SHIFT = 5,
-    CTRL = 6,
-    Q = 7,
-    E = 8,
-    R = 9,
-    F = 10,
-    G = 11,
-    Z = 12,
-    X = 13,
-    C = 14,
-    V = 15,
-    B = 16
+    S = 1<<1,
+    A = 1<<2,
+    D = 1<<3,
+    SHIFT = 1<<4,
+    CTRL = 1<<5,
+    Q = 1<<6,
+    E = 1<<7,
+    R = 1<<8,
+    F = 1<<9,
+    G = 1<<10,
+    Z = 1<<11,
+    X = 1<<12,
+    C = 1<<13,
+    V = 1<<14,
+    B = 1<<15
 };
 
 typedef struct {

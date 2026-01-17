@@ -50,10 +50,7 @@ void RcMsgHandler::handle()
     rc->parseData();
     RC::RcRawMsg_t rcData = rc->getData();
     arcData = rcData;
-    updateRocker(rcMsg_.rx, (float)rcData.rc.ch0);
-    updateRocker(rcMsg_.ry, (float)rcData.rc.ch1);
-    updateRocker(rcMsg_.lx, (float)rcData.rc.ch2);
-    updateRocker(rcMsg_.ly, (float)rcData.rc.ch3);
+
 
     rcMsg_.rSwitch = rcData.rc.switchRight;
     rcMsg_.lSwitch = rcData.rc.switchLeft;
@@ -70,6 +67,11 @@ void RcMsgHandler::handle()
         cmsg.vy = 0.f;
         cmsg.yaw = 0.f;
     } else if (rcData.rc.switchRight == RC_SW_MID) {
+        updateRocker(rcMsg_.rx, (float)rcData.rc.ch0);
+        updateRocker(rcMsg_.ry, (float)rcData.rc.ch1);
+        updateRocker(rcMsg_.lx, (float)rcData.rc.ch2);
+        updateRocker(rcMsg_.ly, (float)rcData.rc.ch3);
+
         amsg.state = ARM::FSMState_e::NORMAL;
         if (rcData.rc.switchLeft == RC_SW_DOWN) {
             cmsg.state = CHASSIS::FSMState_e::RUN;
@@ -101,28 +103,27 @@ void RcMsgHandler::handle()
         if (isKeyPressed(RC::W)) {
             kupdateRocker(rcMsg_.ry, 1); //加速向前，ry 增加并趋近于最大值。
         } else if (isKeyPressed(RC::S)) {
-            updateRocker(rcMsg_.ry, -1); //加速向后，ry 减少并趋近于最小值。
+            kupdateRocker(rcMsg_.ry, -1); //加速向后，ry 减少并趋近于最小值。
         } else {
             kupdateRocker(rcMsg_.ry, 0); //自然减速回中，ry 向 0 值靠近。
         }
 
         if (isKeyPressed(RC::A)) {
-            kupdateRocker(rcMsg_.rx, 1);
-        } else if (isKeyPressed(RC::D)) {
             kupdateRocker(rcMsg_.rx, -1);
+        } else if (isKeyPressed(RC::D)) {
+            kupdateRocker(rcMsg_.rx, 1);
         } else {
             kupdateRocker(rcMsg_.rx, 0);
         }
 
-        if (rcData.rc.switchLeft == 1)
-            kupdateRocker(rcMsg_.lx, -1);
+        if (rcData.mouse.pressRight == 1)
+            lx_command = 1;
+        else if (rcData.mouse.pressLeft == 1)
+            lx_command = -1;
         else
-            kupdateRocker(rcMsg_.lx, 0);
-
-        if (rcData.rc.switchRight == 1)
-            kupdateRocker(rcMsg_.lx, 1);
-        else
-            kupdateRocker(rcMsg_.lx, 0);
+            lx_command = 0;
+        
+        kupdateRocker(rcMsg_.lx, lx_command);
 
 
         // rcMsg_.lx = ((float)rcData->mouse.y * (GAIN_MOUSE_X));
